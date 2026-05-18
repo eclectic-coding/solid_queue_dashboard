@@ -1,15 +1,293 @@
 /*
- * This is a manifest file that'll be compiled into application.css, which will include all the files
- * listed below.
- *
- * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
- * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
- * files in this directory. Styles in this file should be added after the last require_* statement.
- * It is generally better to create a new file per style scope.
- *
- *= require_tree .
  *= require_self
  */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f8f9fa;
+  --surface: #ffffff;
+  --border: #dee2e6;
+  --text: #212529;
+  --muted: #6c757d;
+  --primary: #0d6efd;
+  --danger: #dc3545;
+  --warning: #fd7e14;
+  --success: #198754;
+  --info: #0dcaf0;
+  --purple: #6f42c1;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* Layout */
+.sqd-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  height: 56px;
+}
+
+.sqd-header__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.sqd-nav {
+  display: flex;
+  gap: 0.25rem;
+  list-style: none;
+}
+
+.sqd-nav a {
+  display: block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.1s, color 0.1s;
+}
+
+.sqd-nav a:hover,
+.sqd-nav a.active {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.sqd-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.sqd-page-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+/* Flash notices */
+.sqd-flash {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 13px;
+}
+.sqd-flash--notice { background: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
+.sqd-flash--alert  { background: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }
+
+/* Stat cards */
+.sqd-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.sqd-stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem 1rem;
+  text-align: center;
+}
+
+.sqd-stat__value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.sqd-stat__label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sqd-stat--ready     .sqd-stat__value { color: var(--success); }
+.sqd-stat--scheduled .sqd-stat__value { color: var(--info); }
+.sqd-stat--claimed   .sqd-stat__value { color: var(--primary); }
+.sqd-stat--failed    .sqd-stat__value { color: var(--danger); }
+.sqd-stat--blocked   .sqd-stat__value { color: var(--warning); }
+.sqd-stat--queues    .sqd-stat__value { color: var(--purple); }
+.sqd-stat--processes .sqd-stat__value { color: var(--muted); }
+
+/* Tables */
+.sqd-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.sqd-card__header {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sqd-card__title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  padding: 0.625rem 1rem;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--bg); }
+
+.sqd-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--muted);
+}
+
+/* Badges */
+.sqd-badge {
+  display: inline-block;
+  padding: 0.2em 0.55em;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sqd-badge--ready     { background: #d1e7dd; color: #0f5132; }
+.sqd-badge--scheduled { background: #cff4fc; color: #055160; }
+.sqd-badge--claimed   { background: #cfe2ff; color: #084298; }
+.sqd-badge--failed    { background: #f8d7da; color: #842029; }
+.sqd-badge--blocked   { background: #fff3cd; color: #664d03; }
+.sqd-badge--paused    { background: #e2e3e5; color: #41464b; }
+.sqd-badge--running   { background: #d1e7dd; color: #0f5132; }
+
+/* Buttons */
+.sqd-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.sqd-btn:hover { opacity: 0.85; }
+.sqd-btn--primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.sqd-btn--danger  { background: var(--danger);  color: #fff; border-color: var(--danger);  }
+.sqd-btn--muted   { background: var(--surface); color: var(--text); border-color: var(--border); }
+
+/* Filters */
+.sqd-filters {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.sqd-filters a {
+  padding: 0.35rem 0.875rem;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--surface);
+  transition: all 0.1s;
+}
+
+.sqd-filters a:hover,
+.sqd-filters a.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+/* Code / monospace */
+.sqd-mono {
+  font-family: "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+}
+
+.sqd-error-msg {
+  color: var(--danger);
+  font-size: 12px;
+}
+
+.sqd-truncate {
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Pagination (pagy) */
+.pagy-nav {
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 1rem;
+}
+
+.pagy-nav a,
+.pagy-nav span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 0.5rem;
+  border-radius: 5px;
+  font-size: 13px;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  background: var(--surface);
+}
+
+.pagy-nav a:hover { background: var(--bg); }
+.pagy-nav span.current { background: var(--primary); color: #fff; border-color: var(--primary); }
+.pagy-nav span.gap, .pagy-nav span.disabled { color: var(--muted); }

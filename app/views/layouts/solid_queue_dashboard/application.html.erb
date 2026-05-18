@@ -1,17 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Solid queue dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solid Queue Dashboard</title>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
-
-  <%= yield :head %>
-
-  <%= stylesheet_link_tag    "solid_queue_dashboard/application", media: "all" %>
+  <%= stylesheet_link_tag "solid_queue_dashboard/application", media: "all" %>
 </head>
 <body>
 
-<%= yield %>
+<header class="sqd-header">
+  <%= link_to "Solid Queue", root_path, class: "sqd-header__title" %>
+  <nav>
+    <ul class="sqd-nav">
+      <li><%= link_to "Dashboard", root_path, class: current_page?(root_path) ? "active" : "" %></li>
+      <li><%= link_to "Queues", queues_path, class: current_page?(queues_path) ? "active" : "" %></li>
+      <li><%= link_to "Jobs", jobs_path, class: current_page?(jobs_path) ? "active" : "" %></li>
+      <li><%= link_to "Failed", failed_jobs_path, class: current_page?(failed_jobs_path) ? "active" : "" %></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="sqd-main">
+  <% if notice.present? %>
+    <div class="sqd-flash sqd-flash--notice"><%= notice %></div>
+  <% end %>
+  <% if alert.present? %>
+    <div class="sqd-flash sqd-flash--alert"><%= alert %></div>
+  <% end %>
+
+  <%= yield %>
+</main>
 
 </body>
 </html>

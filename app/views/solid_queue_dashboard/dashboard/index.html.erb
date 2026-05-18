@@ -1,0 +1,60 @@
+<h1 class="sqd-page-title">Dashboard</h1>
+
+<div class="sqd-stats">
+  <div class="sqd-stat sqd-stat--ready">
+    <div class="sqd-stat__value"><%= @stats[:ready] %></div>
+    <div class="sqd-stat__label">Ready</div>
+  </div>
+  <div class="sqd-stat sqd-stat--scheduled">
+    <div class="sqd-stat__value"><%= @stats[:scheduled] %></div>
+    <div class="sqd-stat__label">Scheduled</div>
+  </div>
+  <div class="sqd-stat sqd-stat--claimed">
+    <div class="sqd-stat__value"><%= @stats[:claimed] %></div>
+    <div class="sqd-stat__label">Running</div>
+  </div>
+  <div class="sqd-stat sqd-stat--blocked">
+    <div class="sqd-stat__value"><%= @stats[:blocked] %></div>
+    <div class="sqd-stat__label">Blocked</div>
+  </div>
+  <div class="sqd-stat sqd-stat--failed">
+    <div class="sqd-stat__value"><%= @stats[:failed] %></div>
+    <div class="sqd-stat__label">Failed</div>
+  </div>
+  <div class="sqd-stat sqd-stat--queues">
+    <div class="sqd-stat__value"><%= @stats[:queues] %></div>
+    <div class="sqd-stat__label">Queues</div>
+  </div>
+  <div class="sqd-stat sqd-stat--processes">
+    <div class="sqd-stat__value"><%= @stats[:processes] %></div>
+    <div class="sqd-stat__label">Processes</div>
+  </div>
+</div>
+
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+  <div class="sqd-card">
+    <div class="sqd-card__header">
+      <span class="sqd-card__title">Quick Links</span>
+    </div>
+    <div style="padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+      <%= link_to "View all ready jobs", jobs_path(status: "ready"), class: "sqd-btn sqd-btn--muted" %>
+      <%= link_to "View scheduled jobs", jobs_path(status: "scheduled"), class: "sqd-btn sqd-btn--muted" %>
+      <%= link_to "View failed jobs", failed_jobs_path, class: "sqd-btn sqd-btn--muted" %>
+      <%= link_to "Manage queues", queues_path, class: "sqd-btn sqd-btn--muted" %>
+    </div>
+  </div>
+
+  <% if @stats[:failed] > 0 %>
+    <div class="sqd-card">
+      <div class="sqd-card__header">
+        <span class="sqd-card__title">Attention Required</span>
+      </div>
+      <div style="padding: 1rem;">
+        <p style="color: var(--danger); margin-bottom: 0.75rem;">
+          <%= pluralize(@stats[:failed], "failed job") %> need attention.
+        </p>
+        <%= link_to "Review failed jobs →", failed_jobs_path, class: "sqd-btn sqd-btn--danger" %>
+      </div>
+    </div>
+  <% end %>
+</div>
