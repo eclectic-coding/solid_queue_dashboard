@@ -25,7 +25,7 @@
                   <strong><%= execution.exception_class %></strong>: <%= execution.message %>
                 </div>
               <% else %>
-                <span class="sqd-muted">—</span>
+                <span style="color:var(--muted)">—</span>
               <% end %>
             </td>
             <td class="sqd-mono"><%= execution.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
