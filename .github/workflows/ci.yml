@@ -75,3 +75,13 @@ jobs:
 
       - name: Build and publish gem
         uses: rubygems/release-gem@v1
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          NOTES=$(awk "/^## \[$VERSION\]/{found=1; next} found && /^## \[/{exit} found{print}" CHANGELOG.md)
+          gh release create "$GITHUB_REF_NAME" \
+            --title "v$VERSION" \
+            --notes "$NOTES"

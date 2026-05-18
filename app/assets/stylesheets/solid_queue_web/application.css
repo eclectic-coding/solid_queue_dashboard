@@ -139,6 +139,18 @@ body {
 .sqd-stat--queues    .sqd-stat__value { color: var(--purple); }
 .sqd-stat--processes .sqd-stat__value { color: var(--muted); }
 
+.sqd-stat--link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.sqd-stat--link:hover {
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
 /* Tables */
 .sqd-card {
   background: var(--surface);
