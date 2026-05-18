@@ -12,3 +12,4 @@ gem "rubocop-rails-omakase", require: false
 
 gem "rspec-rails"
 gem "simplecov", require: false
+gem "simplecov-json", require: false
