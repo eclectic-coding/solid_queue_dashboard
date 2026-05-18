@@ -56,6 +56,12 @@ jobs:
       - name: Run tests
         run: bundle exec rspec
 
+      - name: Upload coverage to Codecov
+        if: matrix.ruby == '3.4'
+        uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: false
+
   release:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: [ lint, test ]
