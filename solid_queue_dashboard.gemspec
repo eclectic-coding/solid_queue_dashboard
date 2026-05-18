@@ -23,6 +23,8 @@ Gem::Specification.new do |spec|
     Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
   end
 
+  spec.required_ruby_version = ">= 3.3"
+
   spec.add_dependency "rails", ">= 8.1.3"
   spec.add_dependency "solid_queue", ">= 1.0"
   spec.add_dependency "pagy", ">= 9.0"
