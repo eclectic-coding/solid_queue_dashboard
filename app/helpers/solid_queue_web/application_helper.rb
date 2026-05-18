@@ -1,4 +1,4 @@
-module SolidQueueDashboard
+module SolidQueueWeb
   module ApplicationHelper
   end
 end

@@ -1,4 +1,4 @@
-module SolidQueueDashboard
+module SolidQueueWeb
   class DashboardController < ApplicationController
     def index
       @stats = {

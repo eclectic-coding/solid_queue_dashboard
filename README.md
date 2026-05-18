@@ -1,6 +1,6 @@
-# SolidQueueDashboard
+# SolidQueueWeb
 
-[![Gem Version](https://badge.fury.io/rb/solid_queue_dashboard.svg)](https://rubygems.org/gems/solid_queue_dashboard)
+[![Gem Version](https://badge.fury.io/rb/solid_queue_web.svg)](https://rubygems.org/gems/solid_queue_web)
 
 A read-only Rails engine that mounts a monitoring dashboard for [Solid Queue](https://github.com/rails/solid_queue). View queues, inspect jobs by status, and browse failed executions — all without leaving your app.
 
@@ -17,7 +17,7 @@ A read-only Rails engine that mounts a monitoring dashboard for [Solid Queue](ht
 Add to your application's Gemfile:
 
 ```ruby
-gem "solid_queue_dashboard"
+gem "solid_queue_web"
 ```
 
 Then run:
@@ -31,17 +31,17 @@ bundle install
 Add to your `config/routes.rb`:
 
 ```ruby
-mount SolidQueueDashboard::Engine, at: "/jobs"
+mount SolidQueueWeb::Engine, at: "/jobs"
 ```
 
 The dashboard will be available at `/jobs`.
 
 ## Authentication
 
-The engine ships with no authentication by default. Add a block to an initializer (e.g. `config/initializers/solid_queue_dashboard.rb`) to protect the dashboard:
+The engine ships with no authentication by default. Add a block to an initializer (e.g. `config/initializers/solid_queue_web.rb`) to protect the dashboard:
 
 ```ruby
-SolidQueueDashboard.authenticate do
+SolidQueueWeb.authenticate do
   # Called in the context of ApplicationController — use any helper available there.
   # Return a truthy value to allow access, falsy to deny (triggers HTTP Basic prompt).
   current_user&.admin?
@@ -58,7 +58,7 @@ HTTP Basic authentication is used as a fallback when the block returns falsy.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on [GitHub](https://github.com/eclectic-coding/solid_queue_dashboard).
+Bug reports and pull requests are welcome on [GitHub](https://github.com/eclectic-coding/solid_queue_web).
 
 ## License
 

@@ -1,4 +1,4 @@
-module SolidQueueDashboard
+module SolidQueueWeb
   class ApplicationRecord < ActiveRecord::Base
     self.abstract_class = true
   end

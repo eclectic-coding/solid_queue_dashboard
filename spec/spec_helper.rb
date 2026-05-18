@@ -2,7 +2,7 @@ require "simplecov"
 
 SimpleCov.start "rails" do
   add_filter "/spec/"
-  add_filter "/lib/solid_queue_dashboard/version.rb"
+  add_filter "/lib/solid_queue_web/version.rb"
 
   add_group "Controllers", "app/controllers"
   add_group "Helpers",     "app/helpers"

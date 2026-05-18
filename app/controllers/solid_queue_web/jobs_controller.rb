@@ -1,4 +1,4 @@
-module SolidQueueDashboard
+module SolidQueueWeb
   class JobsController < ApplicationController
     STATUSES = %w[ready scheduled claimed blocked failed].freeze
 

@@ -1,4 +1,4 @@
-SolidQueueDashboard::Engine.routes.draw do
+SolidQueueWeb::Engine.routes.draw do
   root to: "dashboard#index"
 
   resources :queues,      only: [ :index ]

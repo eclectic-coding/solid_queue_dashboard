@@ -1,4 +1,4 @@
-module SolidQueueDashboard
+module SolidQueueWeb
   class FailedJobsController < ApplicationController
     def index
       @failed_jobs = SolidQueue::FailedExecution

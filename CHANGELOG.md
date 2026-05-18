@@ -11,8 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Rails engine scaffold with isolated namespace `SolidQueueDashboard`
-- Configurable authentication hook (`SolidQueueDashboard.authenticate`)
+- Rails engine scaffold with isolated namespace `SolidQueueWeb`
+- Configurable authentication hook (`SolidQueueWeb.authenticate`)
 - Read-only dashboard with stat cards for ready, scheduled, running, blocked, and failed jobs
 - Queues index page showing all queues sorted by name
 - Jobs index with status filter tabs (ready, scheduled, claimed, blocked, failed) and per-queue filtering
@@ -25,5 +25,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI workflow with lint (RuboCop) and test (RSpec) matrix across Ruby 3.3, 3.4, and 4.0
 - `bin/release` script for versioned gem releases
 
-[Unreleased]: https://github.com/eclectic-coding/solid_queue_dashboard/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/eclectic-coding/solid_queue_dashboard/releases/tag/v0.1.0
+[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.1.0
