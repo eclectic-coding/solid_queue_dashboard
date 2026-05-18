@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Failed jobs view now renders error class and message correctly (seed data format and missing CSS class)
+
 ## [0.2.0] - 2026-05-18
 
 ### Added

@@ -101,7 +101,7 @@ errors = [
   job.ready_execution&.destroy
   SolidQueue::FailedExecution.create!(
     job: job,
-    error: { class: err[:class], message: err[:message], backtrace: [ "app/jobs/#{job.class_name.underscore}.rb:42" ] }.to_json,
+    error: { exception_class: err[:class], message: err[:message], backtrace: [ "app/jobs/#{job.class_name.underscore}.rb:42" ] },
     created_at: job.created_at
   )
 end
