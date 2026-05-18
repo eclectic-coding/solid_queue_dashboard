@@ -1,5 +1,7 @@
 # SolidQueueDashboard
 
+[![Gem Version](https://badge.fury.io/rb/solid_queue_dashboard.svg)](https://rubygems.org/gems/solid_queue_dashboard)
+
 A read-only Rails engine that mounts a monitoring dashboard for [Solid Queue](https://github.com/rails/solid_queue). View queues, inspect jobs by status, and browse failed executions — all without leaving your app.
 
 ## Features
