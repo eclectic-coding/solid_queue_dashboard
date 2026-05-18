@@ -21,8 +21,8 @@ if [[ "$BRANCH" != "main" ]]; then
   exit 1
 fi
 
-# Working tree must be clean
-if ! git diff --quiet || ! git diff --cached --quiet; then
+# Working tree must be clean (ignoring .claude/ internal files)
+if ! git diff --quiet -- ':!.claude' || ! git diff --cached --quiet -- ':!.claude'; then
   echo "error: working tree has uncommitted changes"
   exit 1
 fi
