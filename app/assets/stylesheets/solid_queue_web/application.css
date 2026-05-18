@@ -233,6 +233,7 @@ tbody tr:hover { background: var(--bg); }
 .sqd-btn--sm      { padding: 0.2rem 0.55rem; font-size: 11px; }
 
 .sqd-row-actions  { white-space: nowrap; text-align: right; width: 1%; }
+.sqd-row-actions form { display: inline; margin-left: 0.25rem; }
 
 /* Filters */
 .sqd-filters {
