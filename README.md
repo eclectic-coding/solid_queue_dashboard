@@ -76,7 +76,7 @@ The following features are planned. Contributions welcome.
 - [x] Full error backtrace for failed jobs
 
 ### Pagination
-- [ ] Paginate jobs, failed jobs, and queues lists
+- [x] Paginate jobs, failed jobs, and queues lists
 
 ### Queue management
 - [ ] Pause / resume a queue (block new executions)
