@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Usage: bin/release <version>
+#   e.g. bin/release 0.2.0
+
+VERSION="${1:-}"
+
+if [[ -z "$VERSION" ]]; then
+  echo "Usage: bin/release <version>"
+  exit 1
+fi
+
+TAG="v$VERSION"
+VERSION_FILE="lib/solid_queue_dashboard/version.rb"
+
+# Must be on main
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$BRANCH" != "main" ]]; then
+  echo "error: must be on main branch (currently on $BRANCH)"
+  exit 1
+fi
+
+# Working tree must be clean
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "error: working tree has uncommitted changes"
+  exit 1
+fi
+
+# Tag must not already exist
+if git tag | grep -q "^$TAG$"; then
+  echo "error: tag $TAG already exists"
+  exit 1
+fi
+
+echo "==> Running test suite..."
+bundle exec rake
+
+echo ""
+echo "==> Bumping version to $VERSION..."
+sed -i '' "s/VERSION = \".*\"/VERSION = \"$VERSION\"/" "$VERSION_FILE"
+
+echo "==> Updating CHANGELOG..."
+TODAY=$(date +%Y-%m-%d)
+# Rename [Unreleased] heading to the new version + date
+sed -i '' "s/^## \[Unreleased\]$/## [$VERSION] - $TODAY/" CHANGELOG.md
+# Re-insert an empty [Unreleased] section at the top
+awk "/^## \[$VERSION\]/{print \"## [Unreleased]\n\"; print; next}1" CHANGELOG.md > CHANGELOG.tmp && mv CHANGELOG.tmp CHANGELOG.md
+# Update the comparison links at the bottom
+sed -i '' \
+  "s|^\[Unreleased\]:.*|\[Unreleased\]: https://github.com/eclectic-coding/solid_queue_dashboard/compare/$TAG...HEAD\n[$VERSION]: https://github.com/eclectic-coding/solid_queue_dashboard/releases/tag/$TAG|" \
+  CHANGELOG.md
+
+echo "==> Committing release..."
+git add "$VERSION_FILE" CHANGELOG.md
+git commit -m "Release $TAG"
+
+echo "==> Tagging $TAG..."
+git tag -a "$TAG" -m "Release $TAG"
+
+echo "==> Pushing to GitHub..."
+git push origin main
+git push origin "$TAG"
+
+echo "==> Building gem..."
+gem build solid_queue_dashboard.gemspec
+
+GEM_FILE="solid_queue_dashboard-${VERSION}.gem"
+
+echo ""
+echo "Built: $GEM_FILE"
+echo ""
+read -r -p "Push to RubyGems? [y/N] " confirm
+if [[ "$confirm" =~ ^[Yy]$ ]]; then
+  gem push "$GEM_FILE"
+  echo "==> Published $TAG to RubyGems."
+else
+  echo "==> Skipped RubyGems push. Run: gem push $GEM_FILE"
+fi
