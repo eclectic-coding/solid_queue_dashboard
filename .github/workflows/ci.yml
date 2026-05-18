@@ -60,6 +60,7 @@ jobs:
         if: matrix.ruby == '3.4'
         uses: codecov/codecov-action@v5
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
 
   release:
