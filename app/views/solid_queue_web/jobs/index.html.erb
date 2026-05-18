@@ -1,7 +1,16 @@
+<h1 class="sqd-page-title" style="margin-bottom: 1.5rem;">Jobs</h1>
+
+<%= turbo_frame_tag "jobs-table" do %>
 <% discardable = SolidQueueWeb::JobsController::DISCARDABLE.include?(@status) %>
 
 <div class="sqd-page-header">
-  <h1 class="sqd-page-title">Jobs</h1>
+  <div class="sqd-filters">
+    <%= link_to "Ready",     jobs_path(status: "ready",     queue: @queue), class: @status == "ready"     ? "active" : "" %>
+    <%= link_to "Scheduled", jobs_path(status: "scheduled", queue: @queue), class: @status == "scheduled" ? "active" : "" %>
+    <%= link_to "Running",   jobs_path(status: "claimed",   queue: @queue), class: @status == "claimed"   ? "active" : "" %>
+    <%= link_to "Blocked",   jobs_path(status: "blocked",   queue: @queue), class: @status == "blocked"   ? "active" : "" %>
+    <%= link_to "Failed",    jobs_path(status: "failed",    queue: @queue), class: @status == "failed"    ? "active" : "" %>
+  </div>
   <% if discardable && @jobs.any? %>
     <div class="sqd-actions">
       <%= button_to "Discard All", discard_all_jobs_path,
@@ -11,14 +20,6 @@
             data: { confirm: "Discard all #{@jobs.size} #{@status} jobs? This cannot be undone." } %>
     </div>
   <% end %>
-</div>
-
-<div class="sqd-filters">
-  <%= link_to "Ready",     jobs_path(status: "ready",     queue: @queue), class: @status == "ready"     ? "active" : "" %>
-  <%= link_to "Scheduled", jobs_path(status: "scheduled", queue: @queue), class: @status == "scheduled" ? "active" : "" %>
-  <%= link_to "Running",   jobs_path(status: "claimed",   queue: @queue), class: @status == "claimed"   ? "active" : "" %>
-  <%= link_to "Blocked",   jobs_path(status: "blocked",   queue: @queue), class: @status == "blocked"   ? "active" : "" %>
-  <%= link_to "Failed",    jobs_path(status: "failed",    queue: @queue), class: @status == "failed"    ? "active" : "" %>
 </div>
 
 <div class="sqd-card" id="jobs-list">
@@ -78,4 +79,5 @@
     Filtering by queue: <strong><%= @queue %></strong> &mdash;
     <%= link_to "Clear filter", jobs_path(status: @status) %>
   </p>
+<% end %>
 <% end %>
