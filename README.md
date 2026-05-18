@@ -41,7 +41,7 @@ Add to your `config/routes.rb`:
 mount SolidQueueWeb::Engine, at: "/jobs"
 ```
 
-The dashboard will be available at `/jobs`.
+The dashboard will be available at `/jobs`. See [Authentication](#authentication) to restrict access to admin users.
 
 ## Authentication
 
