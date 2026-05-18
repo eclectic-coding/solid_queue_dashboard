@@ -1,6 +1,6 @@
 module SolidQueueDashboard
   class ApplicationController < ActionController::Base
-    include Pagy::Backend
+    include Pagy::Method
 
     before_action :authenticate!
 

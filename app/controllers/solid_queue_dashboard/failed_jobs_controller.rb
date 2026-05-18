@@ -2,7 +2,7 @@ module SolidQueueDashboard
   class FailedJobsController < ApplicationController
     def index
       scope = SolidQueue::FailedExecution.includes(:job).order(created_at: :desc)
-      @pagy, @failed_jobs = pagy(scope, limit: 50)
+      @pagy, @failed_jobs = pagy(:offset, scope, limit: 50)
     end
 
     def retry
