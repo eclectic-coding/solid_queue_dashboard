@@ -11,3 +11,4 @@ gem "sqlite3"
 gem "rubocop-rails-omakase", require: false
 
 gem "rspec-rails"
+gem "simplecov", require: false
