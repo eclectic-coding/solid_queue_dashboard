@@ -48,7 +48,12 @@ sed -i '' "s/^## \[Unreleased\]$/## [$VERSION] - $TODAY/" CHANGELOG.md
 awk "/^## \[$VERSION\]/{print \"## [Unreleased]\n\"; print; next}1" CHANGELOG.md > CHANGELOG.tmp && mv CHANGELOG.tmp CHANGELOG.md
 # Update the comparison links at the bottom
 sed -i '' \
-  "s|^\[Unreleased\]:.*|\[Unreleased\]: https://github.com/eclectic-coding/solid_queue_web/compare/$TAG...HEAD\n[$VERSION]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/$TAG|" \
+  "s|^\[Unreleased\]:.*|\[Unreleased\]: https://github.com/eclectic-coding/solid_queue_web/compare/$TAG...HEAD|" \
+  CHANGELOG.md
+# Insert the new version link after the [Unreleased] link
+sed -i '' \
+  "/^\[Unreleased\]:/a\\
+[$VERSION]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/$TAG" \
   CHANGELOG.md
 
 echo "==> Committing release..."
