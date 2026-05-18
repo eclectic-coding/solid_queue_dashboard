@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-18
+
+### Added
+
+- CI release job publishes gem to RubyGems automatically on version tags
+
+### Fixed
+
+- CSS is now inlined in the layout via a helper — no asset pipeline (Sprockets/Propshaft) required in the host app
+- Renamed gem from `solid_queue_dashboard` to `solid_queue_web` to avoid conflict with an existing RubyGems package
+
 ## [0.1.0] - 2026-05-18
 
 ### Added
