@@ -1,4 +1,17 @@
-<h1 class="sqd-page-title">Jobs</h1>
+<% discardable = SolidQueueWeb::JobsController::DISCARDABLE.include?(@status) %>
+
+<div class="sqd-page-header">
+  <h1 class="sqd-page-title">Jobs</h1>
+  <% if discardable && @jobs.any? %>
+    <div class="sqd-actions">
+      <%= button_to "Discard All", discard_all_jobs_path,
+            method: :post,
+            params: { status: @status, queue: @queue },
+            class: "sqd-btn sqd-btn--danger",
+            data: { confirm: "Discard all #{@jobs.size} #{@status} jobs? This cannot be undone." } %>
+    </div>
+  <% end %>
+</div>
 
 <div class="sqd-filters">
   <%= link_to "Ready",     jobs_path(status: "ready",     queue: @queue), class: @status == "ready"     ? "active" : "" %>
@@ -20,6 +33,7 @@
           <th>Priority</th>
           <th>Scheduled At</th>
           <th>Enqueued At</th>
+          <% if discardable %><th></th><% end %>
         </tr>
       </thead>
       <tbody>
@@ -39,6 +53,15 @@
               <%= job.scheduled_at ? job.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") : "—" %>
             </td>
             <td class="sqd-mono"><%= job.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+            <% if discardable %>
+              <td class="sqd-row-actions">
+                <%= button_to "Discard", job_path(execution),
+                      method: :delete,
+                      params: { status: @status, queue: @queue },
+                      class: "sqd-btn sqd-btn--danger sqd-btn--sm",
+                      data: { confirm: "Discard this job?" } %>
+              </td>
+            <% end %>
           </tr>
         <% end %>
       </tbody>
