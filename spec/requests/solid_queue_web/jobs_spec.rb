@@ -12,6 +12,30 @@ RSpec.describe "Jobs", type: :request do
 
   let(:ready_execution) { ready_job.ready_execution }
 
+  describe "GET /jobs/jobs/:id (detail)" do
+    it "returns HTTP success" do
+      get "/jobs/jobs/#{ready_job.id}"
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "displays job class name and details" do
+      get "/jobs/jobs/#{ready_job.id}"
+      expect(response.body).to include("TestJob")
+      expect(response.body).to include("default")
+    end
+
+    it "shows error section for failed jobs" do
+      ready_job.ready_execution&.destroy
+      SolidQueue::FailedExecution.create!(
+        job: ready_job,
+        error: { exception_class: "RuntimeError", message: "boom", backtrace: [ "app/jobs/test_job.rb:1" ] }
+      )
+      get "/jobs/jobs/#{ready_job.id}"
+      expect(response.body).to include("RuntimeError")
+      expect(response.body).to include("app/jobs/test_job.rb:1")
+    end
+  end
+
   describe "GET /jobs/jobs" do
     it "returns HTTP success" do
       get "/jobs/jobs"

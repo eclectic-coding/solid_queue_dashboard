@@ -28,7 +28,7 @@
         <% @failed_jobs.each do |execution| %>
           <% job = execution.job %>
           <tr>
-            <td><%= job.class_name %></td>
+            <td><%= link_to job.class_name, job_path(job) %></td>
             <td class="sqd-mono"><%= job.queue_name %></td>
             <td>
               <% if execution.exception_class.present? %>

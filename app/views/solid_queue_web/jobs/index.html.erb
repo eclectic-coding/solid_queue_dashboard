@@ -42,7 +42,7 @@
           <tr>
             <td>
               <span class="sqd-badge sqd-badge--<%= @status %>"><%= @status %></span>
-              <span style="margin-left: 0.5rem;"><%= job.class_name %></span>
+              <%= link_to job.class_name, job_path(job), style: "margin-left: 0.5rem;" %>
             </td>
             <td>
               <%= link_to job.queue_name, jobs_path(status: @status, queue: job.queue_name),

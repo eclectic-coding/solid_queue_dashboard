@@ -9,11 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Job detail page showing status, queue, priority, arguments (pretty-printed JSON), and full error backtrace for failed jobs
+- Retry/Discard action buttons on the detail page based on job status
+- Job class names on the jobs and failed jobs index pages link to the detail page
 - Retry and discard actions on individual failed jobs
 - Bulk "Retry All" and "Discard All" actions for failed jobs
 - Discard action on individual ready, scheduled, and blocked jobs
 - Bulk "Discard All" action for ready, scheduled, and blocked jobs (scoped to current queue filter)
-- Roadmap section added to README
+- Roadmap section added to README with planned features and contribution guidelines
 
 ### Fixed
 

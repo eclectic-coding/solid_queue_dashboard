@@ -1,0 +1,75 @@
+<div class="sqd-page-header">
+  <div>
+    <div class="sqd-breadcrumb">
+      <%= link_to "Jobs", jobs_path(status: @execution_status) %> &rsaquo; Detail
+    </div>
+    <h1 class="sqd-page-title"><%= @job.class_name %></h1>
+  </div>
+
+  <div class="sqd-actions">
+    <% if @execution_status == "failed" && @failed_execution %>
+      <%= button_to "Retry", retry_failed_job_path(@failed_execution), method: :post,
+            class: "sqd-btn sqd-btn--primary" %>
+      <%= button_to "Discard", failed_job_path(@failed_execution), method: :delete,
+            class: "sqd-btn sqd-btn--danger",
+            data: { confirm: "Discard this job?" } %>
+    <% elsif SolidQueueWeb::JobsController::DISCARDABLE.include?(@execution_status) %>
+      <% execution = @job.public_send("#{@execution_status}_execution") %>
+      <% if execution %>
+        <%= button_to "Discard", job_path(execution),
+              method: :delete,
+              params: { status: @execution_status },
+              class: "sqd-btn sqd-btn--danger",
+              data: { confirm: "Discard this job?" } %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<div class="sqd-detail-grid">
+  <div class="sqd-card sqd-detail-section">
+    <h2 class="sqd-section-title">Details</h2>
+    <dl class="sqd-dl">
+      <dt>Status</dt>
+      <dd><span class="sqd-badge sqd-badge--<%= @execution_status %>"><%= @execution_status %></span></dd>
+
+      <dt>Queue</dt>
+      <dd class="sqd-mono"><%= @job.queue_name %></dd>
+
+      <dt>Priority</dt>
+      <dd><%= @job.priority %></dd>
+
+      <dt>Active Job ID</dt>
+      <dd class="sqd-mono sqd-truncate" title="<%= @job.active_job_id %>"><%= @job.active_job_id %></dd>
+
+      <dt>Concurrency Key</dt>
+      <dd class="sqd-mono"><%= @job.concurrency_key.presence || "—" %></dd>
+
+      <dt>Enqueued At</dt>
+      <dd class="sqd-mono"><%= @job.created_at.strftime("%Y-%m-%d %H:%M:%S %Z") %></dd>
+
+      <dt>Scheduled At</dt>
+      <dd class="sqd-mono"><%= @job.scheduled_at ? @job.scheduled_at.strftime("%Y-%m-%d %H:%M:%S %Z") : "—" %></dd>
+
+      <dt>Finished At</dt>
+      <dd class="sqd-mono"><%= @job.finished_at ? @job.finished_at.strftime("%Y-%m-%d %H:%M:%S %Z") : "—" %></dd>
+    </dl>
+  </div>
+
+  <div class="sqd-card sqd-detail-section">
+    <h2 class="sqd-section-title">Arguments</h2>
+    <pre class="sqd-pre"><%= JSON.pretty_generate(@job.arguments) rescue @job.arguments.inspect %></pre>
+  </div>
+</div>
+
+<% if @failed_execution %>
+  <div class="sqd-card sqd-detail-section" style="margin-top: 1.5rem;">
+    <h2 class="sqd-section-title sqd-section-title--danger">Error</h2>
+    <p class="sqd-error-header">
+      <strong><%= @failed_execution.exception_class %></strong>: <%= @failed_execution.message %>
+    </p>
+    <% if @failed_execution.backtrace.present? %>
+      <pre class="sqd-pre sqd-pre--muted" style="margin-top: 0.75rem;"><%= Array(@failed_execution.backtrace).join("\n") %></pre>
+    <% end %>
+  </div>
+<% end %>
