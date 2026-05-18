@@ -1,7 +1,7 @@
-require "solid_queue_dashboard/version"
-require "solid_queue_dashboard/engine"
+require "solid_queue_web/version"
+require "solid_queue_web/engine"
 
-module SolidQueueDashboard
+module SolidQueueWeb
   class << self
     def authenticate(&block)
       @authenticate = block if block_given?

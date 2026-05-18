@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in solid_queue_dashboard.gemspec.
+# Specify your gem's dependencies in solid_queue_web.gemspec.
 gemspec
 
 gem "puma"

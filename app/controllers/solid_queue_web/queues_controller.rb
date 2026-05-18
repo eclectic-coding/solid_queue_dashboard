@@ -1,4 +1,4 @@
-module SolidQueueDashboard
+module SolidQueueWeb
   class QueuesController < ApplicationController
     def index
       @queues = SolidQueue::Queue.all.sort_by(&:name)

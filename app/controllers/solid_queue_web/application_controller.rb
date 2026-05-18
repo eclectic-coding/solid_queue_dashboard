@@ -1,11 +1,11 @@
-module SolidQueueDashboard
+module SolidQueueWeb
   class ApplicationController < ActionController::Base
     before_action :authenticate!
 
     private
 
     def authenticate!
-      return unless (auth = SolidQueueDashboard.authenticate)
+      return unless (auth = SolidQueueWeb.authenticate)
 
       instance_exec(&auth) || request_basic_auth
     end

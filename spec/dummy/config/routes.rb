@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  mount SolidQueueDashboard::Engine, at: "/jobs"
+  mount SolidQueueWeb::Engine, at: "/jobs"
 end
