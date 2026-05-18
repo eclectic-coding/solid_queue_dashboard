@@ -5,6 +5,7 @@ AllCops:
   Exclude:
     - "bin/release"
     - "README.md"
+    - "spec/dummy/config/database.yml"
 
 # Overwrite or add rules to create your own house style
 #

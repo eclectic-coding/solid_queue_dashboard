@@ -3,6 +3,10 @@ default: &default
   pool: 5
   timeout: 5000
 
+development:
+  <<: *default
+  database: <%= File.expand_path("../db/development.sqlite3", __dir__) %>
+
 test:
   <<: *default
   database: <%= File.expand_path("../db/test.sqlite3", __dir__) %>
