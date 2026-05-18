@@ -16,7 +16,7 @@ module SolidQueueWeb
       end
 
       @jobs = @jobs.where(jobs: { queue_name: @queue }) if @queue.present?
-      @jobs = @jobs.order(created_at: :desc).limit(100)
+      @pagy, @jobs = pagy(@jobs.order(created_at: :desc))
     end
 
     def show

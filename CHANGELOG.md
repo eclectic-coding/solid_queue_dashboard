@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Pagination for jobs and failed jobs lists via pagy (25 per page)
+- Jobs URL segment renamed from `/jobs/jobs` to `/jobs/list`
 - Job detail page showing status, queue, priority, arguments (pretty-printed JSON), and full error backtrace for failed jobs
 - Retry/Discard action buttons on the detail page based on job status
 - Job class names on the jobs and failed jobs index pages link to the detail page
