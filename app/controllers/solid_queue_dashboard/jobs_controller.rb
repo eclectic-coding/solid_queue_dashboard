@@ -6,7 +6,7 @@ module SolidQueueDashboard
       @status = params[:status].presence_in(STATUSES) || "ready"
       @queue  = params[:queue].presence
 
-      @jobs = case @status
+      scope = case @status
       when "ready"     then SolidQueue::ReadyExecution.includes(:job)
       when "scheduled" then SolidQueue::ScheduledExecution.includes(:job)
       when "claimed"   then SolidQueue::ClaimedExecution.includes(:job)
@@ -14,8 +14,10 @@ module SolidQueueDashboard
       when "failed"    then SolidQueue::FailedExecution.includes(:job)
       end
 
-      @jobs = @jobs.where(jobs: { queue_name: @queue }) if @queue.present?
-      @jobs = @jobs.order(created_at: :desc).page(params[:page]).per(50)
+      scope = scope.where(jobs: { queue_name: @queue }) if @queue.present?
+      scope = scope.order(created_at: :desc)
+
+      @pagy, @jobs = pagy(scope, limit: 50)
     end
   end
 end
