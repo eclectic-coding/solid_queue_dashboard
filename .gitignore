@@ -7,3 +7,4 @@
 /spec/dummy/log/
 /spec/dummy/tmp/
 /coverage/
+/.claude/
