@@ -40,6 +40,9 @@ echo ""
 echo "==> Bumping version to $VERSION..."
 sed -i '' "s/VERSION = \".*\"/VERSION = \"$VERSION\"/" "$VERSION_FILE"
 
+echo "==> Updating Gemfile.lock..."
+bundle install --quiet
+
 echo "==> Updating CHANGELOG..."
 TODAY=$(date +%Y-%m-%d)
 # Rename [Unreleased] heading to the new version + date
@@ -57,7 +60,7 @@ sed -i '' \
   CHANGELOG.md
 
 echo "==> Committing release..."
-git add "$VERSION_FILE" CHANGELOG.md
+git add "$VERSION_FILE" Gemfile.lock CHANGELOG.md
 git commit -m "Release $TAG"
 
 echo "==> Tagging $TAG..."
