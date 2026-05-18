@@ -4,6 +4,7 @@ inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 AllCops:
   Exclude:
     - "bin/release"
+    - "README.md"
 
 # Overwrite or add rules to create your own house style
 #
