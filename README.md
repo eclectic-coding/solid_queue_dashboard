@@ -12,6 +12,7 @@ A Rails engine that mounts a monitoring dashboard for [Solid Queue](https://gith
 - **Failed jobs** — list of failed executions with error details; retry or discard individually or in bulk
 - **Job detail** — full arguments, timestamps, and error backtrace; action buttons based on job status
 - **Queue management** — pause and resume individual queues
+- **Processes** — workers, dispatchers, and supervisors with heartbeat health status
 - No external CSS framework — works out of the box
 
 ## Installation
@@ -57,18 +58,6 @@ HTTP Basic authentication is used as a fallback when the block returns falsy.
 - Ruby >= 3.3
 - Rails >= 8.1.3
 - solid_queue >= 1.0
-
-## Roadmap
-
-The following features are planned. Contributions welcome.
-
-### Queue management
-- [x] Pause / resume a queue (block new executions)
-
-### Process visibility
-- [ ] Processes page showing workers, dispatchers, and last heartbeat
-
----
 
 ## Contributing
 
