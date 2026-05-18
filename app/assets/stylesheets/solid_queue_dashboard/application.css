@@ -264,16 +264,16 @@ tbody tr:hover { background: var(--bg); }
   white-space: nowrap;
 }
 
-/* Pagination (pagy) */
-.pagy-nav {
+/* Pagination (pagy v43 series-nav) */
+nav.pagy {
   display: flex;
   justify-content: center;
   gap: 0.25rem;
   padding: 1rem;
+  list-style: none;
 }
 
-.pagy-nav a,
-.pagy-nav span {
+nav.pagy a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -288,6 +288,7 @@ tbody tr:hover { background: var(--bg); }
   background: var(--surface);
 }
 
-.pagy-nav a:hover { background: var(--bg); }
-.pagy-nav span.current { background: var(--primary); color: #fff; border-color: var(--primary); }
-.pagy-nav span.gap, .pagy-nav span.disabled { color: var(--muted); }
+nav.pagy a:hover:not([aria-disabled="true"]) { background: var(--bg); }
+nav.pagy a[aria-current="page"] { background: var(--primary); color: #fff; border-color: var(--primary); }
+nav.pagy a[role="separator"],
+nav.pagy a[aria-disabled="true"] { color: var(--muted); cursor: default; }
