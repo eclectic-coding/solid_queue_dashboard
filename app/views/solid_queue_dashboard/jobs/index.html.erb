@@ -1,0 +1,55 @@
+<h1 class="sqd-page-title">Jobs</h1>
+
+<div class="sqd-filters">
+  <%= link_to "Ready",     jobs_path(status: "ready",     queue: @queue), class: @status == "ready"     ? "active" : "" %>
+  <%= link_to "Scheduled", jobs_path(status: "scheduled", queue: @queue), class: @status == "scheduled" ? "active" : "" %>
+  <%= link_to "Running",   jobs_path(status: "claimed",   queue: @queue), class: @status == "claimed"   ? "active" : "" %>
+  <%= link_to "Blocked",   jobs_path(status: "blocked",   queue: @queue), class: @status == "blocked"   ? "active" : "" %>
+  <%= link_to "Failed",    jobs_path(status: "failed",    queue: @queue), class: @status == "failed"    ? "active" : "" %>
+</div>
+
+<div class="sqd-card">
+  <% if @jobs.empty? %>
+    <div class="sqd-empty">No <%= @status %> jobs.</div>
+  <% else %>
+    <table>
+      <thead>
+        <tr>
+          <th>Job Class</th>
+          <th>Queue</th>
+          <th>Priority</th>
+          <th>Scheduled At</th>
+          <th>Enqueued At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @jobs.each do |execution| %>
+          <% job = execution.job %>
+          <tr>
+            <td>
+              <span class="sqd-badge sqd-badge--<%= @status %>"><%= @status %></span>
+              <span style="margin-left: 0.5rem;"><%= job.class_name %></span>
+            </td>
+            <td>
+              <%= link_to job.queue_name, jobs_path(status: @status, queue: job.queue_name),
+                    class: "sqd-mono", style: "color: inherit;" %>
+            </td>
+            <td><%= job.priority %></td>
+            <td class="sqd-mono">
+              <%= job.scheduled_at ? job.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") : "—" %>
+            </td>
+            <td class="sqd-mono"><%= job.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= pagy_nav(@pagy) if @pagy.pages > 1 %>
+  <% end %>
+</div>
+
+<% if @queue.present? %>
+  <p style="margin-top: 0.75rem; font-size: 13px; color: var(--muted);">
+    Filtering by queue: <strong><%= @queue %></strong> &mdash;
+    <%= link_to "Clear filter", jobs_path(status: @status) %>
+  </p>
+<% end %>
