@@ -17,7 +17,7 @@ module SolidQueueDashboard
       scope = scope.where(jobs: { queue_name: @queue }) if @queue.present?
       scope = scope.order(created_at: :desc)
 
-      @pagy, @jobs = pagy(scope, limit: 50)
+      @pagy, @jobs = pagy(:offset, scope, limit: 50)
     end
   end
 end

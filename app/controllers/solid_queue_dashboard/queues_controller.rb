@@ -2,7 +2,7 @@ module SolidQueueDashboard
   class QueuesController < ApplicationController
     def index
       all_queues = SolidQueue::Queue.all.sort_by(&:name)
-      @pagy, @queues = pagy_array(all_queues, limit: 50)
+      @pagy, @queues = pagy(:offset, all_queues, limit: 50)
     end
 
     def pause
