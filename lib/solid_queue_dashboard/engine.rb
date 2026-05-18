@@ -1,5 +1,3 @@
-require "pagy"
-require "pagy/toolbox/paginators/method"
 require "solid_queue"
 
 module SolidQueueDashboard
