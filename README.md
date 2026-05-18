@@ -1,6 +1,7 @@
 # SolidQueueWeb
 
 [![CI](https://github.com/eclectic-coding/solid_queue_web/actions/workflows/ci.yml/badge.svg)](https://github.com/eclectic-coding/solid_queue_web/actions/workflows/ci.yml)
+[![Ruby Version](https://img.shields.io/badge/ruby-%3E%3D%203.3-CC342D)](https://rubygems.org/gems/solid_queue_web)
 [![Gem Version](https://img.shields.io/gem/v/solid_queue_web)](https://rubygems.org/gems/solid_queue_web)
 [![Downloads](https://img.shields.io/gem/dt/solid_queue_web)](https://rubygems.org/gems/solid_queue_web)
 [![Coverage](https://codecov.io/gh/eclectic-coding/solid_queue_web/branch/main/graph/badge.svg)](https://codecov.io/gh/eclectic-coding/solid_queue_web)
