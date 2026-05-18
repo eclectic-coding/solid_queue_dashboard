@@ -27,5 +27,4 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rails", ">= 8.1.3"
   spec.add_dependency "solid_queue", ">= 1.0"
-  spec.add_dependency "pagy", ">= 9.0"
 end
