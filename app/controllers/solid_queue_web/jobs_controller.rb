@@ -19,6 +19,14 @@ module SolidQueueWeb
       @jobs = @jobs.order(created_at: :desc).limit(100)
     end
 
+    def show
+      @job = SolidQueue::Job
+        .includes(:ready_execution, :scheduled_execution, :claimed_execution, :blocked_execution, :failed_execution)
+        .find(params[:id])
+      @failed_execution = @job.failed_execution
+      @execution_status = derive_status(@job)
+    end
+
     def destroy
       execution = execution_model_for!(params[:status]).find(params[:id])
       execution.discard
@@ -44,6 +52,15 @@ module SolidQueueWeb
     end
 
     private
+
+    def derive_status(job)
+      return "failed"    if job.failed_execution.present?
+      return "claimed"   if job.claimed_execution.present?
+      return "blocked"   if job.blocked_execution.present?
+      return "ready"     if job.ready_execution.present?
+      return "scheduled" if job.scheduled_execution.present?
+      "finished"
+    end
 
     def execution_model_for!(status)
       case status
