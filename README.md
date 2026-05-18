@@ -8,8 +8,9 @@ A Rails engine that mounts a monitoring dashboard for [Solid Queue](https://gith
 
 - **Dashboard** — stat cards showing counts for ready, scheduled, running, blocked, and failed jobs, plus queues and processes
 - **Queues** — all queues sorted by name
-- **Jobs** — filterable by status (ready, scheduled, claimed, blocked, failed) and by queue
-- **Failed jobs** — list of failed executions with error details
+- **Jobs** — filterable by status (ready, scheduled, claimed, blocked, failed) and by queue; discard individual or all jobs
+- **Failed jobs** — list of failed executions with error details; retry or discard individually or in bulk
+- **Job detail** — full arguments, timestamps, and error backtrace; action buttons based on job status
 - No external CSS framework — works out of the box
 
 ## Installation
@@ -61,18 +62,18 @@ HTTP Basic authentication is used as a fallback when the block returns falsy.
 The following features are planned. Contributions welcome.
 
 ### Actions on failed jobs
-- [ ] Retry a single failed job
-- [ ] Discard (delete) a single failed job
-- [ ] Bulk retry all failed jobs
-- [ ] Bulk discard all failed jobs
+- [x] Retry a single failed job
+- [x] Discard (delete) a single failed job
+- [x] Bulk retry all failed jobs
+- [x] Bulk discard all failed jobs
 
 ### Actions on ready / scheduled jobs
-- [ ] Discard (cancel) a single ready or scheduled job
-- [ ] Bulk discard all jobs in a queue
+- [x] Discard (cancel) a single ready or scheduled job
+- [x] Bulk discard all jobs in a queue
 
 ### Job detail page
-- [ ] Full job details: arguments, priority, attempts, scheduled time
-- [ ] Full error backtrace for failed jobs
+- [x] Full job details: arguments, priority, attempts, scheduled time
+- [x] Full error backtrace for failed jobs
 
 ### Pagination
 - [ ] Paginate jobs, failed jobs, and queues lists
