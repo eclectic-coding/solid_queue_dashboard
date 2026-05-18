@@ -2,7 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/solid_queue_web.svg)](https://rubygems.org/gems/solid_queue_web)
 
-A read-only Rails engine that mounts a monitoring dashboard for [Solid Queue](https://github.com/rails/solid_queue). View queues, inspect jobs by status, and browse failed executions — all without leaving your app.
+A Rails engine that mounts a monitoring dashboard for [Solid Queue](https://github.com/rails/solid_queue). View queues, inspect jobs by status, browse failed executions, and take action — all without leaving your app.
 
 ## Features
 
@@ -55,6 +55,35 @@ HTTP Basic authentication is used as a fallback when the block returns falsy.
 - Ruby >= 3.3
 - Rails >= 8.1.3
 - solid_queue >= 1.0
+
+## Roadmap
+
+The following features are planned. Contributions welcome.
+
+### Actions on failed jobs
+- [ ] Retry a single failed job
+- [ ] Discard (delete) a single failed job
+- [ ] Bulk retry all failed jobs
+- [ ] Bulk discard all failed jobs
+
+### Actions on ready / scheduled jobs
+- [ ] Discard (cancel) a single ready or scheduled job
+- [ ] Bulk discard all jobs in a queue
+
+### Job detail page
+- [ ] Full job details: arguments, priority, attempts, scheduled time
+- [ ] Full error backtrace for failed jobs
+
+### Pagination
+- [ ] Paginate jobs, failed jobs, and queues lists
+
+### Queue management
+- [ ] Pause / resume a queue (block new executions)
+
+### Process visibility
+- [ ] Processes page showing workers, dispatchers, and last heartbeat
+
+---
 
 ## Contributing
 

@@ -1,4 +1,14 @@
-<h1 class="sqd-page-title">Failed Jobs</h1>
+<div class="sqd-page-header">
+  <h1 class="sqd-page-title">Failed Jobs</h1>
+  <% if @failed_jobs.any? %>
+    <div class="sqd-actions">
+      <%= button_to "Retry All", retry_all_failed_jobs_path, method: :post, class: "sqd-btn sqd-btn--primary",
+            data: { confirm: "Retry all #{@failed_jobs.size} failed jobs?" } %>
+      <%= button_to "Discard All", discard_all_failed_jobs_path, method: :post, class: "sqd-btn sqd-btn--danger",
+            data: { confirm: "Discard all #{@failed_jobs.size} failed jobs? This cannot be undone." } %>
+    </div>
+  <% end %>
+</div>
 
 <div class="sqd-card">
   <% if @failed_jobs.empty? %>
@@ -11,6 +21,7 @@
           <th>Queue</th>
           <th>Error</th>
           <th>Failed At</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -29,6 +40,13 @@
               <% end %>
             </td>
             <td class="sqd-mono"><%= execution.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+            <td class="sqd-row-actions">
+              <%= button_to "Retry", retry_failed_job_path(execution), method: :post,
+                    class: "sqd-btn sqd-btn--primary sqd-btn--sm" %>
+              <%= button_to "Discard", failed_job_path(execution), method: :delete,
+                    class: "sqd-btn sqd-btn--danger sqd-btn--sm",
+                    data: { confirm: "Discard this job?" } %>
+            </td>
           </tr>
         <% end %>
       </tbody>

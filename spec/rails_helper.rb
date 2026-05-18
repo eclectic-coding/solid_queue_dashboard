@@ -6,6 +6,8 @@ require File.expand_path("dummy/config/environment", __dir__)
 
 require "rspec/rails"
 
+ActionController::Base.allow_forgery_protection = false
+
 # Load solid_queue schema into the test database
 ActiveRecord::Schema.verbose = false
 load File.expand_path("dummy/db/schema.rb", __dir__)

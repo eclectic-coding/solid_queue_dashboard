@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Retry and discard actions on individual failed jobs
+- Bulk "Retry All" and "Discard All" actions for failed jobs
+- Roadmap section added to README
+
 ### Fixed
 
 - Failed jobs view now renders error class and message correctly (seed data format and missing CSS class)
