@@ -1,0 +1,8 @@
+default: &default
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+
+test:
+  <<: *default
+  database: <%= File.expand_path("../db/test.sqlite3", __dir__) %>
