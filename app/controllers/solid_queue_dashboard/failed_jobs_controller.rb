@@ -1,10 +1,8 @@
 module SolidQueueDashboard
   class FailedJobsController < ApplicationController
     def index
-      @failed_jobs = SolidQueue::FailedExecution
-        .includes(:job)
-        .order(created_at: :desc)
-        .page(params[:page]).per(50)
+      scope = SolidQueue::FailedExecution.includes(:job).order(created_at: :desc)
+      @pagy, @failed_jobs = pagy(scope, limit: 50)
     end
 
     def retry
@@ -20,7 +18,7 @@ module SolidQueueDashboard
     end
 
     def discard_all
-      SolidQueue::FailedExecution.discard_all
+      SolidQueue::FailedExecution.discard_all_in_batches
       redirect_to failed_jobs_path, notice: "All failed jobs discarded."
     end
   end
