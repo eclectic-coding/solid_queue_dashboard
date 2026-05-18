@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Processes page showing workers, dispatchers, and supervisors with kind, PID, host, metadata, last heartbeat, and Healthy/Stale status
 - Queue pause / resume — Pause and Resume buttons per row on the Queues page
 - Pagination for jobs and failed jobs lists via pagy (25 per page)
 - Jobs URL segment renamed from `/jobs/jobs` to `/jobs/list`

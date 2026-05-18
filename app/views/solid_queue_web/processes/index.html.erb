@@ -1,0 +1,54 @@
+<h1 class="sqd-page-title">Processes</h1>
+
+<div class="sqd-card">
+  <% if @processes.empty? %>
+    <div class="sqd-empty">No processes registered.</div>
+  <% else %>
+    <table>
+      <thead>
+        <tr>
+          <th>Kind</th>
+          <th>Name</th>
+          <th>PID</th>
+          <th>Host</th>
+          <th>Details</th>
+          <th>Last Heartbeat</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @processes.each do |process| %>
+          <% stale = process.last_heartbeat_at < SolidQueue.process_alive_threshold.ago %>
+          <tr>
+            <td><span class="sqd-badge sqd-badge--<%= process.kind.downcase %>"><%= process.kind %></span></td>
+            <td class="sqd-mono"><%= process.name %></td>
+            <td class="sqd-mono"><%= process.pid %></td>
+            <td class="sqd-mono"><%= process.hostname %></td>
+            <td class="sqd-process-meta">
+              <% meta = process.metadata || {} %>
+              <% if meta["queues"].present? %>
+                <span title="Queues"><%= Array(meta["queues"]).join(", ") %></span>
+              <% end %>
+              <% if meta["thread_count"].present? %>
+                <span class="sqd-muted-text"><%= meta["thread_count"] %> threads</span>
+              <% end %>
+              <% if meta["polling_interval"].present? %>
+                <span class="sqd-muted-text">every <%= meta["polling_interval"] %>s</span>
+              <% end %>
+            </td>
+            <td class="sqd-mono sqd-muted-text" title="<%= process.last_heartbeat_at %>">
+              <%= time_ago_in_words(process.last_heartbeat_at) %> ago
+            </td>
+            <td>
+              <% if stale %>
+                <span class="sqd-badge sqd-badge--failed">Stale</span>
+              <% else %>
+                <span class="sqd-badge sqd-badge--running">Healthy</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>
