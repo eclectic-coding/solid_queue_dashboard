@@ -61,23 +61,6 @@ HTTP Basic authentication is used as a fallback when the block returns falsy.
 
 The following features are planned. Contributions welcome.
 
-### Actions on failed jobs
-- [x] Retry a single failed job
-- [x] Discard (delete) a single failed job
-- [x] Bulk retry all failed jobs
-- [x] Bulk discard all failed jobs
-
-### Actions on ready / scheduled jobs
-- [x] Discard (cancel) a single ready or scheduled job
-- [x] Bulk discard all jobs in a queue
-
-### Job detail page
-- [x] Full job details: arguments, priority, attempts, scheduled time
-- [x] Full error backtrace for failed jobs
-
-### Pagination
-- [x] Paginate jobs, failed jobs, and queues lists
-
 ### Queue management
 - [ ] Pause / resume a queue (block new executions)
 
