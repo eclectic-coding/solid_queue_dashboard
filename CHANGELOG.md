@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Retry and discard actions on individual failed jobs
 - Bulk "Retry All" and "Discard All" actions for failed jobs
+- Discard action on individual ready, scheduled, and blocked jobs
+- Bulk "Discard All" action for ready, scheduled, and blocked jobs (scoped to current queue filter)
 - Roadmap section added to README
 
 ### Fixed
