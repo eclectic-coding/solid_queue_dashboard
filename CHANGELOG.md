@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.0] - 2026-05-18
 
+## [Unreleased]
+
+## [0.2.0] - 2026-05-18
+
 ### Added
 
 - CI release job publishes gem to RubyGems automatically on version tags
@@ -36,5 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI workflow with lint (RuboCop) and test (RSpec) matrix across Ruby 3.3, 3.4, and 4.0
 - `bin/release` script for versioned gem releases
 
-[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.2.0
 [0.1.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.1.0
