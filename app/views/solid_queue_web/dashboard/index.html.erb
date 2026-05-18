@@ -1,34 +1,34 @@
 <h1 class="sqd-page-title">Dashboard</h1>
 
 <div class="sqd-stats">
-  <div class="sqd-stat sqd-stat--ready">
+  <%= link_to jobs_path(status: "ready"), class: "sqd-stat sqd-stat--ready sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats[:ready] %></div>
     <div class="sqd-stat__label">Ready</div>
-  </div>
-  <div class="sqd-stat sqd-stat--scheduled">
+  <% end %>
+  <%= link_to jobs_path(status: "scheduled"), class: "sqd-stat sqd-stat--scheduled sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats[:scheduled] %></div>
     <div class="sqd-stat__label">Scheduled</div>
-  </div>
-  <div class="sqd-stat sqd-stat--claimed">
+  <% end %>
+  <%= link_to jobs_path(status: "claimed"), class: "sqd-stat sqd-stat--claimed sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats[:claimed] %></div>
     <div class="sqd-stat__label">Running</div>
-  </div>
-  <div class="sqd-stat sqd-stat--blocked">
+  <% end %>
+  <%= link_to jobs_path(status: "blocked"), class: "sqd-stat sqd-stat--blocked sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats[:blocked] %></div>
     <div class="sqd-stat__label">Blocked</div>
-  </div>
-  <div class="sqd-stat sqd-stat--failed">
+  <% end %>
+  <%= link_to failed_jobs_path, class: "sqd-stat sqd-stat--failed sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats[:failed] %></div>
     <div class="sqd-stat__label">Failed</div>
-  </div>
-  <div class="sqd-stat sqd-stat--queues">
+  <% end %>
+  <%= link_to queues_path, class: "sqd-stat sqd-stat--queues sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats[:queues] %></div>
     <div class="sqd-stat__label">Queues</div>
-  </div>
-  <div class="sqd-stat sqd-stat--processes">
+  <% end %>
+  <%= link_to processes_path, class: "sqd-stat sqd-stat--processes sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats[:processes] %></div>
     <div class="sqd-stat__label">Processes</div>
-  </div>
+  <% end %>
 </div>
 
 <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">

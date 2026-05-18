@@ -34,6 +34,24 @@ RSpec.describe "Jobs", type: :request do
       expect(response.body).to include("RuntimeError")
       expect(response.body).to include("app/jobs/test_job.rb:1")
     end
+
+    it "derives scheduled status when only a scheduled execution exists" do
+      ready_job.ready_execution&.destroy
+      ready_job.update!(scheduled_at: 1.hour.from_now)
+      SolidQueue::ScheduledExecution.create!(
+        job: ready_job,
+        queue_name: ready_job.queue_name,
+        priority: ready_job.priority
+      )
+      get "/jobs/list/#{ready_job.id}"
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "derives finished status when no execution exists" do
+      ready_job.ready_execution&.destroy
+      get "/jobs/list/#{ready_job.id}"
+      expect(response).to have_http_status(:ok)
+    end
   end
 
   describe "GET /jobs/list" do
@@ -49,11 +67,33 @@ RSpec.describe "Jobs", type: :request do
   end
 
   describe "DELETE /jobs/list/:id (discard single)" do
-    it "discards the job and redirects" do
+    it "discards the job and redirects (HTML)" do
       delete "/jobs/list/#{ready_execution.id}", params: { status: "ready" }
       expect(response).to redirect_to("/jobs/list?status=ready")
       follow_redirect!
       expect(response.body).to include("discarded")
+    end
+
+    it "responds with turbo stream when last job: replaces card with empty state" do
+      delete "/jobs/list/#{ready_execution.id}",
+        params: { status: "ready" },
+        headers: { "Accept" => "text/vnd.turbo-stream.html, text/html" }
+      expect(response.content_type).to include("text/vnd.turbo-stream.html")
+      expect(response.body).to include("sqd-empty")
+      expect(response.body).to include("No ready jobs")
+    end
+
+    it "responds with turbo stream: removes row when more jobs remain" do
+      SolidQueue::Job.create!(
+        queue_name: "default", class_name: "OtherJob",
+        arguments: {}, active_job_id: SecureRandom.uuid
+      )
+      delete "/jobs/list/#{ready_execution.id}",
+        params: { status: "ready" },
+        headers: { "Accept" => "text/vnd.turbo-stream.html, text/html" }
+      expect(response.content_type).to include("text/vnd.turbo-stream.html")
+      expect(response.body).to include("execution_#{ready_execution.id}")
+      expect(response.body).to include("turbo-stream")
     end
 
     it "removes the execution and job" do
@@ -68,6 +108,14 @@ RSpec.describe "Jobs", type: :request do
       expect(response).to redirect_to("/jobs/list?status=claimed")
       follow_redirect!
       expect(response.body).to include("Cannot discard")
+    end
+
+    it "handles unexpected errors gracefully" do
+      allow_any_instance_of(SolidQueue::ReadyExecution).to receive(:discard).and_raise(RuntimeError, "disk full")
+      delete "/jobs/list/#{ready_execution.id}", params: { status: "ready" }
+      expect(response).to redirect_to("/jobs/list?status=ready")
+      follow_redirect!
+      expect(response.body).to include("Could not discard job")
     end
   end
 
@@ -90,6 +138,14 @@ RSpec.describe "Jobs", type: :request do
       expect(response).to redirect_to("/jobs/list?status=claimed")
       follow_redirect!
       expect(response.body).to include("Cannot discard")
+    end
+
+    it "handles unexpected errors gracefully" do
+      allow(SolidQueue::ReadyExecution).to receive(:discard_all_from_jobs).and_raise(RuntimeError, "disk full")
+      post "/jobs/list/discard_all", params: { status: "ready" }
+      expect(response).to redirect_to("/jobs/list?status=ready")
+      follow_redirect!
+      expect(response.body).to include("Could not discard jobs")
     end
   end
 end

@@ -3,19 +3,21 @@ module SolidQueueWeb
     STATUSES = %w[ready scheduled claimed blocked failed].freeze
     DISCARDABLE = %w[ready scheduled blocked].freeze
 
+    before_action :set_status_and_queue, only: [ :destroy, :discard_all ]
+
+    EXECUTION_MODELS = {
+      "ready"     => SolidQueue::ReadyExecution,
+      "scheduled" => SolidQueue::ScheduledExecution,
+      "claimed"   => SolidQueue::ClaimedExecution,
+      "blocked"   => SolidQueue::BlockedExecution,
+      "failed"    => SolidQueue::FailedExecution
+    }.freeze
+
     def index
       @status = params[:status].presence_in(STATUSES) || "ready"
       @queue  = params[:queue].presence
-
-      @jobs = case @status
-      when "ready"     then SolidQueue::ReadyExecution.includes(:job)
-      when "scheduled" then SolidQueue::ScheduledExecution.includes(:job)
-      when "claimed"   then SolidQueue::ClaimedExecution.includes(:job)
-      when "blocked"   then SolidQueue::BlockedExecution.includes(:job)
-      when "failed"    then SolidQueue::FailedExecution.includes(:job)
-      end
-
-      @jobs = @jobs.where(jobs: { queue_name: @queue }) if @queue.present?
+      @jobs   = EXECUTION_MODELS[@status].includes(:job)
+      @jobs   = @jobs.where(jobs: { queue_name: @queue }) if @queue.present?
       @pagy, @jobs = pagy(@jobs.order(created_at: :desc))
     end
 
@@ -28,27 +30,30 @@ module SolidQueueWeb
     end
 
     def destroy
-      execution = execution_model_for!(params[:status]).find(params[:id])
-      execution.discard
-      redirect_to jobs_path(status: params[:status], queue: params[:queue]), notice: "Job discarded."
+      model = execution_model_for!(@status)
+      @execution = model.find(params[:id])
+      @execution.discard
+      @remaining_count = filtered_scope(model).count
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to jobs_path(status: @status, queue: @queue), notice: "Job discarded." }
+      end
     rescue ArgumentError => e
-      redirect_to jobs_path(status: params[:status], queue: params[:queue]), alert: e.message
+      redirect_to jobs_path(status: @status, queue: @queue), alert: e.message
     rescue => e
-      redirect_to jobs_path(status: params[:status], queue: params[:queue]), alert: "Could not discard job: #{e.message}"
+      redirect_to jobs_path(status: @status, queue: @queue), alert: "Could not discard job: #{e.message}"
     end
 
     def discard_all
-      model = execution_model_for!(params[:status])
-      scope = model.includes(:job)
-      scope = scope.where(jobs: { queue_name: params[:queue] }) if params[:queue].present?
-      jobs = scope.map(&:job)
+      model = execution_model_for!(@status)
+      jobs = filtered_scope(model).map(&:job)
       model.discard_all_from_jobs(jobs)
-      redirect_to jobs_path(status: params[:status], queue: params[:queue]),
+      redirect_to jobs_path(status: @status, queue: @queue),
         notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
     rescue ArgumentError => e
-      redirect_to jobs_path(status: params[:status], queue: params[:queue]), alert: e.message
+      redirect_to jobs_path(status: @status, queue: @queue), alert: e.message
     rescue => e
-      redirect_to jobs_path(status: params[:status], queue: params[:queue]), alert: "Could not discard jobs: #{e.message}"
+      redirect_to jobs_path(status: @status, queue: @queue), alert: "Could not discard jobs: #{e.message}"
     end
 
     private
@@ -62,13 +67,19 @@ module SolidQueueWeb
       "finished"
     end
 
+    def set_status_and_queue
+      @status = params[:status]
+      @queue  = params[:queue].presence
+    end
+
+    def filtered_scope(model)
+      scope = model.includes(:job)
+      @queue.present? ? scope.where(jobs: { queue_name: @queue }) : scope
+    end
+
     def execution_model_for!(status)
-      case status
-      when "ready"     then SolidQueue::ReadyExecution
-      when "scheduled" then SolidQueue::ScheduledExecution
-      when "blocked"   then SolidQueue::BlockedExecution
-      else raise ArgumentError, "Cannot discard #{status} jobs from this page."
-      end
+      raise ArgumentError, "Cannot discard #{status} jobs from this page." unless DISCARDABLE.include?(status)
+      EXECUTION_MODELS[status]
     end
   end
 end

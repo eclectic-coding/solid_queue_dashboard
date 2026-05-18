@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Turbo Streams on the jobs list — discarding a single job removes its row in place; the last job swaps the card to an empty state without a full page reload
+- Turbo Frame on the jobs list — status filter tabs, queue filter links, Discard All button, and pagination all update in place without reloading the page header or flash
+- Dashboard stat cards are now clickable links to their respective filtered views
+- GitHub Releases created automatically with CHANGELOG notes when a version tag is pushed
+- `turbo-rails >= 2.0` added as a runtime dependency
+
+### Changed
+
+- `JobsController` refactored: execution model mapping moved to `EXECUTION_MODELS` hash constant, eliminating two `case` statements
+- `JobsController#destroy` and `#discard_all` share a `before_action :set_status_and_queue` and a `filtered_scope` helper, removing duplicated param reading and scope building
+
+### Fixed
+
+- Test suite reaches 100% line coverage; rescue paths, `derive_status` branches (scheduled, finished), and the authentication block are all exercised
+
 ## [0.3.0] - 2026-05-18
 
 ### Added
