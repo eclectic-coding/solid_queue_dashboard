@@ -1,7 +1,12 @@
 SolidQueueWeb::Engine.routes.draw do
   root to: "dashboard#index"
 
-  resources :queues,      only: [ :index ]
+  resources :queues, only: [ :index ], param: :name do
+    member do
+      post :pause
+      post :resume
+    end
+  end
   resources :jobs, path: "list", only: [ :index, :show, :destroy ] do
     collection do
       post :discard_all
