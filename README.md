@@ -6,7 +6,30 @@
 [![Downloads](https://img.shields.io/gem/dt/solid_queue_web)](https://rubygems.org/gems/solid_queue_web)
 [![Coverage](https://codecov.io/gh/eclectic-coding/solid_queue_web/branch/main/graph/badge.svg)](https://codecov.io/gh/eclectic-coding/solid_queue_web)
 
-A Rails engine that mounts a monitoring dashboard for [Solid Queue](https://github.com/rails/solid_queue). View queues, inspect jobs by status, browse failed executions, and take action — all without leaving your app.
+A monitoring and management dashboard for [Solid Queue](https://github.com/rails/solid_queue), mountable as a Rails engine in any app.
+
+## The problem
+
+Solid Queue ships without a web interface. When jobs fail, queues back up, or workers go silent in production, the only options are `rails console` or raw SQL queries. SolidQueueWeb gives your team a real-time dashboard to inspect, retry, and discard jobs without leaving the browser — and without standing up any additional infrastructure.
+
+## Why SolidQueueWeb?
+
+- Purpose-built for Solid Queue — uses its native models directly, no adapters
+- No external CSS framework — drops into any Rails app without asset conflicts
+- Zero-config to start — one line in `routes.rb` and you're running
+- Built for Rails 8 — Turbo for live updates, Pagy for efficient pagination
+- Inspired by Sidekiq Web UI and the GoodJob dashboard, adapted for the Solid Queue ecosystem
+
+## Real-world use case
+
+A Rails app processes order confirmations, email notifications, and report generation through Solid Queue. An operations team needs to:
+
+- Monitor queue depth before a high-traffic event
+- Retry a batch of failed notification jobs after a third-party API outage
+- Pause a queue while a fix is being deployed
+- Identify blocked or long-running jobs before they impact users
+
+SolidQueueWeb surfaces all of this in a browser UI available at any route you choose.
 
 ## Features
 
@@ -17,7 +40,20 @@ A Rails engine that mounts a monitoring dashboard for [Solid Queue](https://gith
 - **Job detail** — full arguments, timestamps, and error backtrace; action buttons based on job status
 - **Queue management** — pause and resume individual queues
 - **Processes** — workers, dispatchers, and supervisors with heartbeat health status
-- No external CSS framework — works out of the box
+
+## Screenshots
+
+![SolidQueueWeb dashboard](docs/solid-queue-web.png)
+
+## Compatibility
+
+| Dependency  | Version    |
+|-------------|------------|
+| Ruby        | >= 3.3     |
+| Rails       | >= 8.1.3   |
+| Solid Queue | >= 1.0     |
+
+Tested on Ruby 3.3, 3.4, and 4.0.
 
 ## Installation
 
@@ -56,12 +92,6 @@ end
 ```
 
 HTTP Basic authentication is used as a fallback when the block returns falsy.
-
-## Requirements
-
-- Ruby >= 3.3
-- Rails >= 8.1.3
-- solid_queue >= 1.0
 
 ## Contributing
 
