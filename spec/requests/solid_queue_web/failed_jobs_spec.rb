@@ -43,6 +43,14 @@ RSpec.describe "FailedJobs", type: :request do
         post "/jobs/failed_jobs/#{execution.id}/retry"
       }.to change(SolidQueue::FailedExecution, :count).by(-1)
     end
+
+    it "handles retry failure gracefully" do
+      allow_any_instance_of(SolidQueue::FailedExecution).to receive(:retry).and_raise(RuntimeError, "boom")
+      post "/jobs/failed_jobs/#{execution.id}/retry"
+      expect(response).to redirect_to("/jobs/failed_jobs")
+      follow_redirect!
+      expect(response.body).to include("Could not retry job")
+    end
   end
 
   describe "DELETE /jobs/failed_jobs/:id" do
@@ -58,6 +66,14 @@ RSpec.describe "FailedJobs", type: :request do
         delete "/jobs/failed_jobs/#{execution.id}"
       }.to change(SolidQueue::FailedExecution, :count).by(-1)
         .and change(SolidQueue::Job, :count).by(-1)
+    end
+
+    it "handles discard failure gracefully" do
+      allow_any_instance_of(SolidQueue::FailedExecution).to receive(:discard).and_raise(RuntimeError, "boom")
+      delete "/jobs/failed_jobs/#{execution.id}"
+      expect(response).to redirect_to("/jobs/failed_jobs")
+      follow_redirect!
+      expect(response.body).to include("Could not discard job")
     end
   end
 

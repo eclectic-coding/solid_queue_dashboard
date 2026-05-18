@@ -35,6 +35,14 @@ RSpec.describe "Queues", type: :request do
         post "/jobs/queues/default/pause"
       }.to change(SolidQueue::Pause, :count).by(1)
     end
+
+    it "handles pause failure gracefully" do
+      allow_any_instance_of(SolidQueue::Queue).to receive(:pause).and_raise(RuntimeError, "boom")
+      post "/jobs/queues/default/pause"
+      expect(response).to redirect_to("/jobs/queues")
+      follow_redirect!
+      expect(response.body).to include("Could not pause queue")
+    end
   end
 
   describe "POST /jobs/queues/:name/resume" do
@@ -51,6 +59,14 @@ RSpec.describe "Queues", type: :request do
       expect {
         post "/jobs/queues/default/resume"
       }.to change(SolidQueue::Pause, :count).by(-1)
+    end
+
+    it "handles resume failure gracefully" do
+      allow_any_instance_of(SolidQueue::Queue).to receive(:resume).and_raise(RuntimeError, "boom")
+      post "/jobs/queues/default/resume"
+      expect(response).to redirect_to("/jobs/queues")
+      follow_redirect!
+      expect(response.body).to include("Could not resume queue")
     end
   end
 end
