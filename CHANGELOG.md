@@ -9,10 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.0] - 2026-05-18
 
-## [Unreleased]
-
-## [0.2.0] - 2026-05-18
-
 ### Added
 
 - CI release job publishes gem to RubyGems automatically on version tags
