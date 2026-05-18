@@ -4,6 +4,7 @@ on:
   pull_request:
   push:
     branches: [ main ]
+    tags: [ "v*" ]
 
 jobs:
   lint:
@@ -54,3 +55,35 @@ jobs:
 
       - name: Run tests
         run: bundle exec rspec
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [ lint, test ]
+    runs-on: ubuntu-latest
+    env:
+      RUBY_VERSION: "4.0"
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+
+      - name: Build gem
+        run: gem build solid_queue_web.gemspec
+
+      - name: Push to RubyGems
+        run: gem push solid_queue_web-*.gem
+        env:
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: solid_queue_web-*.gem
+          generate_release_notes: false

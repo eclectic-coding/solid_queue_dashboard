@@ -62,18 +62,5 @@ echo "==> Pushing to GitHub..."
 git push origin main
 git push origin "$TAG"
 
-echo "==> Building gem..."
-gem build solid_queue_web.gemspec
-
-GEM_FILE="solid_queue_web-${VERSION}.gem"
-
-echo ""
-echo "Built: $GEM_FILE"
-echo ""
-read -r -p "Push to RubyGems? [y/N] " confirm
-if [[ "$confirm" =~ ^[Yy]$ ]]; then
-  gem push "$GEM_FILE"
-  echo "==> Published $TAG to RubyGems."
-else
-  echo "==> Skipped RubyGems push. Run: gem push $GEM_FILE"
-fi
+echo "==> Done. CI will build and publish the gem once the tag is picked up."
+echo "    Monitor: https://github.com/eclectic-coding/solid_queue_web/actions"
