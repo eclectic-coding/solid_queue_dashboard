@@ -1,6 +1,7 @@
 require "solid_queue"
 require "pagy"
 require "pagy/toolbox/paginators/method"
+require "turbo-rails"
 
 module SolidQueueWeb
   class Engine < ::Rails::Engine

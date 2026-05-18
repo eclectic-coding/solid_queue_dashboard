@@ -28,13 +28,22 @@ module SolidQueueWeb
     end
 
     def destroy
-      execution = execution_model_for!(params[:status]).find(params[:id])
-      execution.discard
-      redirect_to jobs_path(status: params[:status], queue: params[:queue]), notice: "Job discarded."
+      @status = params[:status]
+      @queue  = params[:queue].presence
+      model = execution_model_for!(@status)
+      @execution = model.find(params[:id])
+      @execution.discard
+      scope = model.includes(:job)
+      scope = scope.where(jobs: { queue_name: @queue }) if @queue.present?
+      @remaining_count = scope.count
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to jobs_path(status: @status, queue: @queue), notice: "Job discarded." }
+      end
     rescue ArgumentError => e
-      redirect_to jobs_path(status: params[:status], queue: params[:queue]), alert: e.message
+      redirect_to jobs_path(status: params[:status], queue: params[:queue].presence), alert: e.message
     rescue => e
-      redirect_to jobs_path(status: params[:status], queue: params[:queue]), alert: "Could not discard job: #{e.message}"
+      redirect_to jobs_path(status: params[:status], queue: params[:queue].presence), alert: "Could not discard job: #{e.message}"
     end
 
     def discard_all

@@ -1,0 +1,9 @@
+<% if @remaining_count == 0 %>
+  <%= turbo_stream.replace "jobs-list" do %>
+    <div class="sqd-card" id="jobs-list">
+      <div class="sqd-empty">No <%= @status %> jobs.</div>
+    </div>
+  <% end %>
+<% else %>
+  <%= turbo_stream.remove "execution_#{@execution.id}" %>
+<% end %>

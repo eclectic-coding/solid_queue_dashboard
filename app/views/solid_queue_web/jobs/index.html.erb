@@ -21,7 +21,7 @@
   <%= link_to "Failed",    jobs_path(status: "failed",    queue: @queue), class: @status == "failed"    ? "active" : "" %>
 </div>
 
-<div class="sqd-card">
+<div class="sqd-card" id="jobs-list">
   <% if @jobs.empty? %>
     <div class="sqd-empty">No <%= @status %> jobs.</div>
   <% else %>
@@ -39,7 +39,7 @@
       <tbody>
         <% @jobs.each do |execution| %>
           <% job = execution.job %>
-          <tr>
+          <tr id="execution_<%= execution.id %>">
             <td>
               <span class="sqd-badge sqd-badge--<%= @status %>"><%= @status %></span>
               <%= link_to job.class_name, job_path(job), style: "margin-left: 0.5rem;" %>

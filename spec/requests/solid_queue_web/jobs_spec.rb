@@ -49,11 +49,33 @@ RSpec.describe "Jobs", type: :request do
   end
 
   describe "DELETE /jobs/list/:id (discard single)" do
-    it "discards the job and redirects" do
+    it "discards the job and redirects (HTML)" do
       delete "/jobs/list/#{ready_execution.id}", params: { status: "ready" }
       expect(response).to redirect_to("/jobs/list?status=ready")
       follow_redirect!
       expect(response.body).to include("discarded")
+    end
+
+    it "responds with turbo stream when last job: replaces card with empty state" do
+      delete "/jobs/list/#{ready_execution.id}",
+        params: { status: "ready" },
+        headers: { "Accept" => "text/vnd.turbo-stream.html, text/html" }
+      expect(response.content_type).to include("text/vnd.turbo-stream.html")
+      expect(response.body).to include("sqd-empty")
+      expect(response.body).to include("No ready jobs")
+    end
+
+    it "responds with turbo stream: removes row when more jobs remain" do
+      SolidQueue::Job.create!(
+        queue_name: "default", class_name: "OtherJob",
+        arguments: {}, active_job_id: SecureRandom.uuid
+      )
+      delete "/jobs/list/#{ready_execution.id}",
+        params: { status: "ready" },
+        headers: { "Accept" => "text/vnd.turbo-stream.html, text/html" }
+      expect(response.content_type).to include("text/vnd.turbo-stream.html")
+      expect(response.body).to include("execution_#{ready_execution.id}")
+      expect(response.body).to include("turbo-stream")
     end
 
     it "removes the execution and job" do
