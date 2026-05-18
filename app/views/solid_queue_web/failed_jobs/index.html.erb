@@ -10,6 +10,10 @@
   <% end %>
 </div>
 
+<% if @pagy.last > 1 %>
+  <%= @pagy.series_nav.html_safe %>
+<% end %>
+
 <div class="sqd-card">
   <% if @failed_jobs.empty? %>
     <div class="sqd-empty">No failed jobs. All clear!</div>

@@ -2,7 +2,7 @@ SolidQueueWeb::Engine.routes.draw do
   root to: "dashboard#index"
 
   resources :queues,      only: [ :index ]
-  resources :jobs, only: [ :index, :show, :destroy ] do
+  resources :jobs, path: "list", only: [ :index, :show, :destroy ] do
     collection do
       post :discard_all
     end

@@ -1,10 +1,9 @@
 module SolidQueueWeb
   class FailedJobsController < ApplicationController
     def index
-      @failed_jobs = SolidQueue::FailedExecution
-        .includes(:job)
-        .order(created_at: :desc)
-        .limit(100)
+      @pagy, @failed_jobs = pagy(
+        SolidQueue::FailedExecution.includes(:job).order(created_at: :desc)
+      )
     end
 
     def retry

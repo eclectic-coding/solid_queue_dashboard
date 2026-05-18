@@ -69,6 +69,10 @@
   <% end %>
 </div>
 
+<% if @pagy.last > 1 %>
+  <%= @pagy.series_nav.html_safe %>
+<% end %>
+
 <% if @queue.present? %>
   <p style="margin-top: 0.75rem; font-size: 13px; color: var(--muted);">
     Filtering by queue: <strong><%= @queue %></strong> &mdash;
