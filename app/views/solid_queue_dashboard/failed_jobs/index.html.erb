@@ -1,12 +1,4 @@
-<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
-  <h1 class="sqd-page-title" style="margin-bottom: 0;">Failed Jobs</h1>
-  <% if @failed_jobs.any? %>
-    <%= button_to "Discard All", discard_all_failed_jobs_path,
-          method: :delete,
-          data: { confirm: "Discard all failed jobs? This cannot be undone." },
-          class: "sqd-btn sqd-btn--danger" %>
-  <% end %>
-</div>
+<h1 class="sqd-page-title">Failed Jobs</h1>
 
 <div class="sqd-card">
   <% if @failed_jobs.empty? %>
@@ -19,7 +11,6 @@
           <th>Queue</th>
           <th>Error</th>
           <th>Failed At</th>
-          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -38,19 +29,9 @@
               <% end %>
             </td>
             <td class="sqd-mono"><%= execution.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
-            <td style="text-align: right; white-space: nowrap;">
-              <%= button_to "Retry", retry_failed_job_path(execution),
-                    method: :post, class: "sqd-btn sqd-btn--primary",
-                    style: "margin-right: 0.25rem;" %>
-              <%= button_to "Discard", failed_job_path(execution),
-                    method: :delete,
-                    data: { confirm: "Discard this job?" },
-                    class: "sqd-btn sqd-btn--danger" %>
-            </td>
           </tr>
         <% end %>
       </tbody>
     </table>
-    <%= raw @pagy.series_nav if @pagy.pages > 1 %>
   <% end %>
 </div>
