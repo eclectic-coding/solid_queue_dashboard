@@ -33,12 +33,13 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 
 ## Features
 
-- **Dashboard** — stat cards showing counts for ready, scheduled, running, blocked, and failed jobs, plus queues and processes
+- **Dashboard** — stat cards showing counts for ready, scheduled, running, blocked, and failed jobs, plus queues, recurring tasks, and processes
 - **Queues** — all queues sorted by name
 - **Jobs** — filterable by status (ready, scheduled, claimed, blocked, failed) and by queue; discard individual or all jobs
 - **Failed jobs** — list of failed executions with error details; retry or discard individually or in bulk
 - **Job detail** — full arguments, timestamps, and error backtrace; action buttons based on job status
 - **Queue management** — pause and resume individual queues
+- **Recurring tasks** — all configured recurring tasks with cron schedule, next run time, last run time, and static/dynamic classification
 - **Processes** — workers, dispatchers, and supervisors with heartbeat health status
 
 ## Screenshots
