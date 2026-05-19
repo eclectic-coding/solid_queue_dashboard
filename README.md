@@ -17,7 +17,7 @@ Solid Queue ships without a web interface. When jobs fail, queues back up, or wo
 - Purpose-built for Solid Queue — uses its native models directly, no adapters
 - No external CSS framework — drops into any Rails app without asset conflicts
 - Zero-config to start — one line in `routes.rb` and you're running
-- Built for Rails 8 — Turbo for live updates, Pagy for efficient pagination
+- Built for Rails 8 — Turbo Frames for in-place updates, Stimulus for dynamic search, Pagy for efficient pagination
 - Inspired by Sidekiq Web UI and the GoodJob dashboard, adapted for the Solid Queue ecosystem
 
 ## Real-world use case
@@ -35,7 +35,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 
 - **Dashboard** — stat cards showing counts for ready, scheduled, running, blocked, and failed jobs, plus queues, recurring tasks, and processes
 - **Queues** — all queues sorted by name
-- **Jobs** — filterable by status (ready, scheduled, claimed, blocked, failed) and by queue; discard individual or all jobs
+- **Jobs** — filterable by status (ready, scheduled, claimed, blocked, failed) and by queue; search by job class name with dynamic auto-submit; discard individual or all jobs; Turbo Frame navigation so only the table updates on filter or search
 - **Failed jobs** — list of failed executions with error details; retry or discard individually or in bulk
 - **Job detail** — full arguments, timestamps, and error backtrace; action buttons based on job status
 - **Queue management** — pause and resume individual queues
