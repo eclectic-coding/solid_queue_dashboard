@@ -1,0 +1,68 @@
+<h1 class="sqd-page-title">Recurring Tasks</h1>
+
+<div class="sqd-card" style="margin-top: 1.5rem;">
+  <% if @recurring_tasks.empty? %>
+    <div class="sqd-empty">No recurring tasks configured.</div>
+  <% else %>
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Key</th>
+          <th scope="col">Schedule</th>
+          <th scope="col">Job / Command</th>
+          <th scope="col">Queue</th>
+          <th scope="col">Next Run</th>
+          <th scope="col">Last Run</th>
+          <th scope="col">Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @recurring_tasks.each do |task| %>
+          <tr>
+            <td class="sqd-mono"><%= task.key %></td>
+            <td class="sqd-mono"><%= task.schedule %></td>
+            <td>
+              <% if task.class_name.present? %>
+                <%= task.class_name %>
+                <% if task.arguments.present? %>
+                  <div class="sqd-muted-text sqd-mono" style="font-size: 11px;">
+                    <%= task.arguments.inspect %>
+                  </div>
+                <% end %>
+              <% else %>
+                <span class="sqd-mono sqd-muted-text"><%= task.command %></span>
+              <% end %>
+              <% if task.description.present? %>
+                <div class="sqd-muted-text" style="font-size: 12px; margin-top: 0.2rem;">
+                  <%= task.description %>
+                </div>
+              <% end %>
+            </td>
+            <td class="sqd-mono"><%= task.queue_name.presence || "default" %></td>
+            <td class="sqd-mono">
+              <%
+                next_run = begin
+                  task.next_time.strftime("%Y-%m-%d %H:%M %Z")
+                rescue
+                  nil
+                end
+              %>
+              <%= next_run || "—" %>
+            </td>
+            <td class="sqd-mono">
+              <% last_run = task.last_enqueued_time %>
+              <%= last_run ? last_run.strftime("%Y-%m-%d %H:%M %Z") : "—" %>
+            </td>
+            <td>
+              <% if task.static? %>
+                <span class="sqd-badge sqd-badge--static">Static</span>
+              <% else %>
+                <span class="sqd-badge sqd-badge--dynamic">Dynamic</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>

@@ -11,6 +11,13 @@ RSpec.describe "Dashboard", type: :request do
       get "/jobs"
       expect(response.body).to include("Dashboard")
     end
+
+    it "includes a recurring tasks stat card and quick link" do
+      SolidQueue::RecurringTask.create!(key: "t", schedule: "* * * * *", command: "echo hi")
+      get "/jobs"
+      expect(response.body).to include("Recurring")
+      expect(response.body).to include("recurring_tasks")
+    end
   end
 
   describe "authentication" do

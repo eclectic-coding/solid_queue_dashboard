@@ -8,7 +8,8 @@ module SolidQueueWeb
         failed:    SolidQueue::FailedExecution.count,
         blocked:   SolidQueue::BlockedExecution.count,
         queues:    SolidQueue::Job.select(:queue_name).distinct.count,
-        processes: SolidQueue::Process.count
+        processes: SolidQueue::Process.count,
+        recurring: SolidQueue::RecurringTask.count
       }
     end
   end
