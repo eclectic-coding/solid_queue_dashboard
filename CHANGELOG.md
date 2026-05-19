@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Hamburger toggle nav for viewports narrower than 576px — three-bar button opens a full-width dropdown with vertically stacked links; no JS file required
+- `sqd-grid-2` utility class for responsive two-column layouts (collapses to one column at ≤768px)
+- `.sqd-sr-only` utility class for visually-hidden text
+- `:focus-visible` focus ring (2px primary blue) for keyboard navigation
+- `aria-expanded` on the mobile nav toggle, kept in sync on open/close
+- `role="status"` on notice flash messages and `role="alert"` on alert flash messages
+- `aria-label="Main"` on the primary navigation landmark
+- `aria-current="page"` on the active navigation link
+- `scope="col"` on all table header cells
+- Visually-hidden "Actions" label on empty action column headers
+
+### Changed
+
+- Navbar title and links constrained to the same max-width as page content so they align horizontally with the dashboard
+- Page headers stack vertically on mobile (≤640px)
+- Stat grid uses a smaller minimum cell width on mobile
+- Cards scroll horizontally on mobile to accommodate wide tables
+- Main content padding reduced on mobile
+
 ## [0.4.0] - 2026-05-18
 
 ### Added
