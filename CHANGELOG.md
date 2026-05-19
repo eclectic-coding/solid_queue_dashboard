@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-05-19
+
 ### Added
 
 - Job selection and targeted bulk actions — checkboxes on the jobs index (ready/scheduled/blocked) and failed jobs index; a selection bar appears above the table showing the count and action buttons ("Discard Selected" for jobs, "Retry Selected" / "Discard Selected" for failed jobs); select-all checkbox in the table header; powered by a new `selection` Stimulus controller that injects checked IDs into a hidden form on submit; uses nested singular resources (`Jobs::SelectionsController`, `FailedJobs::SelectionsController`) following Rails conventions
@@ -139,7 +141,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI workflow with lint (RuboCop) and test (RSpec) matrix across Ruby 3.3, 3.4, and 4.0
 - `bin/release` script for versioned gem releases
 
-[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.5.5...HEAD
+[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.6.0
 [0.5.5]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.5.5
 [0.5.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.5.0
 [0.4.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.4.0
