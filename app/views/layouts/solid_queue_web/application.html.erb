@@ -13,15 +13,23 @@
 <header class="sqd-header">
   <div class="sqd-header__inner">
     <%= link_to "Solid Queue", root_path, class: "sqd-header__title" %>
-    <nav>
-      <ul class="sqd-nav">
-        <li><%= link_to "Dashboard", root_path, class: current_page?(root_path) ? "active" : "" %></li>
-        <li><%= link_to "Queues", queues_path, class: current_page?(queues_path) ? "active" : "" %></li>
-        <li><%= link_to "Jobs", jobs_path, class: current_page?(jobs_path) ? "active" : "" %></li>
-        <li><%= link_to "Failed", failed_jobs_path, class: current_page?(failed_jobs_path) ? "active" : "" %></li>
-        <li><%= link_to "Processes", processes_path, class: current_page?(processes_path) ? "active" : "" %></li>
-      </ul>
-    </nav>
+    <button class="sqd-nav-toggle" aria-label="Toggle navigation"
+            onclick="document.querySelector('.sqd-nav-wrapper').classList.toggle('sqd-nav--open')">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="sqd-nav-wrapper">
+      <nav>
+        <ul class="sqd-nav">
+          <li><%= link_to "Dashboard", root_path, class: current_page?(root_path) ? "active" : "" %></li>
+          <li><%= link_to "Queues", queues_path, class: current_page?(queues_path) ? "active" : "" %></li>
+          <li><%= link_to "Jobs", jobs_path, class: current_page?(jobs_path) ? "active" : "" %></li>
+          <li><%= link_to "Failed", failed_jobs_path, class: current_page?(failed_jobs_path) ? "active" : "" %></li>
+          <li><%= link_to "Processes", processes_path, class: current_page?(processes_path) ? "active" : "" %></li>
+        </ul>
+      </nav>
+    </div>
   </div>
 </header>
 
