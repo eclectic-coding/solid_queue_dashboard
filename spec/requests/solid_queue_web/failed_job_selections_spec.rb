@@ -58,6 +58,14 @@ RSpec.describe "Failed Job Selections", type: :request do
            params: { ids: [ execution.id, other_execution.id ] }
       expect(SolidQueue::FailedExecution.count).to eq(0)
     end
+
+    it "handles unexpected errors gracefully" do
+      allow(SolidQueue::FailedExecution).to receive(:retry_all).and_raise(RuntimeError, "db error")
+      post "/jobs/failed_jobs/selection", params: { ids: [ execution.id ] }
+      expect(response).to redirect_to("/jobs/failed_jobs")
+      follow_redirect!
+      expect(response.body).to include("Could not retry jobs")
+    end
   end
 
   describe "DELETE /jobs/failed_jobs/selection (discard selected)" do
@@ -82,6 +90,14 @@ RSpec.describe "Failed Job Selections", type: :request do
       delete "/jobs/failed_jobs/selection",
              params: { ids: [ execution.id, other_execution.id ] }
       expect(SolidQueue::FailedExecution.count).to eq(0)
+    end
+
+    it "handles unexpected errors gracefully" do
+      allow(SolidQueue::FailedExecution).to receive(:discard_all_from_jobs).and_raise(RuntimeError, "db error")
+      delete "/jobs/failed_jobs/selection", params: { ids: [ execution.id ] }
+      expect(response).to redirect_to("/jobs/failed_jobs")
+      follow_redirect!
+      expect(response.body).to include("Could not discard jobs")
     end
   end
 

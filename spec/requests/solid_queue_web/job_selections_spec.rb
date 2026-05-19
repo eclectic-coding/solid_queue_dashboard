@@ -60,6 +60,15 @@ RSpec.describe "Job Selections", type: :request do
              params: { status: "claimed", ids: [ ready_execution.id ] }
       expect(response).to redirect_to(/status=claimed/)
     end
+
+    it "handles unexpected errors gracefully" do
+      allow(SolidQueue::ReadyExecution).to receive(:discard_all_from_jobs).and_raise(RuntimeError, "db error")
+      delete "/jobs/list/selection",
+             params: { status: "ready", ids: [ ready_execution.id ] }
+      expect(response).to redirect_to(/status=ready/)
+      follow_redirect!
+      expect(response.body).to include("Could not discard jobs")
+    end
   end
 
   describe "GET /jobs/list with selection UI" do
