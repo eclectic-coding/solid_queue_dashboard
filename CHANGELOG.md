@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- CSS split into 10 focused partial files (`_01_base.css` through `_10_responsive.css`); `inline_styles` helper globs `_*.css` files in sort order — runtime output is identical, authoring is easier
+
+### Fixed
+
+- Auto-refresh no longer wipes checkbox selections — refresh skips its tick whenever any checkbox inside the turbo-frame is checked and resumes once selections are cleared or submitted
+
 ## [0.6.0] - 2026-05-19
 
 ### Added
