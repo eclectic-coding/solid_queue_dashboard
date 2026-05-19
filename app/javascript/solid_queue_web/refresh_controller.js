@@ -23,7 +23,8 @@ export default class extends Controller {
 
   async _reload() {
     clearTimeout(this._timer)
-    if (!document.hidden) {
+    const hasSelection = this.element.querySelector("input[type='checkbox']:checked")
+    if (!document.hidden && !hasSelection) {
       try {
         const response = await fetch(window.location.href, {
           headers: { "Turbo-Frame": this.element.id, Accept: "text/html" }
@@ -44,7 +45,7 @@ export default class extends Controller {
   _onVisibilityChange() {
     if (document.hidden) {
       clearTimeout(this._timer)
-    } else {
+    } else if (!this.element.querySelector("input[type='checkbox']:checked")) {
       this._reload()
     }
   }
