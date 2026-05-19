@@ -302,6 +302,36 @@ tbody tr:hover { background: var(--bg); }
 .sqd-row-actions  { white-space: nowrap; text-align: right; width: 1%; }
 .sqd-row-actions form { display: inline; margin-left: 0.25rem; }
 
+/* Search */
+.sqd-search {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.sqd-search__input {
+  width: 280px;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-size: 13px;
+  background: var(--surface);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.sqd-search__input:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: -1px;
+  border-color: var(--primary);
+}
+
+@media (max-width: 640px) {
+  .sqd-search { flex-wrap: wrap; }
+  .sqd-search__input { width: 100%; }
+}
+
 /* Filters */
 .sqd-filters {
   display: flex;

@@ -66,6 +66,43 @@ RSpec.describe "Jobs", type: :request do
     end
   end
 
+  describe "GET /jobs/list?q= (class name search)" do
+    let!(:other_job) do
+      SolidQueue::Job.create!(
+        queue_name: "default",
+        class_name: "MailerJob",
+        arguments: {},
+        active_job_id: SecureRandom.uuid
+      )
+    end
+
+    it "returns only jobs matching the search term" do
+      get "/jobs/list", params: { q: "Test" }
+      expect(response.body).to include("TestJob")
+      expect(response.body).not_to include("MailerJob")
+    end
+
+    it "is case-insensitive" do
+      get "/jobs/list", params: { q: "test" }
+      expect(response.body).to include("TestJob")
+    end
+
+    it "shows empty state when search matches nothing" do
+      get "/jobs/list", params: { q: "NoSuchJob" }
+      expect(response.body).to include("No ready jobs")
+    end
+
+    it "renders a clear link when search is active" do
+      get "/jobs/list", params: { q: "Test" }
+      expect(response.body).to include("Clear")
+    end
+
+    it "persists search term across status tab links" do
+      get "/jobs/list", params: { q: "Test" }
+      expect(response.body).to include("q=Test")
+    end
+  end
+
   describe "DELETE /jobs/list/:id (discard single)" do
     it "discards the job and redirects (HTML)" do
       delete "/jobs/list/#{ready_execution.id}", params: { status: "ready" }

@@ -1,10 +1,9 @@
 module SolidQueueWeb
   class JobsController < ApplicationController
-    STATUSES = %w[ready scheduled claimed blocked failed].freeze
-    DISCARDABLE = %w[ready scheduled blocked].freeze
-
     before_action :set_status_and_queue, only: [ :destroy, :discard_all ]
 
+    STATUSES = %w[ready scheduled claimed blocked failed].freeze
+    DISCARDABLE = %w[ready scheduled blocked].freeze
     EXECUTION_MODELS = {
       "ready"     => SolidQueue::ReadyExecution,
       "scheduled" => SolidQueue::ScheduledExecution,
@@ -16,8 +15,10 @@ module SolidQueueWeb
     def index
       @status = params[:status].presence_in(STATUSES) || "ready"
       @queue  = params[:queue].presence
+      @search = params[:q].presence
       @jobs   = EXECUTION_MODELS[@status].includes(:job)
       @jobs   = @jobs.where(jobs: { queue_name: @queue }) if @queue.present?
+      @jobs   = @jobs.references(:job).where("solid_queue_jobs.class_name LIKE ?", "%#{@search}%") if @search.present?
       @pagy, @jobs = pagy(@jobs.order(created_at: :desc))
     end
 
