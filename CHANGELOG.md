@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.5] - 2026-05-19
+
 ### Added
 
 - Failed jobs search: `?q=` param filters by class name substring on the failed jobs index
@@ -129,7 +131,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI workflow with lint (RuboCop) and test (RSpec) matrix across Ruby 3.3, 3.4, and 4.0
 - `bin/release` script for versioned gem releases
 
-[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.5.5...HEAD
+[0.5.5]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.5.5
 [0.5.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.5.0
 [0.4.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.4.0
 [0.3.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.3.0
