@@ -13,7 +13,7 @@
       <%= button_to "Discard", failed_job_path(@failed_execution), method: :delete,
             class: "sqd-btn sqd-btn--danger",
             data: { confirm: "Discard this job?" } %>
-    <% elsif SolidQueueWeb::JobsController::DISCARDABLE.include?(@execution_status) %>
+    <% elsif SolidQueueWeb::Job::DISCARDABLE.include?(@execution_status) %>
       <% execution = @job.public_send("#{@execution_status}_execution") %>
       <% if execution %>
         <%= button_to "Discard", job_path(execution),

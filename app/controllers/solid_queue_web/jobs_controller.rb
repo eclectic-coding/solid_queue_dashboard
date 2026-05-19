@@ -2,21 +2,11 @@ module SolidQueueWeb
   class JobsController < ApplicationController
     before_action :set_status_and_queue, only: [ :destroy, :discard_all ]
 
-    STATUSES = %w[ready scheduled claimed blocked failed].freeze
-    DISCARDABLE = %w[ready scheduled blocked].freeze
-    EXECUTION_MODELS = {
-      "ready"     => SolidQueue::ReadyExecution,
-      "scheduled" => SolidQueue::ScheduledExecution,
-      "claimed"   => SolidQueue::ClaimedExecution,
-      "blocked"   => SolidQueue::BlockedExecution,
-      "failed"    => SolidQueue::FailedExecution
-    }.freeze
-
     def index
-      @status = params[:status].presence_in(STATUSES) || "ready"
+      @status = params[:status].presence_in(Job::STATUSES) || "ready"
       @queue  = params[:queue].presence
       @search = params[:q].presence
-      @jobs   = EXECUTION_MODELS[@status].includes(:job)
+      @jobs   = Job::EXECUTION_MODELS[@status].includes(:job)
       @jobs   = @jobs.where(jobs: { queue_name: @queue }) if @queue.present?
       @jobs   = @jobs.references(:job).where("solid_queue_jobs.class_name LIKE ?", "%#{@search}%") if @search.present?
       @pagy, @jobs = pagy(@jobs.order(created_at: :desc))
@@ -79,8 +69,8 @@ module SolidQueueWeb
     end
 
     def execution_model_for!(status)
-      raise ArgumentError, "Cannot discard #{status} jobs from this page." unless DISCARDABLE.include?(status)
-      EXECUTION_MODELS[status]
+      raise ArgumentError, "Cannot discard #{status} jobs from this page." unless Job::DISCARDABLE.include?(status)
+      Job::EXECUTION_MODELS[status]
     end
   end
 end
