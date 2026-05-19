@@ -96,6 +96,47 @@ RSpec.describe "FailedJobs", type: :request do
     end
   end
 
+  describe "GET /jobs/failed_jobs?period= (time-based filter)" do
+    let!(:old_execution) do
+      j = SolidQueue::Job.create!(
+        queue_name: "default",
+        class_name: "OldFailedJob",
+        arguments: {},
+        active_job_id: SecureRandom.uuid
+      )
+      j.ready_execution&.destroy
+      exec = SolidQueue::FailedExecution.create!(
+        job: j,
+        error: { exception_class: "RuntimeError", message: "old", backtrace: [] }
+      )
+      j.update_columns(created_at: 2.days.ago)
+      exec
+    end
+
+    it "shows all failed jobs when no period is set" do
+      get "/jobs/failed_jobs"
+      expect(response.body).to include("TestJob")
+      expect(response.body).to include("OldFailedJob")
+    end
+
+    it "filters to jobs failed within the last hour" do
+      get "/jobs/failed_jobs", params: { period: "1h" }
+      expect(response.body).to include("TestJob")
+      expect(response.body).not_to include("OldFailedJob")
+    end
+
+    it "ignores invalid period values" do
+      get "/jobs/failed_jobs", params: { period: "bogus" }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("TestJob")
+    end
+
+    it "persists period across bulk action params" do
+      get "/jobs/failed_jobs", params: { period: "1h" }
+      expect(response.body).to include("period=1h")
+    end
+  end
+
   describe "POST /jobs/failed_jobs/:id/retry" do
     it "retries the job and redirects" do
       post "/jobs/failed_jobs/#{execution.id}/retry"

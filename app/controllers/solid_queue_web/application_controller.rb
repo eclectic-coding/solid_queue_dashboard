@@ -2,6 +2,8 @@ module SolidQueueWeb
   class ApplicationController < ActionController::Base
     include Pagy::Method
 
+    PERIOD_DURATIONS = { "1h" => 1.hour, "24h" => 24.hours, "7d" => 7.days }.freeze
+
     before_action :authenticate!
 
     private
