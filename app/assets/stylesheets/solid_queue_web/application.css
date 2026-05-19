@@ -364,13 +364,7 @@ tbody tr:hover { background: var(--bg); }
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  margin-bottom: 0.75rem;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.sqd-period-filter__label {
-  margin-right: 0.25rem;
+  margin-left: auto;
 }
 
 .sqd-period-filter a {

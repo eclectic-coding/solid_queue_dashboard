@@ -22,14 +22,6 @@
   <% end %>
 </div>
 
-<div class="sqd-period-filter">
-  <span class="sqd-period-filter__label">Period:</span>
-  <%= link_to "All", jobs_path(status: @status, q: @search),                        class: @period.nil? ? "active" : "" %>
-  <%= link_to "1h",  jobs_path(status: @status, q: @search, period: "1h"),  class: @period == "1h"  ? "active" : "" %>
-  <%= link_to "24h", jobs_path(status: @status, q: @search, period: "24h"), class: @period == "24h" ? "active" : "" %>
-  <%= link_to "7d",  jobs_path(status: @status, q: @search, period: "7d"),  class: @period == "7d"  ? "active" : "" %>
-</div>
-
 <form class="sqd-search" action="<%= jobs_path %>" method="get" data-controller="search">
   <input type="hidden" name="status" value="<%= @status %>">
   <input type="hidden" name="period" value="<%= @period %>">
@@ -40,6 +32,12 @@
   <% if @search.present? %>
     <%= link_to "Clear", jobs_path(status: @status, period: @period), class: "sqd-btn sqd-btn--muted" %>
   <% end %>
+  <div class="sqd-period-filter">
+    <%= link_to "All", jobs_path(status: @status, q: @search),                       class: @period.nil? ? "active" : "" %>
+    <%= link_to "1h",  jobs_path(status: @status, q: @search, period: "1h"),  class: @period == "1h"  ? "active" : "" %>
+    <%= link_to "24h", jobs_path(status: @status, q: @search, period: "24h"), class: @period == "24h" ? "active" : "" %>
+    <%= link_to "7d",  jobs_path(status: @status, q: @search, period: "7d"),  class: @period == "7d"  ? "active" : "" %>
+  </div>
 </form>
 
 <div class="sqd-card" id="jobs-list">

@@ -16,14 +16,6 @@
   <% end %>
 </div>
 
-<div class="sqd-period-filter">
-  <span class="sqd-period-filter__label">Period:</span>
-  <%= link_to "All", failed_jobs_path(queue: @queue, q: @search),                        class: @period.nil? ? "active" : "" %>
-  <%= link_to "1h",  failed_jobs_path(queue: @queue, q: @search, period: "1h"),  class: @period == "1h"  ? "active" : "" %>
-  <%= link_to "24h", failed_jobs_path(queue: @queue, q: @search, period: "24h"), class: @period == "24h" ? "active" : "" %>
-  <%= link_to "7d",  failed_jobs_path(queue: @queue, q: @search, period: "7d"),  class: @period == "7d"  ? "active" : "" %>
-</div>
-
 <form class="sqd-search" action="<%= failed_jobs_path %>" method="get" data-controller="search">
   <% if @queue.present? %>
     <input type="hidden" name="queue" value="<%= @queue %>">
@@ -36,6 +28,12 @@
   <% if @search.present? %>
     <%= link_to "Clear", failed_jobs_path(queue: @queue, period: @period), class: "sqd-btn sqd-btn--muted" %>
   <% end %>
+  <div class="sqd-period-filter">
+    <%= link_to "All", failed_jobs_path(queue: @queue, q: @search),                       class: @period.nil? ? "active" : "" %>
+    <%= link_to "1h",  failed_jobs_path(queue: @queue, q: @search, period: "1h"),  class: @period == "1h"  ? "active" : "" %>
+    <%= link_to "24h", failed_jobs_path(queue: @queue, q: @search, period: "24h"), class: @period == "24h" ? "active" : "" %>
+    <%= link_to "7d",  failed_jobs_path(queue: @queue, q: @search, period: "7d"),  class: @period == "7d"  ? "active" : "" %>
+  </div>
 </form>
 
 <% if @pagy.last > 1 %>
