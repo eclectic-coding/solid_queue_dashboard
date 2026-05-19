@@ -7,10 +7,10 @@
   </div>
 
   <div class="sqd-actions">
-    <% if @execution_status == "failed" && @failed_execution %>
-      <%= button_to "Retry", retry_failed_job_path(@failed_execution), method: :post,
+    <% if @execution_status == "failed" && @job.failed_execution %>
+      <%= button_to "Retry", retry_failed_job_path(@job.failed_execution), method: :post,
             class: "sqd-btn sqd-btn--primary" %>
-      <%= button_to "Discard", failed_job_path(@failed_execution), method: :delete,
+      <%= button_to "Discard", failed_job_path(@job.failed_execution), method: :delete,
             class: "sqd-btn sqd-btn--danger",
             data: { confirm: "Discard this job?" } %>
     <% elsif SolidQueueWeb::Job::DISCARDABLE.include?(@execution_status) %>
@@ -45,9 +45,9 @@
       <dt>Concurrency Key</dt>
       <dd class="sqd-mono"><%= @job.concurrency_key.presence || "—" %></dd>
 
-      <% if @blocked_execution %>
+      <% if @job.blocked_execution %>
         <dt>Blocked Until</dt>
-        <dd class="sqd-mono"><%= @blocked_execution.expires_at ? @blocked_execution.expires_at.strftime("%Y-%m-%d %H:%M:%S %Z") : "—" %></dd>
+        <dd class="sqd-mono"><%= @job.blocked_execution.expires_at ? @job.blocked_execution.expires_at.strftime("%Y-%m-%d %H:%M:%S %Z") : "—" %></dd>
       <% end %>
 
       <dt>Enqueued At</dt>
@@ -67,14 +67,14 @@
   </div>
 </div>
 
-<% if @failed_execution %>
+<% if @job.failed_execution %>
   <div class="sqd-card sqd-detail-section" style="margin-top: 1.5rem;">
     <h2 class="sqd-section-title sqd-section-title--danger">Error</h2>
     <p class="sqd-error-header">
-      <strong><%= @failed_execution.exception_class %></strong>: <%= @failed_execution.message %>
+      <strong><%= @job.failed_execution.exception_class %></strong>: <%= @job.failed_execution.message %>
     </p>
-    <% if @failed_execution.backtrace.present? %>
-      <pre class="sqd-pre sqd-pre--muted" style="margin-top: 0.75rem;"><%= Array(@failed_execution.backtrace).join("\n") %></pre>
+    <% if @job.failed_execution.backtrace.present? %>
+      <pre class="sqd-pre sqd-pre--muted" style="margin-top: 0.75rem;"><%= Array(@job.failed_execution.backtrace).join("\n") %></pre>
     <% end %>
   </div>
 <% end %>
