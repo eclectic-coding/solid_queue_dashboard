@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-05-19
+
 ### Added
 
 - Job class name search field on the jobs index — filters the current status tab by class name substring; case-insensitive; persists across status tab switches
@@ -109,7 +111,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI workflow with lint (RuboCop) and test (RSpec) matrix across Ruby 3.3, 3.4, and 4.0
 - `bin/release` script for versioned gem releases
 
-[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.5.0
 [0.4.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.4.0
 [0.3.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.3.0
 [0.2.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.2.0
