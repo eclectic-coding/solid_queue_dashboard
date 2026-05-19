@@ -117,6 +117,55 @@ RSpec.describe "Jobs", type: :request do
     end
   end
 
+  describe "GET /jobs/list?period= (time-based filter)" do
+    let!(:old_job) do
+      job = SolidQueue::Job.create!(
+        queue_name: "default",
+        class_name: "OldJob",
+        arguments: {},
+        active_job_id: SecureRandom.uuid
+      )
+      job.update_columns(created_at: 2.days.ago)
+      job.ready_execution.update_columns(created_at: 2.days.ago)
+      job
+    end
+
+    it "shows all jobs when no period is set" do
+      get "/jobs/list"
+      expect(response.body).to include("TestJob")
+      expect(response.body).to include("OldJob")
+    end
+
+    it "filters to jobs enqueued within the last hour" do
+      get "/jobs/list", params: { period: "1h" }
+      expect(response.body).to include("TestJob")
+      expect(response.body).not_to include("OldJob")
+    end
+
+    it "filters to jobs enqueued within the last 24 hours" do
+      get "/jobs/list", params: { period: "24h" }
+      expect(response.body).to include("TestJob")
+      expect(response.body).not_to include("OldJob")
+    end
+
+    it "includes all jobs within 7 days" do
+      get "/jobs/list", params: { period: "7d" }
+      expect(response.body).to include("TestJob")
+      expect(response.body).to include("OldJob")
+    end
+
+    it "ignores invalid period values" do
+      get "/jobs/list", params: { period: "bogus" }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("TestJob")
+    end
+
+    it "persists period across status tab links" do
+      get "/jobs/list", params: { period: "1h" }
+      expect(response.body).to include("period=1h")
+    end
+  end
+
   describe "DELETE /jobs/list/:id (discard single)" do
     it "discards the job and redirects (HTML)" do
       delete "/jobs/list/#{ready_execution.id}", params: { status: "ready" }

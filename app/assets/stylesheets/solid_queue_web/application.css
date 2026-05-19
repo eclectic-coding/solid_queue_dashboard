@@ -359,6 +359,39 @@ tbody tr:hover { background: var(--bg); }
   color: #fff;
 }
 
+/* Period filter */
+.sqd-period-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.sqd-period-filter__label {
+  margin-right: 0.25rem;
+}
+
+.sqd-period-filter a {
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--surface);
+  transition: all 0.1s;
+}
+
+.sqd-period-filter a:hover,
+.sqd-period-filter a.active {
+  background: var(--muted);
+  border-color: var(--muted);
+  color: #fff;
+}
+
 /* Code / monospace */
 .sqd-mono {
   font-family: "SFMono-Regular", Menlo, Monaco, Consolas, monospace;

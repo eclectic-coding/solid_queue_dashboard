@@ -5,31 +5,40 @@
 
 <div class="sqd-page-header">
   <div class="sqd-filters">
-    <%= link_to "Ready",     jobs_path(status: "ready",     q: @search), class: @status == "ready"     ? "active" : "" %>
-    <%= link_to "Scheduled", jobs_path(status: "scheduled", q: @search), class: @status == "scheduled" ? "active" : "" %>
-    <%= link_to "Running",   jobs_path(status: "claimed",   q: @search), class: @status == "claimed"   ? "active" : "" %>
-    <%= link_to "Blocked",   jobs_path(status: "blocked",   q: @search), class: @status == "blocked"   ? "active" : "" %>
-    <%= link_to "Failed",    jobs_path(status: "failed",    q: @search), class: @status == "failed"    ? "active" : "" %>
+    <%= link_to "Ready",     jobs_path(status: "ready",     q: @search, period: @period), class: @status == "ready"     ? "active" : "" %>
+    <%= link_to "Scheduled", jobs_path(status: "scheduled", q: @search, period: @period), class: @status == "scheduled" ? "active" : "" %>
+    <%= link_to "Running",   jobs_path(status: "claimed",   q: @search, period: @period), class: @status == "claimed"   ? "active" : "" %>
+    <%= link_to "Blocked",   jobs_path(status: "blocked",   q: @search, period: @period), class: @status == "blocked"   ? "active" : "" %>
+    <%= link_to "Failed",    jobs_path(status: "failed",    q: @search, period: @period), class: @status == "failed"    ? "active" : "" %>
   </div>
   <% if discardable && @jobs.any? %>
     <div class="sqd-actions">
       <%= button_to "Discard All", discard_all_jobs_path,
             method: :post,
-            params: { status: @status },
+            params: { status: @status, period: @period },
             class: "sqd-btn sqd-btn--danger",
             data: { confirm: "Discard all #{@jobs.size} #{@status} jobs? This cannot be undone." } %>
     </div>
   <% end %>
 </div>
 
+<div class="sqd-period-filter">
+  <span class="sqd-period-filter__label">Period:</span>
+  <%= link_to "All", jobs_path(status: @status, q: @search),                        class: @period.nil? ? "active" : "" %>
+  <%= link_to "1h",  jobs_path(status: @status, q: @search, period: "1h"),  class: @period == "1h"  ? "active" : "" %>
+  <%= link_to "24h", jobs_path(status: @status, q: @search, period: "24h"), class: @period == "24h" ? "active" : "" %>
+  <%= link_to "7d",  jobs_path(status: @status, q: @search, period: "7d"),  class: @period == "7d"  ? "active" : "" %>
+</div>
+
 <form class="sqd-search" action="<%= jobs_path %>" method="get" data-controller="search">
   <input type="hidden" name="status" value="<%= @status %>">
+  <input type="hidden" name="period" value="<%= @period %>">
   <input class="sqd-search__input" type="search" name="q" value="<%= @search %>"
          placeholder="Filter by job class…" autocomplete="off" aria-label="Filter by job class"
          data-action="input->search#filter">
   <button type="submit" class="sqd-btn sqd-btn--muted">Search</button>
   <% if @search.present? %>
-    <%= link_to "Clear", jobs_path(status: @status), class: "sqd-btn sqd-btn--muted" %>
+    <%= link_to "Clear", jobs_path(status: @status, period: @period), class: "sqd-btn sqd-btn--muted" %>
   <% end %>
 </form>
 
@@ -69,7 +78,7 @@
               <td class="sqd-row-actions">
                 <%= button_to "Discard", job_path(execution),
                       method: :delete,
-                      params: { status: @status },
+                      params: { status: @status, period: @period },
                       class: "sqd-btn sqd-btn--danger sqd-btn--sm",
                       data: { confirm: "Discard this job?" } %>
               </td>
