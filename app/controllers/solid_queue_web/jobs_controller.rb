@@ -14,8 +14,6 @@ module SolidQueueWeb
       @job = SolidQueue::Job
         .includes(:ready_execution, :scheduled_execution, :claimed_execution, :blocked_execution, :failed_execution)
         .find(params[:id])
-      @failed_execution = @job.failed_execution
-      @blocked_execution = @job.blocked_execution
       @execution_status = derive_status(@job)
     end
 
