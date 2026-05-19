@@ -42,6 +42,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **Recurring tasks** — all configured recurring tasks with cron schedule, next run time, last run time, and static/dynamic classification
 - **Processes** — workers, dispatchers, and supervisors with heartbeat health status; auto-refreshes every 10 seconds
 - **Global search** — search across all job statuses at once by class name substring; results grouped by status with match count and direct links to filtered views; native datalist autocomplete pre-populated from all known job classes; auto-submits on selection
+- **Targeted bulk actions** — checkboxes on the jobs and failed jobs lists for selecting individual rows; selection bar shows count and action buttons ("Discard Selected" for jobs, "Retry Selected" / "Discard Selected" for failed jobs); select-all checkbox in the table header
 
 ## Screenshots
 
