@@ -6,6 +6,9 @@ on:
     branches: [ main ]
     tags: [ "v*" ]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -43,7 +46,6 @@ jobs:
         ruby: [ "3.3", "3.4", "4.0" ]
     env:
       RAILS_ENV: test
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -82,7 +84,7 @@ jobs:
           bundler-cache: true
 
       - name: Build and publish gem
-        uses: rubygems/release-gem@v1
+        uses: rubygems/release-gem@v1.2.0
 
       - name: Create GitHub release
         env:
