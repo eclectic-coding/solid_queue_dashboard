@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Job class name search field on the jobs index — filters the current status tab by class name substring; case-insensitive; persists across status tab switches
+- Dynamic search: auto-submits after 4 characters typed or on clear (300 ms debounce) via a Stimulus `search` controller (`app/javascript/solid_queue_web/search_controller.js`)
+- Turbo Frame navigation on the jobs index — status filter tabs, search, and pagination update only the table region without a full page reload; URL is pushed to browser history so filtering is bookmarkable
+- `importmap-rails` integration: engine registers its own `config/importmap.rb`, adds `app/javascript/` to the asset pipeline, and loads via `javascript_importmap_tags` in the layout
+- `@hotwired/turbo` imported in the engine entry point so Turbo is active within the engine's own layout
 - Recurring Tasks page (`/jobs/recurring_tasks`) showing key, cron schedule, job class or command, queue, next run time, last run time, and Static/Dynamic badge; eager loads recurring executions to avoid N+1
 - Recurring Tasks stat card on the dashboard (cyan, links to the page)
 - "View recurring tasks" button in the dashboard Quick Links
