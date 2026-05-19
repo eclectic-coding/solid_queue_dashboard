@@ -60,7 +60,7 @@
           <tr id="execution_<%= execution.id %>">
             <td>
               <span class="sqd-badge sqd-badge--<%= @status %>"><%= @status %></span>
-              <%= link_to job.class_name, job_path(job), style: "margin-left: 0.5rem;" %>
+              <%= link_to job.class_name, job_path(job), style: "margin-left: 0.5rem;", data: { turbo_frame: "_top" } %>
             </td>
             <td><%= job.priority %></td>
             <td class="sqd-mono">
