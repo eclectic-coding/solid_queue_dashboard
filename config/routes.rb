@@ -1,6 +1,7 @@
 SolidQueueWeb::Engine.routes.draw do
   root to: "dashboard#index"
 
+  resources :recurring_tasks, only: [ :index ]
   resources :processes, only: [ :index ]
   resources :queues, only: [ :index ], param: :name do
     member do

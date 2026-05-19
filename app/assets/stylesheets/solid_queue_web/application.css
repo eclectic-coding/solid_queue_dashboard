@@ -267,6 +267,8 @@ tbody tr:hover { background: var(--bg); }
 .sqd-badge--claimed   { background: #cfe2ff; color: #084298; }
 .sqd-badge--failed    { background: #f8d7da; color: #842029; }
 .sqd-badge--blocked   { background: #fff3cd; color: #664d03; }
+.sqd-badge--static  { background: #d1e7dd; color: #0f5132; }
+.sqd-badge--dynamic { background: #e0d7f5; color: #4a2c8a; }
 .sqd-badge--paused      { background: #e2e3e5; color: #41464b; }
 .sqd-badge--running     { background: #d1e7dd; color: #0f5132; }
 .sqd-badge--supervisor  { background: #e0d7f5; color: #4a2c8a; }
