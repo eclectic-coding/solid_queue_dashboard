@@ -36,9 +36,16 @@ RSpec.describe "Search", type: :request do
       expect(response.body).to include("Search by job class name")
     end
 
+    it "renders a datalist with known job class names" do
+      get "/jobs/search"
+      expect(response.body).to include("job-class-list")
+      expect(response.body).to include("MyWorkerJob")
+      expect(response.body).to include("MyMailerJob")
+    end
+
     it "shows no results section when query is blank" do
       get "/jobs/search"
-      expect(response.body).not_to include("MyWorkerJob")
+      expect(response.body).not_to include('class="sqd-search-group"')
     end
   end
 
@@ -63,7 +70,8 @@ RSpec.describe "Search", type: :request do
     it "shows only matching jobs" do
       get "/jobs/search", params: { q: "Worker" }
       expect(response.body).to include("MyWorkerJob")
-      expect(response.body).not_to include("MyMailerJob")
+      # MyMailerJob appears in the datalist but must not appear in a result row
+      expect(response.body).not_to include("MyMailerJob</a>")
     end
 
     it "shows empty state when nothing matches" do

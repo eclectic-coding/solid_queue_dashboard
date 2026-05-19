@@ -3,8 +3,9 @@ module SolidQueueWeb
     LIMIT = 25
 
     def index
-      @query = params[:q].presence
-      @results = {}
+      @query      = params[:q].presence
+      @job_classes = SolidQueue::Job.distinct.order(:class_name).pluck(:class_name)
+      @results    = {}
 
       return unless @query
 
