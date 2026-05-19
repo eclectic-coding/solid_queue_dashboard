@@ -27,4 +27,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "solid_queue", ">= 1.0"
   spec.add_dependency "pagy", ">= 43.0"
   spec.add_dependency "turbo-rails", ">= 2.0"
+  spec.add_dependency "importmap-rails", ">= 1.2"
 end

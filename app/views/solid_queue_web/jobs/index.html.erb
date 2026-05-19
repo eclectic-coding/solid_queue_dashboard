@@ -1,15 +1,15 @@
 <h1 class="sqd-page-title" style="margin-bottom: 1.5rem;">Jobs</h1>
 
-<%= turbo_frame_tag "jobs-table" do %>
+<%= turbo_frame_tag "jobs-table", data: { turbo_action: "advance" } do %>
 <% discardable = SolidQueueWeb::JobsController::DISCARDABLE.include?(@status) %>
 
 <div class="sqd-page-header">
   <div class="sqd-filters">
-    <%= link_to "Ready",     jobs_path(status: "ready",     queue: @queue), class: @status == "ready"     ? "active" : "" %>
-    <%= link_to "Scheduled", jobs_path(status: "scheduled", queue: @queue), class: @status == "scheduled" ? "active" : "" %>
-    <%= link_to "Running",   jobs_path(status: "claimed",   queue: @queue), class: @status == "claimed"   ? "active" : "" %>
-    <%= link_to "Blocked",   jobs_path(status: "blocked",   queue: @queue), class: @status == "blocked"   ? "active" : "" %>
-    <%= link_to "Failed",    jobs_path(status: "failed",    queue: @queue), class: @status == "failed"    ? "active" : "" %>
+    <%= link_to "Ready",     jobs_path(status: "ready",     queue: @queue, q: @search), class: @status == "ready"     ? "active" : "" %>
+    <%= link_to "Scheduled", jobs_path(status: "scheduled", queue: @queue, q: @search), class: @status == "scheduled" ? "active" : "" %>
+    <%= link_to "Running",   jobs_path(status: "claimed",   queue: @queue, q: @search), class: @status == "claimed"   ? "active" : "" %>
+    <%= link_to "Blocked",   jobs_path(status: "blocked",   queue: @queue, q: @search), class: @status == "blocked"   ? "active" : "" %>
+    <%= link_to "Failed",    jobs_path(status: "failed",    queue: @queue, q: @search), class: @status == "failed"    ? "active" : "" %>
   </div>
   <% if discardable && @jobs.any? %>
     <div class="sqd-actions">
@@ -21,6 +21,20 @@
     </div>
   <% end %>
 </div>
+
+<form class="sqd-search" action="<%= jobs_path %>" method="get" data-controller="search">
+  <input type="hidden" name="status" value="<%= @status %>">
+  <% if @queue.present? %>
+    <input type="hidden" name="queue" value="<%= @queue %>">
+  <% end %>
+  <input class="sqd-search__input" type="search" name="q" value="<%= @search %>"
+         placeholder="Filter by job class…" autocomplete="off" aria-label="Filter by job class"
+         data-action="input->search#filter">
+  <button type="submit" class="sqd-btn sqd-btn--muted">Search</button>
+  <% if @search.present? %>
+    <%= link_to "Clear", jobs_path(status: @status, queue: @queue), class: "sqd-btn sqd-btn--muted" %>
+  <% end %>
+</form>
 
 <div class="sqd-card" id="jobs-list">
   <% if @jobs.empty? %>

@@ -1,4 +1,5 @@
 require "solid_queue_web/version"
+require "importmap-rails"
 require "solid_queue_web/engine"
 
 module SolidQueueWeb
