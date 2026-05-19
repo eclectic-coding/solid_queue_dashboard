@@ -13,6 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Failed jobs queue filter: queue names in the failed jobs table are clickable links that filter to that queue; a "Filtering by queue" indicator appears with a clear link
 - Queue-scoped Retry All / Discard All on failed jobs: bulk actions apply only to the active queue/search filter and redirect back preserving those params
 - Blocked job detail: job show page displays "Blocked Until" (`BlockedExecution#expires_at`) when the job has a blocked execution
+- Queue-scoped jobs view at `/jobs/queues/:queue_name/list` — dedicated `Queues::JobsController` with status tabs, class name search, per-row discard (Turbo Stream), and Discard All scoped to the queue; navigated to by clicking queue names on the global jobs list
+
+### Fixed
+
+- Job detail links inside the turbo frame on the jobs index rendered "Content missing" because the show page has no matching frame; fixed with `data-turbo-frame="_top"` so navigation breaks out to a full page load
+
+### Changed
+
+- `JobsController#index` no longer filters by queue — queue filtering is owned by `Queues::JobsController`
 
 ## [0.5.0] - 2026-05-19
 
