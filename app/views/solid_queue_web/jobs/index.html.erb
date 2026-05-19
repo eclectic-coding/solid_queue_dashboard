@@ -22,13 +22,14 @@
   <% end %>
 </div>
 
-<form class="sqd-search" action="<%= jobs_path %>" method="get">
+<form class="sqd-search" action="<%= jobs_path %>" method="get" data-controller="sqd-search">
   <input type="hidden" name="status" value="<%= @status %>">
   <% if @queue.present? %>
     <input type="hidden" name="queue" value="<%= @queue %>">
   <% end %>
   <input class="sqd-search__input" type="search" name="q" value="<%= @search %>"
-         placeholder="Filter by job class…" autocomplete="off" aria-label="Filter by job class">
+         placeholder="Filter by job class…" autocomplete="off" aria-label="Filter by job class"
+         data-action="input->sqd-search#filter">
   <button type="submit" class="sqd-btn sqd-btn--muted">Search</button>
   <% if @search.present? %>
     <%= link_to "Clear", jobs_path(status: @status, queue: @queue), class: "sqd-btn sqd-btn--muted" %>
