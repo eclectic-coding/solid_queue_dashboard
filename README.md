@@ -41,6 +41,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **Queue management** — pause and resume individual queues; queue-scoped job list with status filter, search, and discard
 - **Recurring tasks** — all configured recurring tasks with cron schedule, next run time, last run time, and static/dynamic classification
 - **Processes** — workers, dispatchers, and supervisors with heartbeat health status; auto-refreshes every 10 seconds
+- **Global search** — search across all job statuses at once by class name substring; results grouped by status with match count and direct links to filtered views; native datalist autocomplete pre-populated from all known job classes; auto-submits on selection
 
 ## Screenshots
 
