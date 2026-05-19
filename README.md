@@ -17,7 +17,7 @@ Solid Queue ships without a web interface. When jobs fail, queues back up, or wo
 - Purpose-built for Solid Queue — uses its native models directly, no adapters
 - No external CSS framework — drops into any Rails app without asset conflicts
 - Zero-config to start — one line in `routes.rb` and you're running
-- Built for Rails 8 — Turbo Frames for in-place updates, Stimulus for dynamic search, Pagy for efficient pagination
+- Built for Rails 8 — Turbo Frames for in-place updates, Stimulus for dynamic search and auto-refresh, Pagy for efficient pagination
 - Inspired by Sidekiq Web UI and the GoodJob dashboard, adapted for the Solid Queue ecosystem
 
 ## Real-world use case
@@ -33,14 +33,14 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 
 ## Features
 
-- **Dashboard** — stat cards showing counts for ready, scheduled, running, blocked, and failed jobs, plus queues, recurring tasks, and processes
-- **Queues** — all queues sorted by name
-- **Jobs** — filterable by status (ready, scheduled, claimed, blocked, failed) and by queue; search by job class name with dynamic auto-submit; discard individual or all jobs; Turbo Frame navigation so only the table updates on filter or search
-- **Failed jobs** — list of failed executions with error details; retry or discard individually or in bulk
-- **Job detail** — full arguments, timestamps, and error backtrace; action buttons based on job status
-- **Queue management** — pause and resume individual queues
+- **Dashboard** — stat cards showing counts for ready, scheduled, running, blocked, and failed jobs, plus queues, recurring tasks, and processes; auto-refreshes every 5 seconds
+- **Queues** — all queues sorted by name with size, latency, and pause/resume controls
+- **Jobs** — filterable by status (ready, scheduled, claimed, blocked, failed) and by queue; search by job class name with dynamic auto-submit; discard individual or all jobs; Turbo Frame navigation so only the table updates on filter or search; auto-refreshes every 10 seconds
+- **Failed jobs** — list of failed executions with error details; search by class name; filter by queue; retry or discard individually or in bulk
+- **Job detail** — full arguments, timestamps, blocked-until date, and error backtrace; action buttons based on job status
+- **Queue management** — pause and resume individual queues; queue-scoped job list with status filter, search, and discard
 - **Recurring tasks** — all configured recurring tasks with cron schedule, next run time, last run time, and static/dynamic classification
-- **Processes** — workers, dispatchers, and supervisors with heartbeat health status
+- **Processes** — workers, dispatchers, and supervisors with heartbeat health status; auto-refreshes every 10 seconds
 
 ## Screenshots
 
