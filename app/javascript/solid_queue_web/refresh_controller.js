@@ -4,38 +4,48 @@ export default class extends Controller {
   static values = { interval: { type: Number, default: 5000 } }
 
   initialize() {
-    this._onLoad = this._onLoad.bind(this)
     this._onVisibilityChange = this._onVisibilityChange.bind(this)
   }
 
   connect() {
-    this.element.addEventListener("turbo:frame-load", this._onLoad)
     document.addEventListener("visibilitychange", this._onVisibilityChange)
     this._schedule()
   }
 
   disconnect() {
     clearTimeout(this._timer)
-    this.element.removeEventListener("turbo:frame-load", this._onLoad)
     document.removeEventListener("visibilitychange", this._onVisibilityChange)
   }
 
   _schedule() {
-    this._timer = setTimeout(() => {
-      if (!document.hidden) this.element.reload()
-    }, this.intervalValue)
+    this._timer = setTimeout(() => this._reload(), this.intervalValue)
   }
 
-  _onLoad() {
+  async _reload() {
     clearTimeout(this._timer)
-    this._schedule()
+    if (!document.hidden) {
+      try {
+        const response = await fetch(window.location.href, {
+          headers: { "Turbo-Frame": this.element.id, Accept: "text/html" }
+        })
+        if (response.ok) {
+          const html = await response.text()
+          const doc = new DOMParser().parseFromString(html, "text/html")
+          const frame = doc.querySelector(`turbo-frame#${this.element.id}`)
+          if (frame && this.element.isConnected) this.element.innerHTML = frame.innerHTML
+        }
+      } catch {
+        // network error — skip this tick
+      }
+    }
+    if (this.element.isConnected) this._schedule()
   }
 
   _onVisibilityChange() {
     if (document.hidden) {
       clearTimeout(this._timer)
     } else {
-      this.element.reload()
+      this._reload()
     }
   }
 }
