@@ -149,7 +149,7 @@ body {
 /* Stat cards */
 .sqd-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
 }
@@ -183,6 +183,7 @@ body {
 .sqd-stat--blocked   .sqd-stat__value { color: var(--warning); }
 .sqd-stat--queues    .sqd-stat__value { color: var(--purple); }
 .sqd-stat--processes .sqd-stat__value { color: var(--muted); }
+.sqd-stat--recurring .sqd-stat__value { color: var(--info); }
 
 .sqd-stat--link {
   display: block;

@@ -25,6 +25,10 @@
     <div class="sqd-stat__value"><%= @stats[:queues] %></div>
     <div class="sqd-stat__label">Queues</div>
   <% end %>
+  <%= link_to recurring_tasks_path, class: "sqd-stat sqd-stat--recurring sqd-stat--link" do %>
+    <div class="sqd-stat__value"><%= @stats[:recurring] %></div>
+    <div class="sqd-stat__label">Recurring</div>
+  <% end %>
   <%= link_to processes_path, class: "sqd-stat sqd-stat--processes sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats[:processes] %></div>
     <div class="sqd-stat__label">Processes</div>
@@ -41,6 +45,7 @@
       <%= link_to "View scheduled jobs", jobs_path(status: "scheduled"), class: "sqd-btn sqd-btn--muted" %>
       <%= link_to "View failed jobs", failed_jobs_path, class: "sqd-btn sqd-btn--muted" %>
       <%= link_to "Manage queues", queues_path, class: "sqd-btn sqd-btn--muted" %>
+      <%= link_to "View recurring tasks", recurring_tasks_path, class: "sqd-btn sqd-btn--muted" %>
     </div>
   </div>
 
