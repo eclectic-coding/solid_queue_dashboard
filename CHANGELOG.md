@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Failed jobs search: `?q=` param filters by class name substring on the failed jobs index
+- Failed jobs queue filter: queue names in the failed jobs table are clickable links that filter to that queue; a "Filtering by queue" indicator appears with a clear link
+- Queue-scoped Retry All / Discard All on failed jobs: bulk actions apply only to the active queue/search filter and redirect back preserving those params
+- Blocked job detail: job show page displays "Blocked Until" (`BlockedExecution#expires_at`) when the job has a blocked execution
+
 ## [0.5.0] - 2026-05-19
 
 ### Added
