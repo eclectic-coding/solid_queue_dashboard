@@ -6,12 +6,12 @@
   <% end %>
 </datalist>
 
-<form class="sqd-search sqd-search--global" action="<%= search_path %>" method="get">
+<form class="sqd-search sqd-search--global" action="<%= search_path %>" method="get" data-controller="search">
   <input class="sqd-search__input sqd-search__input--lg" type="search" name="q"
          value="<%= @query %>" placeholder="Search by job class name…"
          list="job-class-list" autocomplete="off"
-         aria-label="Search all jobs by class name">
-  <button type="submit" class="sqd-btn sqd-btn--primary">Search</button>
+         aria-label="Search all jobs by class name"
+         data-action="change->search#select">
   <% if @query.present? %>
     <%= link_to "Clear", search_path, class: "sqd-btn sqd-btn--muted" %>
   <% end %>

@@ -8,4 +8,9 @@ export default class extends Controller {
       this._timer = setTimeout(() => target.form.requestSubmit(), 300)
     }
   }
+
+  select({ target }) {
+    clearTimeout(this._timer)
+    target.form.requestSubmit()
+  }
 }
