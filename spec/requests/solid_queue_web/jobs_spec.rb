@@ -125,6 +125,7 @@ RSpec.describe "Jobs", type: :request do
       expect(response.body).to include("discarded")
     end
 
+
     it "responds with turbo stream when last job: replaces card with empty state" do
       delete "/jobs/list/#{ready_execution.id}",
         params: { status: "ready" },

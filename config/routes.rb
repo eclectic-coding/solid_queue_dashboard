@@ -8,6 +8,11 @@ SolidQueueWeb::Engine.routes.draw do
       post :pause
       post :resume
     end
+    resources :jobs, path: "list", only: [ :index, :destroy ], controller: "queues/jobs" do
+      collection do
+        post :discard_all
+      end
+    end
   end
   resources :jobs, path: "list", only: [ :index, :show, :destroy ] do
     collection do
