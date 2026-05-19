@@ -1,0 +1,57 @@
+<h1 class="sqd-page-title" style="margin-bottom: 1.5rem;">Search Jobs</h1>
+
+<form class="sqd-search sqd-search--global" action="<%= search_path %>" method="get">
+  <input class="sqd-search__input sqd-search__input--lg" type="search" name="q"
+         value="<%= @query %>" placeholder="Search by job class name…"
+         autocomplete="off" aria-label="Search all jobs by class name" autofocus>
+  <button type="submit" class="sqd-btn sqd-btn--primary">Search</button>
+  <% if @query.present? %>
+    <%= link_to "Clear", search_path, class: "sqd-btn sqd-btn--muted" %>
+  <% end %>
+</form>
+
+<% if @query.present? %>
+  <% if @results.empty? %>
+    <div class="sqd-empty" style="margin-top: 1rem;">No jobs found matching &ldquo;<%= @query %>&rdquo;.</div>
+  <% else %>
+    <% @results.each do |status, data| %>
+      <div class="sqd-search-group">
+        <div class="sqd-search-group__header">
+          <span class="sqd-badge sqd-badge--<%= status %>"><%= status %></span>
+          <span class="sqd-muted-text">
+            <%= pluralize(data[:total], "match", "matches") %>
+            <% if data[:total] > SolidQueueWeb::SearchController::LIMIT %>
+              &mdash; showing first <%= SolidQueueWeb::SearchController::LIMIT %>
+            <% end %>
+          </span>
+          <% if status == "failed" %>
+            <%= link_to "View all →", failed_jobs_path(q: @query), class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
+          <% else %>
+            <%= link_to "View all →", jobs_path(status: status, q: @query), class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
+          <% end %>
+        </div>
+        <div class="sqd-card">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Job Class</th>
+                <th scope="col">Queue</th>
+                <th scope="col">Enqueued At</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% data[:executions].each do |execution| %>
+                <% job = execution.job %>
+                <tr>
+                  <td><%= link_to job.class_name, job_path(job) %></td>
+                  <td class="sqd-mono"><%= job.queue_name %></td>
+                  <td class="sqd-mono"><%= job.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>
