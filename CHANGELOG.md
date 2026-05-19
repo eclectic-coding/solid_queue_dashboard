@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Recurring Tasks page (`/jobs/recurring_tasks`) showing key, cron schedule, job class or command, queue, next run time, last run time, and Static/Dynamic badge; eager loads recurring executions to avoid N+1
+- Recurring Tasks stat card on the dashboard (cyan, links to the page)
+- "View recurring tasks" button in the dashboard Quick Links
+- `sqd-badge--static` (green) and `sqd-badge--dynamic` (purple) badge variants
 - Hamburger toggle nav for viewports narrower than 576px — three-bar button opens a full-width dropdown with vertically stacked links; no JS file required
 - `sqd-grid-2` utility class for responsive two-column layouts (collapses to one column at ≤768px)
 - `.sqd-sr-only` utility class for visually-hidden text
@@ -22,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Dashboard stat card order aligned with nav: Ready, Scheduled, Running, Blocked, Failed, Queues, Recurring, Processes
+- Stat grid minimum cell width reduced from 150px to 128px so all 8 cards fit in one row
 - Navbar title and links constrained to the same max-width as page content so they align horizontally with the dashboard
 - Page headers stack vertically on mobile (≤640px)
 - Stat grid uses a smaller minimum cell width on mobile
