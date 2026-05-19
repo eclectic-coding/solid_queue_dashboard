@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `JobsController#index` no longer filters by queue — queue filtering is owned by `Queues::JobsController`
+- `JobsController#show` no longer assigns `@failed_execution` / `@blocked_execution`; view reads associations directly from `@job` (already eager-loaded)
+- Removed stale `queue: @queue` from status tab links in the jobs index (param was always `nil` after the queue controller refactor)
 
 ## [0.5.0] - 2026-05-19
 
