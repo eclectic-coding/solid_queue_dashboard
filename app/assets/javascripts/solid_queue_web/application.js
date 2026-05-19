@@ -1,15 +1,5 @@
-import { Application, Controller } from "@hotwired/stimulus"
+import { Application } from "@hotwired/stimulus"
+import SearchController from "solid_queue_web/search_controller"
 
 const application = Application.start()
-
-class SearchController extends Controller {
-  filter({ target }) {
-    clearTimeout(this._timer)
-    const len = target.value.length
-    if (len >= 4 || len === 0) {
-      this._timer = setTimeout(() => target.form.requestSubmit(), 300)
-    }
-  }
-}
-
-application.register("sqd-search", SearchController)
+application.register("search", SearchController)

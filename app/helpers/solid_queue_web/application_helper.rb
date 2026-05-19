@@ -5,9 +5,5 @@ module SolidQueueWeb
       content_tag(:style, css.html_safe)
     end
 
-    def inline_scripts
-      js = SolidQueueWeb::Engine.root.join("app/assets/javascripts/solid_queue_web/application.js").read
-      content_tag(:script, js.html_safe, type: "module")
-    end
   end
 end
