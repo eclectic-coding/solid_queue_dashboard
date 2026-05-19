@@ -1,3 +1,4 @@
+import "@hotwired/turbo"
 import { Application } from "@hotwired/stimulus"
 import SearchController from "solid_queue_web/search_controller"
 

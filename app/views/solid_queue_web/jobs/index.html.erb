@@ -1,6 +1,6 @@
 <h1 class="sqd-page-title" style="margin-bottom: 1.5rem;">Jobs</h1>
 
-<%= turbo_frame_tag "jobs-table" do %>
+<%= turbo_frame_tag "jobs-table", data: { turbo_action: "advance" } do %>
 <% discardable = SolidQueueWeb::JobsController::DISCARDABLE.include?(@status) %>
 
 <div class="sqd-page-header">
