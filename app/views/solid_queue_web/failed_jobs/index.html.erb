@@ -40,52 +40,90 @@
   <%= @pagy.series_nav.html_safe %>
 <% end %>
 
-<div class="sqd-card">
-  <% if @failed_jobs.empty? %>
-    <div class="sqd-empty">No failed jobs. All clear!</div>
-  <% else %>
-    <table>
-      <thead>
-        <tr>
-          <th scope="col">Job Class</th>
-          <th scope="col">Queue</th>
-          <th scope="col">Error</th>
-          <th scope="col">Failed At</th>
-          <th scope="col"><span class="sqd-sr-only">Actions</span></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @failed_jobs.each do |execution| %>
-          <% job = execution.job %>
+<% if @failed_jobs.any? %>
+  <div data-controller="selection">
+    <%= form_tag failed_job_selection_path, method: :post, id: "retry-selection-form" do %>
+      <%= hidden_field_tag :queue, @queue %>
+      <%= hidden_field_tag :q, @search %>
+      <%= hidden_field_tag :period, @period %>
+    <% end %>
+
+    <%= form_tag failed_job_selection_path, method: :delete, id: "discard-selection-form",
+          data: { turbo_confirm: "Discard selected jobs? This cannot be undone." } do %>
+      <%= hidden_field_tag :queue, @queue %>
+      <%= hidden_field_tag :q, @search %>
+      <%= hidden_field_tag :period, @period %>
+    <% end %>
+
+    <div class="sqd-selection-bar" data-selection-target="bar" style="display: none;">
+      <span class="sqd-muted-text"><span data-selection-target="count">0</span> selected</span>
+      <button type="button" class="sqd-btn sqd-btn--primary sqd-btn--sm"
+              data-action="click->selection#submit"
+              data-selection-form-id-param="retry-selection-form">Retry Selected</button>
+      <button type="button" class="sqd-btn sqd-btn--danger sqd-btn--sm"
+              data-action="click->selection#submit"
+              data-selection-form-id-param="discard-selection-form">Discard Selected</button>
+    </div>
+
+    <div class="sqd-card">
+      <table>
+        <thead>
           <tr>
-            <td><%= link_to job.class_name, job_path(job) %></td>
-            <td>
-              <%= link_to job.queue_name, failed_jobs_path(queue: job.queue_name, q: @search, period: @period),
-                    class: "sqd-mono", style: "color: inherit;" %>
-            </td>
-            <td>
-              <% if execution.exception_class.present? %>
-                <div class="sqd-error-msg sqd-truncate" title="<%= execution.exception_class %>: <%= execution.message %>">
-                  <strong><%= execution.exception_class %></strong>: <%= execution.message %>
-                </div>
-              <% else %>
-                <span style="color:var(--muted)">—</span>
-              <% end %>
-            </td>
-            <td class="sqd-mono"><%= execution.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
-            <td class="sqd-row-actions">
-              <%= button_to "Retry", retry_failed_job_path(execution), method: :post,
-                    class: "sqd-btn sqd-btn--primary sqd-btn--sm" %>
-              <%= button_to "Discard", failed_job_path(execution), method: :delete,
-                    class: "sqd-btn sqd-btn--danger sqd-btn--sm",
-                    data: { confirm: "Discard this job?" } %>
-            </td>
+            <th scope="col">
+              <input type="checkbox" data-selection-target="selectAll"
+                     data-action="change->selection#selectAll"
+                     aria-label="Select all failed jobs">
+            </th>
+            <th scope="col">Job Class</th>
+            <th scope="col">Queue</th>
+            <th scope="col">Error</th>
+            <th scope="col">Failed At</th>
+            <th scope="col"><span class="sqd-sr-only">Actions</span></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
-  <% end %>
-</div>
+        </thead>
+        <tbody>
+          <% @failed_jobs.each do |execution| %>
+            <% job = execution.job %>
+            <tr>
+              <td>
+                <input type="checkbox" value="<%= execution.id %>"
+                       data-selection-target="checkbox"
+                       data-action="change->selection#toggle"
+                       aria-label="Select job <%= job.class_name %>">
+              </td>
+              <td><%= link_to job.class_name, job_path(job) %></td>
+              <td>
+                <%= link_to job.queue_name, failed_jobs_path(queue: job.queue_name, q: @search, period: @period),
+                      class: "sqd-mono", style: "color: inherit;" %>
+              </td>
+              <td>
+                <% if execution.exception_class.present? %>
+                  <div class="sqd-error-msg sqd-truncate" title="<%= execution.exception_class %>: <%= execution.message %>">
+                    <strong><%= execution.exception_class %></strong>: <%= execution.message %>
+                  </div>
+                <% else %>
+                  <span style="color:var(--muted)">—</span>
+                <% end %>
+              </td>
+              <td class="sqd-mono"><%= execution.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+              <td class="sqd-row-actions">
+                <%= button_to "Retry", retry_failed_job_path(execution), method: :post,
+                      class: "sqd-btn sqd-btn--primary sqd-btn--sm" %>
+                <%= button_to "Discard", failed_job_path(execution), method: :delete,
+                      class: "sqd-btn sqd-btn--danger sqd-btn--sm",
+                      data: { confirm: "Discard this job?" } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% else %>
+  <div class="sqd-card">
+    <div class="sqd-empty">No failed jobs. All clear!</div>
+  </div>
+<% end %>
 
 <% if @queue.present? %>
   <p style="margin-top: 0.75rem; font-size: 13px; color: var(--muted);">

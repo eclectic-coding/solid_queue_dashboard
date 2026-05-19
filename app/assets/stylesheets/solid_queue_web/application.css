@@ -302,6 +302,25 @@ tbody tr:hover { background: var(--bg); }
 .sqd-row-actions  { white-space: nowrap; text-align: right; width: 1%; }
 .sqd-row-actions form { display: inline; margin-left: 0.25rem; }
 
+/* Selection bar */
+.sqd-selection-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg-alt, #f0f4ff);
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+table th input[type="checkbox"],
+table td input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: var(--primary);
+}
+
 /* Search */
 .sqd-search {
   display: flex;

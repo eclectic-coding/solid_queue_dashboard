@@ -16,11 +16,18 @@ SolidQueueWeb::Engine.routes.draw do
       end
     end
   end
+
+  # Singular selection resources must be defined before the member routes of their
+  # parent resources, otherwise DELETE /list/selection matches /list/:id first.
+  resource :job_selection, path: "list/selection", only: [ :destroy ], controller: "jobs/selections"
   resources :jobs, path: "list", only: [ :index, :show, :destroy ] do
     collection do
       post :discard_all
     end
   end
+
+  resource :failed_job_selection, path: "failed_jobs/selection", only: [ :create, :destroy ],
+           controller: "failed_jobs/selections"
   resources :failed_jobs, only: [ :index, :destroy ] do
     collection do
       post :retry_all
