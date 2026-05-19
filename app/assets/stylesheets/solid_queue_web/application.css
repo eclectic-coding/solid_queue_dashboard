@@ -349,8 +349,60 @@ nav.pagy a[aria-disabled="true"] { color: var(--muted); cursor: default; }
   gap: 1.5rem;
 }
 
+.sqd-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
 @media (max-width: 768px) {
   .sqd-detail-grid { grid-template-columns: 1fr; }
+  .sqd-grid-2 { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .sqd-header__inner {
+    height: auto;
+    min-height: 56px;
+    flex-wrap: wrap;
+    padding: 0.75rem 1rem;
+    gap: 0.5rem;
+  }
+
+  .sqd-nav {
+    flex-wrap: wrap;
+  }
+
+  .sqd-nav a {
+    font-size: 12px;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .sqd-main {
+    padding: 1.5rem 1rem;
+  }
+
+  .sqd-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .sqd-card {
+    overflow-x: auto;
+  }
+
+  .sqd-card__header {
+    flex-wrap: wrap;
+  }
+
+  .sqd-stats {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .sqd-truncate {
+    max-width: 160px;
+  }
 }
 
 .sqd-detail-section { padding: 1.25rem; }
