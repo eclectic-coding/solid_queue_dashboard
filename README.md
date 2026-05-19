@@ -35,8 +35,8 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 
 - **Dashboard** — stat cards showing counts for ready, scheduled, running, blocked, and failed jobs, plus queues, recurring tasks, and processes; auto-refreshes every 5 seconds
 - **Queues** — all queues sorted by name with size, latency, and pause/resume controls
-- **Jobs** — filterable by status (ready, scheduled, claimed, blocked, failed) and by queue; search by job class name with dynamic auto-submit; discard individual or all jobs; Turbo Frame navigation so only the table updates on filter or search; auto-refreshes every 10 seconds
-- **Failed jobs** — list of failed executions with error details; search by class name; filter by queue; retry or discard individually or in bulk
+- **Jobs** — filterable by status (ready, scheduled, claimed, blocked, failed) and by queue; search by job class name with dynamic auto-submit; time-based period filter (1 h / 24 h / 7 d); discard individual or all jobs; Turbo Frame navigation so only the table updates on filter or search; auto-refreshes every 10 seconds
+- **Failed jobs** — list of failed executions with error details; search by class name; filter by queue; time-based period filter; retry or discard individually or in bulk
 - **Job detail** — full arguments, timestamps, blocked-until date, and error backtrace; action buttons based on job status
 - **Queue management** — pause and resume individual queues; queue-scoped job list with status filter, search, and discard
 - **Recurring tasks** — all configured recurring tasks with cron schedule, next run time, last run time, and static/dynamic classification

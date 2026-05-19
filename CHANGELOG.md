@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Auto-refresh for dashboard, jobs list, and processes — a `refresh` Stimulus controller polls the current page at a configurable interval (5 s for dashboard, 10 s for jobs/processes) and swaps the matching `<turbo-frame>` content in place; polling pauses when the browser tab is hidden and resumes with an immediate refresh when the tab becomes visible again
+- Time-based period filter (`?period=1h|24h|7d`) on the jobs and failed jobs indexes — filters results by enqueued timestamp; period pills render inline with the search bar, right-justified; active period is preserved across status tab switches, search, queue filters, and bulk actions
 - `spec/dummy/bin/rails` — enables `bin/rails console` and `bin/rails server` from the dummy app directory during local development
 
 ## [0.5.5] - 2026-05-19
