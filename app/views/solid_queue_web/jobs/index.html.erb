@@ -5,11 +5,11 @@
 
 <div class="sqd-page-header">
   <div class="sqd-filters">
-    <%= link_to "Ready",     jobs_path(status: "ready",     queue: @queue, q: @search), class: @status == "ready"     ? "active" : "" %>
-    <%= link_to "Scheduled", jobs_path(status: "scheduled", queue: @queue, q: @search), class: @status == "scheduled" ? "active" : "" %>
-    <%= link_to "Running",   jobs_path(status: "claimed",   queue: @queue, q: @search), class: @status == "claimed"   ? "active" : "" %>
-    <%= link_to "Blocked",   jobs_path(status: "blocked",   queue: @queue, q: @search), class: @status == "blocked"   ? "active" : "" %>
-    <%= link_to "Failed",    jobs_path(status: "failed",    queue: @queue, q: @search), class: @status == "failed"    ? "active" : "" %>
+    <%= link_to "Ready",     jobs_path(status: "ready",     q: @search), class: @status == "ready"     ? "active" : "" %>
+    <%= link_to "Scheduled", jobs_path(status: "scheduled", q: @search), class: @status == "scheduled" ? "active" : "" %>
+    <%= link_to "Running",   jobs_path(status: "claimed",   q: @search), class: @status == "claimed"   ? "active" : "" %>
+    <%= link_to "Blocked",   jobs_path(status: "blocked",   q: @search), class: @status == "blocked"   ? "active" : "" %>
+    <%= link_to "Failed",    jobs_path(status: "failed",    q: @search), class: @status == "failed"    ? "active" : "" %>
   </div>
   <% if discardable && @jobs.any? %>
     <div class="sqd-actions">
