@@ -4,6 +4,8 @@
 /pkg/
 /tmp/
 /spec/dummy/db/*.sqlite3
+/spec/dummy/db/*.sqlite3-shm
+/spec/dummy/db/*.sqlite3-wal
 /spec/dummy/log/
 /spec/dummy/tmp/
 /coverage/

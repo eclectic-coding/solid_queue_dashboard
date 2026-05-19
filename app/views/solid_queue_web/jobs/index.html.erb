@@ -29,12 +29,12 @@
     <table>
       <thead>
         <tr>
-          <th>Job Class</th>
-          <th>Queue</th>
-          <th>Priority</th>
-          <th>Scheduled At</th>
-          <th>Enqueued At</th>
-          <% if discardable %><th></th><% end %>
+          <th scope="col">Job Class</th>
+          <th scope="col">Queue</th>
+          <th scope="col">Priority</th>
+          <th scope="col">Scheduled At</th>
+          <th scope="col">Enqueued At</th>
+          <% if discardable %><th scope="col"><span class="sqd-sr-only">Actions</span></th><% end %>
         </tr>
       </thead>
       <tbody>
