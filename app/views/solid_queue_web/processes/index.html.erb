@@ -1,4 +1,4 @@
-<%= turbo_frame_tag "processes", data: { controller: "refresh", refresh_interval_value: 10000 } do %>
+<%= turbo_frame_tag "processes", target: "_top", data: { controller: "refresh", refresh_interval_value: 10000 } do %>
 <h1 class="sqd-page-title">Processes</h1>
 
 <div class="sqd-card">
