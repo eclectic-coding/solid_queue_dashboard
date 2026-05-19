@@ -2,13 +2,32 @@
   <h1 class="sqd-page-title">Failed Jobs</h1>
   <% if @failed_jobs.any? %>
     <div class="sqd-actions">
-      <%= button_to "Retry All", retry_all_failed_jobs_path, method: :post, class: "sqd-btn sqd-btn--primary",
+      <%= button_to "Retry All", retry_all_failed_jobs_path,
+            method: :post,
+            params: { queue: @queue, q: @search },
+            class: "sqd-btn sqd-btn--primary",
             data: { confirm: "Retry all #{@failed_jobs.size} failed jobs?" } %>
-      <%= button_to "Discard All", discard_all_failed_jobs_path, method: :post, class: "sqd-btn sqd-btn--danger",
+      <%= button_to "Discard All", discard_all_failed_jobs_path,
+            method: :post,
+            params: { queue: @queue, q: @search },
+            class: "sqd-btn sqd-btn--danger",
             data: { confirm: "Discard all #{@failed_jobs.size} failed jobs? This cannot be undone." } %>
     </div>
   <% end %>
 </div>
+
+<form class="sqd-search" action="<%= failed_jobs_path %>" method="get" data-controller="search">
+  <% if @queue.present? %>
+    <input type="hidden" name="queue" value="<%= @queue %>">
+  <% end %>
+  <input class="sqd-search__input" type="search" name="q" value="<%= @search %>"
+         placeholder="Filter by job class…" autocomplete="off" aria-label="Filter by job class"
+         data-action="input->search#filter">
+  <button type="submit" class="sqd-btn sqd-btn--muted">Search</button>
+  <% if @search.present? %>
+    <%= link_to "Clear", failed_jobs_path(queue: @queue), class: "sqd-btn sqd-btn--muted" %>
+  <% end %>
+</form>
 
 <% if @pagy.last > 1 %>
   <%= @pagy.series_nav.html_safe %>
@@ -33,7 +52,10 @@
           <% job = execution.job %>
           <tr>
             <td><%= link_to job.class_name, job_path(job) %></td>
-            <td class="sqd-mono"><%= job.queue_name %></td>
+            <td>
+              <%= link_to job.queue_name, failed_jobs_path(queue: job.queue_name, q: @search),
+                    class: "sqd-mono", style: "color: inherit;" %>
+            </td>
             <td>
               <% if execution.exception_class.present? %>
                 <div class="sqd-error-msg sqd-truncate" title="<%= execution.exception_class %>: <%= execution.message %>">
@@ -57,3 +79,10 @@
     </table>
   <% end %>
 </div>
+
+<% if @queue.present? %>
+  <p style="margin-top: 0.75rem; font-size: 13px; color: var(--muted);">
+    Filtering by queue: <strong><%= @queue %></strong> &mdash;
+    <%= link_to "Clear filter", failed_jobs_path(q: @search) %>
+  </p>
+<% end %>

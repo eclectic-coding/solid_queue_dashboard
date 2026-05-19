@@ -45,6 +45,11 @@
       <dt>Concurrency Key</dt>
       <dd class="sqd-mono"><%= @job.concurrency_key.presence || "—" %></dd>
 
+      <% if @blocked_execution %>
+        <dt>Blocked Until</dt>
+        <dd class="sqd-mono"><%= @blocked_execution.expires_at ? @blocked_execution.expires_at.strftime("%Y-%m-%d %H:%M:%S %Z") : "—" %></dd>
+      <% end %>
+
       <dt>Enqueued At</dt>
       <dd class="sqd-mono"><%= @job.created_at.strftime("%Y-%m-%d %H:%M:%S %Z") %></dd>
 

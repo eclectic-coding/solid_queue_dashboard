@@ -52,6 +52,20 @@ RSpec.describe "Jobs", type: :request do
       get "/jobs/list/#{ready_job.id}"
       expect(response).to have_http_status(:ok)
     end
+
+    it "shows blocked until date for blocked jobs" do
+      ready_job.ready_execution&.destroy
+      ready_job.update!(concurrency_key: "TestJob/1")
+      allow_any_instance_of(SolidQueue::BlockedExecution).to receive(:set_expires_at)
+      SolidQueue::BlockedExecution.create!(
+        job: ready_job,
+        queue_name: ready_job.queue_name,
+        priority: ready_job.priority,
+        expires_at: 1.hour.from_now
+      )
+      get "/jobs/list/#{ready_job.id}"
+      expect(response.body).to include("Blocked Until")
+    end
   end
 
   describe "GET /jobs/list" do

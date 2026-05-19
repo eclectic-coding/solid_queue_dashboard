@@ -28,6 +28,72 @@ RSpec.describe "FailedJobs", type: :request do
       get "/jobs/failed_jobs"
       expect(response.body).to include("TestJob")
     end
+
+    it "renders a search form" do
+      get "/jobs/failed_jobs"
+      expect(response.body).to include("Filter by job class")
+    end
+  end
+
+  describe "GET /jobs/failed_jobs?q= (class name search)" do
+    let!(:other_job) do
+      j = SolidQueue::Job.create!(
+        queue_name: "default",
+        class_name: "MailerJob",
+        arguments: {},
+        active_job_id: SecureRandom.uuid
+      )
+      j.ready_execution&.destroy
+      SolidQueue::FailedExecution.create!(
+        job: j,
+        error: { exception_class: "RuntimeError", message: "oops", backtrace: [] }
+      )
+      j
+    end
+
+    it "returns only matching jobs" do
+      get "/jobs/failed_jobs", params: { q: "Test" }
+      expect(response.body).to include("TestJob")
+      expect(response.body).not_to include("MailerJob")
+    end
+
+    it "renders a clear link when search is active" do
+      get "/jobs/failed_jobs", params: { q: "Test" }
+      expect(response.body).to include("Clear")
+    end
+  end
+
+  describe "GET /jobs/failed_jobs?queue= (queue filter)" do
+    let!(:other_job) do
+      j = SolidQueue::Job.create!(
+        queue_name: "mailers",
+        class_name: "MailerJob",
+        arguments: {},
+        active_job_id: SecureRandom.uuid
+      )
+      j.ready_execution&.destroy
+      SolidQueue::FailedExecution.create!(
+        job: j,
+        error: { exception_class: "RuntimeError", message: "oops", backtrace: [] }
+      )
+      j
+    end
+
+    it "returns only jobs in the specified queue" do
+      get "/jobs/failed_jobs", params: { queue: "default" }
+      expect(response.body).to include("TestJob")
+      expect(response.body).not_to include("MailerJob")
+    end
+
+    it "shows queue filter indicator" do
+      get "/jobs/failed_jobs", params: { queue: "default" }
+      expect(response.body).to include("Filtering by queue")
+    end
+
+    it "queue names in the table link to the queue filter" do
+      get "/jobs/failed_jobs"
+      expect(response.body).to include("queue=default")
+    end
   end
 
   describe "POST /jobs/failed_jobs/:id/retry" do
@@ -90,6 +156,28 @@ RSpec.describe "FailedJobs", type: :request do
         post "/jobs/failed_jobs/retry_all"
       }.to change(SolidQueue::FailedExecution, :count).to(0)
     end
+
+    it "scopes retry to the specified queue" do
+      other_job = SolidQueue::Job.create!(
+        queue_name: "mailers",
+        class_name: "MailerJob",
+        arguments: {},
+        active_job_id: SecureRandom.uuid
+      )
+      other_job.ready_execution&.destroy
+      SolidQueue::FailedExecution.create!(
+        job: other_job,
+        error: { exception_class: "RuntimeError", message: "oops", backtrace: [] }
+      )
+
+      post "/jobs/failed_jobs/retry_all", params: { queue: "default" }
+      expect(SolidQueue::FailedExecution.joins(:job).where(solid_queue_jobs: { queue_name: "mailers" }).count).to eq(1)
+    end
+
+    it "preserves queue param in redirect" do
+      post "/jobs/failed_jobs/retry_all", params: { queue: "default" }
+      expect(response).to redirect_to("/jobs/failed_jobs?queue=default")
+    end
   end
 
   describe "POST /jobs/failed_jobs/discard_all" do
@@ -104,6 +192,28 @@ RSpec.describe "FailedJobs", type: :request do
       expect {
         post "/jobs/failed_jobs/discard_all"
       }.to change(SolidQueue::FailedExecution, :count).to(0)
+    end
+
+    it "scopes discard to the specified queue" do
+      other_job = SolidQueue::Job.create!(
+        queue_name: "mailers",
+        class_name: "MailerJob",
+        arguments: {},
+        active_job_id: SecureRandom.uuid
+      )
+      other_job.ready_execution&.destroy
+      SolidQueue::FailedExecution.create!(
+        job: other_job,
+        error: { exception_class: "RuntimeError", message: "oops", backtrace: [] }
+      )
+
+      post "/jobs/failed_jobs/discard_all", params: { queue: "default" }
+      expect(SolidQueue::FailedExecution.joins(:job).where(solid_queue_jobs: { queue_name: "mailers" }).count).to eq(1)
+    end
+
+    it "preserves queue param in redirect" do
+      post "/jobs/failed_jobs/discard_all", params: { queue: "default" }
+      expect(response).to redirect_to("/jobs/failed_jobs?queue=default")
     end
   end
 end
