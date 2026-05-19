@@ -1,0 +1,49 @@
+.sqd-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.sqd-stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem 1rem;
+  text-align: center;
+}
+
+.sqd-stat__value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.sqd-stat__label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sqd-stat--ready     .sqd-stat__value { color: var(--success); }
+.sqd-stat--scheduled .sqd-stat__value { color: var(--info); }
+.sqd-stat--claimed   .sqd-stat__value { color: var(--primary); }
+.sqd-stat--failed    .sqd-stat__value { color: var(--danger); }
+.sqd-stat--blocked   .sqd-stat__value { color: var(--warning); }
+.sqd-stat--queues    .sqd-stat__value { color: var(--purple); }
+.sqd-stat--processes .sqd-stat__value { color: var(--muted); }
+.sqd-stat--recurring .sqd-stat__value { color: var(--info); }
+
+.sqd-stat--link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.sqd-stat--link:hover {
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
