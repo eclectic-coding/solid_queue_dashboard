@@ -1,13 +1,11 @@
 module SolidQueueWeb
   class JobsController < ApplicationController
-    before_action :set_status_and_queue, only: [ :destroy, :discard_all ]
+    before_action :set_status, only: [ :destroy, :discard_all ]
 
     def index
       @status = params[:status].presence_in(Job::STATUSES) || "ready"
-      @queue  = params[:queue].presence
       @search = params[:q].presence
       @jobs   = Job::EXECUTION_MODELS[@status].includes(:job)
-      @jobs   = @jobs.where(jobs: { queue_name: @queue }) if @queue.present?
       @jobs   = @jobs.references(:job).where("solid_queue_jobs.class_name LIKE ?", "%#{@search}%") if @search.present?
       @pagy, @jobs = pagy(@jobs.order(created_at: :desc))
     end
@@ -28,24 +26,24 @@ module SolidQueueWeb
       @remaining_count = filtered_scope(model).count
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to jobs_path(status: @status, queue: @queue), notice: "Job discarded." }
+        format.html { redirect_to jobs_path(status: @status), notice: "Job discarded." }
       end
     rescue ArgumentError => e
-      redirect_to jobs_path(status: @status, queue: @queue), alert: e.message
+      redirect_to jobs_path(status: @status), alert: e.message
     rescue => e
-      redirect_to jobs_path(status: @status, queue: @queue), alert: "Could not discard job: #{e.message}"
+      redirect_to jobs_path(status: @status), alert: "Could not discard job: #{e.message}"
     end
 
     def discard_all
       model = execution_model_for!(@status)
       jobs = filtered_scope(model).map(&:job)
       model.discard_all_from_jobs(jobs)
-      redirect_to jobs_path(status: @status, queue: @queue),
+      redirect_to jobs_path(status: @status),
         notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
     rescue ArgumentError => e
-      redirect_to jobs_path(status: @status, queue: @queue), alert: e.message
+      redirect_to jobs_path(status: @status), alert: e.message
     rescue => e
-      redirect_to jobs_path(status: @status, queue: @queue), alert: "Could not discard jobs: #{e.message}"
+      redirect_to jobs_path(status: @status), alert: "Could not discard jobs: #{e.message}"
     end
 
     private
@@ -59,14 +57,12 @@ module SolidQueueWeb
       "finished"
     end
 
-    def set_status_and_queue
+    def set_status
       @status = params[:status]
-      @queue  = params[:queue].presence
     end
 
     def filtered_scope(model)
-      scope = model.includes(:job)
-      @queue.present? ? scope.where(jobs: { queue_name: @queue }) : scope
+      model.includes(:job)
     end
 
     def execution_model_for!(status)
