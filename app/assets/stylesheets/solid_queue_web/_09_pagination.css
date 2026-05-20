@@ -24,4 +24,4 @@ nav.pagy a {
 nav.pagy a:hover:not([aria-disabled="true"]) { background: var(--bg); }
 nav.pagy a[aria-current="page"] { background: var(--primary); color: #fff; border-color: var(--primary); }
 nav.pagy a[role="separator"],
-nav.pagy a[aria-disabled="true"] { color: var(--muted); cursor: default; }
+nav.pagy a[aria-disabled="true"]:not([aria-current="page"]) { color: var(--muted); cursor: default; }
