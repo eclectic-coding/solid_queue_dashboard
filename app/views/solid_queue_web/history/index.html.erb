@@ -28,10 +28,6 @@
   </p>
 <% end %>
 
-<% if @pagy.last > 1 %>
-  <%= @pagy.series_nav.html_safe %>
-<% end %>
-
 <% if @jobs.any? %>
   <div class="sqd-card">
     <table>
@@ -62,4 +58,8 @@
   <div class="sqd-card">
     <div class="sqd-empty">No finished jobs found.</div>
   </div>
+<% end %>
+
+<% if @pagy.last > 1 %>
+  <%= @pagy.series_nav.html_safe %>
 <% end %>
