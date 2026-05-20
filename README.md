@@ -33,7 +33,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 
 ## Features
 
-- **Dashboard** — stat cards showing counts for ready, scheduled, running, blocked, and failed jobs, plus queues, recurring tasks, and processes; auto-refreshes every 5 seconds
+- **Dashboard** — stat cards showing counts for ready, scheduled, running, blocked, and failed jobs, plus queues, recurring tasks, and processes; "Done (1h)" and "Done (24h)" throughput cards; a "Throughput — Last 12 Hours" bar chart showing completed-job counts per hour (pure CSS, no charting library); auto-refreshes every 5 seconds
 - **Queues** — all queues sorted by name with size, latency, and pause/resume controls
 - **Jobs** — filterable by status (ready, scheduled, claimed, blocked, failed) and by queue; search by job class name with dynamic auto-submit; time-based period filter (1 h / 24 h / 7 d); discard individual or all jobs; Turbo Frame navigation so only the table updates on filter or search; auto-refreshes every 10 seconds
 - **Failed jobs** — list of failed executions with error details; search by class name; filter by queue; time-based period filter; retry or discard individually or in bulk
