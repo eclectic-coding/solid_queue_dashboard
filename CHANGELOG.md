@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Queue latency detail — oldest ready job age per queue; replaces the verbose `human_latency` string with `format_duration` output (e.g. "1h 12m"); color-coded orange above 1 hour, red above 24 hours; hovering shows the absolute UTC timestamp of the oldest waiting job; empty queues show "—"
 - Queue throughput columns — Done (24h) and Failed (24h) counts per queue on the Queues page; powered by two grouped COUNT queries; Done renders in green, Failed renders in red when non-zero
 - Auto-refresh on the Job History page — wraps the page in a turbo-frame polled every 10 seconds, matching the jobs and processes pages; pauses when the browser tab is hidden
 - Job History page (`/jobs/history`) — browsable list of all finished jobs (`finished_at IS NOT NULL`) ordered by most-recent-first; columns show class name (links to job detail), queue (clickable queue filter), duration (formatted as `Xs`, `Xm Xs`, or `Xh Xm`), and finished timestamp; filterable by time period (1h / 24h / 7d), queue name, and class name search; paginated; "Done (1h)" and "Done (24h)" dashboard stat cards now link to the history page pre-filtered by period; "History" nav link added between Jobs and Failed

@@ -89,11 +89,17 @@
   gap: 0.5rem;
 }
 
+@keyframes sqd-flash-dismiss {
+  0%, 75%  { opacity: 1; max-height: 120px; padding: 0.75rem 1rem; margin-bottom: 1rem; }
+  100%     { opacity: 0; max-height: 0;     padding: 0;            margin-bottom: 0;   overflow: hidden; }
+}
+
 .sqd-flash {
   padding: 0.75rem 1rem;
   border-radius: 6px;
   margin-bottom: 1rem;
   font-size: 13px;
+  animation: sqd-flash-dismiss 6s ease-in forwards;
 }
 .sqd-flash--notice { background: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
 .sqd-flash--alert  { background: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }

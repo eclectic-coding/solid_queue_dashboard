@@ -27,6 +27,18 @@ RSpec.describe "Queues", type: :request do
       expect(response.body).to include("Failed (24h)")
     end
 
+    it "shows formatted latency for a queue with ready jobs" do
+      get "/jobs/queues"
+      expect(response.body).to include("Latency")
+      expect(response.body).to match(/\d+s|\d+m \d+s|\d+h \d+m/)
+    end
+
+    it "shows a dash for queues with no ready jobs" do
+      SolidQueue::ReadyExecution.delete_all
+      get "/jobs/queues"
+      expect(response.body).to include("—")
+    end
+
     it "shows completed count for a queue" do
       job = SolidQueue::Job.new(
         queue_name: "default", class_name: "TestJob",
