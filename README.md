@@ -123,9 +123,6 @@ Planned features, roughly ordered by priority:
 - Multi-database support — when Solid Queue runs on a separate database from the host app
 - Read replica support — route dashboard queries to a replica to avoid impacting the primary
 
-**Code quality**
-- Rails controller conventions — complete the 7-action refactor: `QueuesController#pause` / `#resume` → `Queues::PausesController#create` / `#destroy`; `Queues::JobsController#discard_all` → map to `#destroy` matching the pattern already applied to `JobsController`
-
 Pull requests for any of these are welcome. See [Contributing](#contributing) below.
 
 ## Contributing
