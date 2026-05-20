@@ -10,6 +10,8 @@
           <th scope="col">Name</th>
           <th scope="col">Size</th>
           <th scope="col">Latency</th>
+          <th scope="col">Done (24h)</th>
+          <th scope="col">Failed (24h)</th>
           <th scope="col">Status</th>
           <th scope="col"><span class="sqd-sr-only">Actions</span></th>
         </tr>
@@ -20,6 +22,8 @@
             <td class="sqd-mono"><%= queue.name %></td>
             <td><%= queue.size %></td>
             <td><%= queue.human_latency %></td>
+            <td style="color: var(--success);"><%= @completed_24h[queue.name] || 0 %></td>
+            <td style="color: <%= (@failed_24h[queue.name] || 0) > 0 ? "var(--danger)" : "inherit" %>;"><%= @failed_24h[queue.name] || 0 %></td>
             <td>
               <% if queue.paused? %>
                 <span class="sqd-badge sqd-badge--paused">Paused</span>
