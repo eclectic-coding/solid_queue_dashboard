@@ -34,6 +34,44 @@
     <div class="sqd-stat__value"><%= @stats[:processes] %></div>
     <div class="sqd-stat__label">Processes</div>
   <% end %>
+  <div class="sqd-stat sqd-stat--done">
+    <div class="sqd-stat__value"><%= @throughput[:completed_1h] %></div>
+    <div class="sqd-stat__label">Done (1h)</div>
+  </div>
+  <div class="sqd-stat sqd-stat--done">
+    <div class="sqd-stat__value"><%= @throughput[:completed_24h] %></div>
+    <div class="sqd-stat__label">Done (24h)</div>
+  </div>
+</div>
+
+<% max_val = [@sparkline.max, 1].max %>
+<div class="sqd-card" style="margin-bottom: 1rem;">
+  <div class="sqd-card__header">
+    <span class="sqd-card__title">Throughput &mdash; Last 12 Hours</span>
+    <div class="sqd-throughput__summary">
+      <span>1h: <strong><%= @throughput[:completed_1h] %></strong></span>
+      <span>24h: <strong><%= @throughput[:completed_24h] %></strong></span>
+    </div>
+  </div>
+  <% if @throughput[:completed_24h] == 0 %>
+    <div class="sqd-sparkline__empty">No completed jobs in the last 24 hours</div>
+  <% else %>
+    <div class="sqd-sparkline" aria-label="Jobs completed per hour over the last 12 hours">
+      <% @sparkline.each_with_index do |count, i| %>
+        <% pct = (count.to_f / max_val * 100).round %>
+        <% hour_start = (12 - i).hours.ago %>
+        <% show_tick = [0, 3, 6, 9, 11].include?(i) %>
+        <div class="sqd-sparkline__col">
+          <div class="sqd-sparkline__bar-wrap">
+            <div class="sqd-sparkline__bar"
+                 style="height: <%= [pct, 3].max %>%"
+                 title="<%= hour_start.strftime('%-I%p').downcase %>: <%= count %> <%= "job".pluralize(count) %>"></div>
+          </div>
+          <div class="sqd-sparkline__tick"><%= show_tick ? (i == 11 ? "now" : hour_start.strftime("%-I%p").downcase) : "" %></div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 </div>
 
 <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">

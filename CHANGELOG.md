@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Throughput section on the dashboard — "Done (1h)" and "Done (24h)" stat cards show completed-job counts; a full-width "Throughput — Last 12 Hours" card displays a pure-CSS bar chart (12 hourly buckets, oldest left → newest right, tick labels every 3 bars) with no JavaScript or charting library; powered by a single `pluck(:finished_at)` query with Ruby-side grouping for DB-agnostic compatibility; seed data updated with a realistic daily-pattern distribution so the chart shows meaningful data out of the box
+
 ### Changed
 
 - CSS split into 10 focused partial files (`_01_base.css` through `_10_responsive.css`); `inline_styles` helper globs `_*.css` files in sort order — runtime output is identical, authoring is easier

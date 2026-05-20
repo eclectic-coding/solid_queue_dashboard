@@ -31,7 +31,7 @@ supervisor = SolidQueue::Process.create!(kind: "Supervisor", pid: 12_345, hostna
 worker0    = SolidQueue::Process.create!(kind: "Worker",     pid: 12_346, hostname: "web-1.local", name: "worker-0-web-1",   last_heartbeat_at: 5.seconds.ago,   metadata: { queues: %w[default mailers], thread_count: 3 }.to_json)
 worker1    = SolidQueue::Process.create!(kind: "Worker",     pid: 12_347, hostname: "web-1.local", name: "worker-1-web-1",   last_heartbeat_at: 8.seconds.ago,   metadata: { queues: %w[critical], thread_count: 1 }.to_json)
 SolidQueue::Process.create!(kind: "Dispatcher", pid: 12_348, hostname: "web-1.local", name: "dispatcher-web-1", last_heartbeat_at: 12.seconds.ago, metadata: { polling_interval: 1 }.to_json, supervisor_id: supervisor.id)
-workers = [ worker0, worker1 ]
+workers = [worker0, worker1]
 
 puts "Seeding ready jobs..."
 # Job.create! triggers after_create :prepare_for_execution which auto-creates ReadyExecution
@@ -40,7 +40,7 @@ puts "Seeding ready jobs..."
     queue_name: queues.sample,
     class_name: job_classes.sample,
     arguments: { job_id: i + 1, user_id: rand(1000) }.to_json,
-    priority: [ 0, 5, 10 ].sample,
+    priority: [0, 5, 10].sample,
     active_job_id: SecureRandom.uuid,
     created_at: rand(1..48).hours.ago,
     updated_at: rand(1..48).hours.ago
@@ -101,9 +101,46 @@ errors = [
   job.ready_execution&.destroy
   SolidQueue::FailedExecution.create!(
     job: job,
-    error: { exception_class: err[:class], message: err[:message], backtrace: [ "app/jobs/#{job.class_name.underscore}.rb:42" ] },
+    error: { exception_class: err[:class], message: err[:message], backtrace: ["app/jobs/#{job.class_name.underscore}.rb:42"] },
     created_at: job.created_at
   )
+end
+
+puts "Seeding finished jobs (for throughput chart)..."
+# Recent jobs — guaranteed within last 30 minutes so Done (1h) is non-zero
+5.times do |i|
+  job = SolidQueue::Job.new(
+    queue_name: queues.sample,
+    class_name: job_classes.sample,
+    arguments: { recent: true, idx: i }.to_json,
+    priority: 0,
+    active_job_id: SecureRandom.uuid
+  )
+  finished_at = rand(2..28).minutes.ago
+  job.finished_at = finished_at
+  job.created_at  = finished_at - rand(10..60).seconds
+  job.updated_at  = finished_at
+  job.save!(validate: false)
+end
+
+# Distributed across last 24h with a realistic daily pattern (more during business hours)
+hour_weights = [0, 0, 1, 1, 1, 1, 2, 3, 5, 6, 6, 5, 4, 5, 6, 6, 5, 4, 3, 3, 2, 2, 1, 1]
+hour_weights.each_with_index do |weight, hours_ago|
+  next if hours_ago == 0
+  weight.times do |i|
+    job = SolidQueue::Job.new(
+      queue_name: queues.sample,
+      class_name: job_classes.sample,
+      arguments: { finished_seed: true, idx: i }.to_json,
+      priority: 0,
+      active_job_id: SecureRandom.uuid
+    )
+    finished_at = (hours_ago + rand).hours.ago
+    job.finished_at = finished_at
+    job.created_at  = finished_at - rand(10..120).seconds
+    job.updated_at  = finished_at
+    job.save!(validate: false)
+  end
 end
 
 puts "Done! Created:"
@@ -112,3 +149,4 @@ puts "  #{SolidQueue::ScheduledExecution.count} scheduled jobs"
 puts "  #{SolidQueue::ClaimedExecution.count} claimed (running) jobs"
 puts "  #{SolidQueue::FailedExecution.count} failed jobs"
 puts "  #{SolidQueue::Process.count} processes"
+puts "  #{SolidQueue::Job.where.not(finished_at: nil).count} finished jobs"
