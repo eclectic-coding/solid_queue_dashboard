@@ -13,6 +13,10 @@ module SolidQueueWeb
         .where(created_at: 24.hours.ago..now)
         .group("solid_queue_jobs.queue_name")
         .count
+      @oldest_ready = SolidQueue::ReadyExecution
+        .joins(:job)
+        .group("solid_queue_jobs.queue_name")
+        .minimum("solid_queue_jobs.created_at")
     end
 
     def pause
