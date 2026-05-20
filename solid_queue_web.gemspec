@@ -4,8 +4,8 @@ require_relative "lib/solid_queue_web/version"
 Gem::Specification.new do |spec|
   spec.name        = "solid_queue_web"
   spec.version     = SolidQueueWeb::VERSION
-  spec.authors     = [ "Chuck Smith" ]
-  spec.email       = [ "eclectic-coding@users.noreply.github.com" ]
+  spec.authors     = ["Chuck Smith"]
+  spec.email       = ["eclectic-coding@users.noreply.github.com"]
   spec.homepage    = "https://github.com/eclectic-coding/solid_queue_web"
   spec.summary     = "A Rails engine dashboard for monitoring and managing Solid Queue jobs."
   spec.description = "Mount SolidQueueWeb in any Rails app using Solid Queue to get a " \

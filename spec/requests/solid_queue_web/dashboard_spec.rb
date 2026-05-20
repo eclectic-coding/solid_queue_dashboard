@@ -18,6 +18,32 @@ RSpec.describe "Dashboard", type: :request do
       expect(response.body).to include("Recurring")
       expect(response.body).to include("recurring_tasks")
     end
+
+    it "shows Done (1h) and Done (24h) stat cards" do
+      get "/jobs"
+      expect(response.body).to include("Done (1h)")
+      expect(response.body).to include("Done (24h)")
+    end
+
+    it "renders the throughput card with completed job counts" do
+      job = SolidQueue::Job.new(
+        queue_name: "default", class_name: "TestJob",
+        arguments: {}.to_json, priority: 0, active_job_id: SecureRandom.uuid
+      )
+      job.finished_at = 30.minutes.ago
+      job.created_at = 35.minutes.ago
+      job.updated_at = 30.minutes.ago
+      job.save!(validate: false)
+
+      get "/jobs"
+      expect(response.body).to include("Throughput")
+      expect(response.body).to include("sqd-sparkline")
+    end
+
+    it "shows empty-state message when no jobs have finished" do
+      get "/jobs"
+      expect(response.body).to include("No completed jobs in the last 24 hours")
+    end
   end
 
   describe "authentication" do

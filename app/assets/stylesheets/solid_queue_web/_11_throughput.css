@@ -1,0 +1,68 @@
+.sqd-throughput__summary {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.sqd-throughput__summary strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.sqd-sparkline {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 80px;
+  padding: 0.75rem 1.25rem 0;
+}
+
+.sqd-sparkline__col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  height: 100%;
+}
+
+.sqd-sparkline__bar-wrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.sqd-sparkline__bar {
+  width: 100%;
+  background: var(--primary);
+  border-radius: 2px 2px 0 0;
+  min-height: 2px;
+  opacity: 0.75;
+  transition: opacity 0.15s;
+}
+
+.sqd-sparkline__bar:hover {
+  opacity: 1;
+}
+
+.sqd-sparkline__tick {
+  font-size: 10px;
+  color: var(--muted);
+  white-space: nowrap;
+  min-height: 14px;
+  line-height: 14px;
+}
+
+.sqd-sparkline__empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 1rem 1.25rem;
+}
+
+.sqd-stat--done .sqd-stat__value { color: var(--success); }

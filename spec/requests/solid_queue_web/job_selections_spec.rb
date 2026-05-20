@@ -25,46 +25,46 @@ RSpec.describe "Job Selections", type: :request do
   describe "DELETE /jobs/list/selection (discard selected)" do
     it "discards only the selected executions" do
       delete "/jobs/list/selection",
-             params: { status: "ready", ids: [ ready_execution.id ] }
+             params: { status: "ready", ids: [ready_execution.id] }
       expect(SolidQueue::ReadyExecution.where(id: ready_execution.id)).to be_empty
       expect(SolidQueue::ReadyExecution.where(id: other_execution.id)).to exist
     end
 
     it "redirects to the jobs list preserving status" do
       delete "/jobs/list/selection",
-             params: { status: "ready", ids: [ ready_execution.id ] }
+             params: { status: "ready", ids: [ready_execution.id] }
       expect(response).to redirect_to(/status=ready/)
     end
 
     it "preserves the period param in the redirect" do
       delete "/jobs/list/selection",
-             params: { status: "ready", period: "1h", ids: [ ready_execution.id ] }
+             params: { status: "ready", period: "1h", ids: [ready_execution.id] }
       expect(response).to redirect_to(/period=1h/)
     end
 
     it "discards multiple selected executions" do
       delete "/jobs/list/selection",
-             params: { status: "ready", ids: [ ready_execution.id, other_execution.id ] }
+             params: { status: "ready", ids: [ready_execution.id, other_execution.id] }
       expect(SolidQueue::ReadyExecution.count).to eq(0)
     end
 
     it "shows a notice with the count of discarded jobs" do
       delete "/jobs/list/selection",
-             params: { status: "ready", ids: [ ready_execution.id ] }
+             params: { status: "ready", ids: [ready_execution.id] }
       follow_redirect!
       expect(response.body).to include("discarded")
     end
 
     it "rejects non-discardable statuses" do
       delete "/jobs/list/selection",
-             params: { status: "claimed", ids: [ ready_execution.id ] }
+             params: { status: "claimed", ids: [ready_execution.id] }
       expect(response).to redirect_to(/status=claimed/)
     end
 
     it "handles unexpected errors gracefully" do
       allow(SolidQueue::ReadyExecution).to receive(:discard_all_from_jobs).and_raise(RuntimeError, "db error")
       delete "/jobs/list/selection",
-             params: { status: "ready", ids: [ ready_execution.id ] }
+             params: { status: "ready", ids: [ready_execution.id] }
       expect(response).to redirect_to(/status=ready/)
       follow_redirect!
       expect(response.body).to include("Could not discard jobs")

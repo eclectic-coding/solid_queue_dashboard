@@ -7,7 +7,7 @@ require "rspec/core/rake_task"
 RuboCop::RakeTask.new
 RSpec::Core::RakeTask.new(:spec)
 
-task default: [ :rubocop, :spec ]
+task default: [:rubocop, :spec]
 
 namespace :dev do
   def dummy_env
@@ -32,5 +32,5 @@ namespace :dev do
   end
 
   desc "Reset and reseed the dummy app development database"
-  task reset: [ :setup, :seed ]
+  task reset: [:setup, :seed]
 end
