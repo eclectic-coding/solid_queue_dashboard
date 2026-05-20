@@ -91,3 +91,7 @@
   background: var(--border);
   opacity: 0.5;
 }
+
+.sqd-sparkline__bar--depth {
+  background: var(--purple);
+}

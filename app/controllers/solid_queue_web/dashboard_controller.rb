@@ -23,6 +23,14 @@ module SolidQueueWeb
         to   = i == 11 ? now : (11 - i).hours.ago
         finished_times.count { |t| t >= from && t < to }
       end
+
+      job_timestamps = SolidQueue::Job
+        .where("created_at >= ? OR finished_at IS NULL", 72.hours.ago)
+        .pluck(:created_at, :finished_at)
+      @depth_sparkline = 12.times.map do |i|
+        t = i == 11 ? now : (12 - i).hours.ago
+        job_timestamps.count { |created, finished| created <= t && (finished.nil? || finished > t) }
+      end
     end
 
     def retry_all_failed
