@@ -92,7 +92,7 @@
                        data-action="change->selection#toggle"
                        aria-label="Select job <%= job.class_name %>">
               </td>
-              <td><%= link_to job.class_name, job_path(job) %></td>
+              <td><%= link_to job.class_name, job_path(job), class: "sqd-table-link" %></td>
               <td>
                 <%= link_to job.queue_name, failed_jobs_path(queue: job.queue_name, q: @search, period: @period),
                       class: "sqd-mono", style: "color: inherit;" %>

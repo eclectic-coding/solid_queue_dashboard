@@ -87,7 +87,7 @@
               </td>
               <td>
                 <span class="sqd-badge sqd-badge--<%= @status %>"><%= @status %></span>
-                <%= link_to job.class_name, job_path(job), style: "margin-left: 0.5rem;", data: { turbo_frame: "_top" } %>
+                <%= link_to job.class_name, job_path(job), class: "sqd-table-link", style: "margin-left: 0.5rem;", data: { turbo_frame: "_top" } %>
               </td>
               <td>
                 <%= link_to job.queue_name, queue_jobs_path(queue_name: job.queue_name, status: @status),
@@ -116,6 +116,7 @@
     <% if @jobs.empty? %>
       <div class="sqd-empty">No <%= @status %> jobs.</div>
     <% else %>
+      <% slow_threshold = @status == "claimed" ? SolidQueueWeb.slow_job_threshold : nil %>
       <table>
         <thead>
           <tr>
@@ -124,15 +125,22 @@
             <th scope="col">Priority</th>
             <th scope="col">Scheduled At</th>
             <th scope="col">Enqueued At</th>
+            <% if @status == "claimed" %>
+              <th scope="col">Running For</th>
+            <% end %>
           </tr>
         </thead>
         <tbody>
           <% @jobs.each do |execution| %>
             <% job = execution.job %>
-            <tr id="execution_<%= execution.id %>">
+            <% slow = slow_threshold && execution.created_at <= slow_threshold.ago %>
+            <tr id="execution_<%= execution.id %>"<%= slow ? ' class="sqd-row--slow"'.html_safe : "" %>>
               <td>
                 <span class="sqd-badge sqd-badge--<%= @status %>"><%= @status %></span>
-                <%= link_to job.class_name, job_path(job), style: "margin-left: 0.5rem;", data: { turbo_frame: "_top" } %>
+                <% if slow %>
+                  <span class="sqd-badge sqd-badge--slow">slow</span>
+                <% end %>
+                <%= link_to job.class_name, job_path(job), class: "sqd-table-link", style: "margin-left: 0.5rem;", data: { turbo_frame: "_top" } %>
               </td>
               <td>
                 <%= link_to job.queue_name, queue_jobs_path(queue_name: job.queue_name, status: @status),
@@ -143,6 +151,11 @@
                 <%= job.scheduled_at ? job.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") : "—" %>
               </td>
               <td class="sqd-mono"><%= job.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+              <% if @status == "claimed" %>
+                <td class="sqd-mono<%= slow ? " sqd-slow-duration" : "" %>">
+                  <%= time_ago_in_words(execution.created_at) %>
+                </td>
+              <% end %>
             </tr>
           <% end %>
         </tbody>

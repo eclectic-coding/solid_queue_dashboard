@@ -136,6 +136,20 @@
     </div>
   <% end %>
 
+  <% if SolidQueueWeb.slow_job_threshold && @stats.slow_jobs_count > 0 %>
+    <div class="sqd-card">
+      <div class="sqd-card__header">
+        <span class="sqd-card__title">Slow Jobs</span>
+      </div>
+      <div style="padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+        <p style="color: var(--warning); font-size: 13px;">
+          <%= pluralize(@stats.slow_jobs_count, "job") %> running longer than <%= distance_of_time_in_words(SolidQueueWeb.slow_job_threshold) %>.
+        </p>
+        <%= link_to "Review →", jobs_path(status: "claimed"), class: "sqd-btn sqd-btn--muted" %>
+      </div>
+    </div>
+  <% end %>
+
   <% if @stats.counts[:blocked] > 0 %>
     <div class="sqd-card">
       <div class="sqd-card__header">
