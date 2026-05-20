@@ -83,25 +83,11 @@ Add to your `config/routes.rb`:
 mount SolidQueueWeb::Engine, at: "/jobs"
 ```
 
-The dashboard will be available at `/jobs`. See [Authentication](#authentication) to restrict access to admin users.
-
-## Authentication
-
-The engine ships with no authentication by default. Add a block to an initializer (e.g. `config/initializers/solid_queue_web.rb`) to protect the dashboard:
-
-```ruby
-SolidQueueWeb.authenticate do
-  # Called in the context of ApplicationController — use any helper available there.
-  # Return a truthy value to allow access, falsy to deny (triggers HTTP Basic prompt).
-  current_user&.admin?
-end
-```
-
-HTTP Basic authentication is used as a fallback when the block returns falsy.
+The dashboard will be available at `/jobs`.
 
 ## Configuration
 
-All settings are optional — the dashboard works with zero configuration. To override defaults, add a block to an initializer (e.g. `config/initializers/solid_queue_web.rb`):
+All settings are optional — the dashboard works with zero configuration. Create `config/initializers/solid_queue_web.rb` to customize behavior:
 
 ```ruby
 SolidQueueWeb.configure do |config|
@@ -110,13 +96,19 @@ SolidQueueWeb.configure do |config|
   config.default_refresh_interval   = 30_000 # jobs/processes/history auto-refresh in ms (default: 10_000)
   config.search_results_limit       = 10     # max results per status in global search (default: 25)
 end
+
+SolidQueueWeb.authenticate do
+  # Called in the context of ApplicationController — use any helper available there.
+  # Return a truthy value to allow access, falsy to deny (triggers HTTP Basic prompt).
+  current_user&.admin?
+end
 ```
+
+No authentication is enforced by default. When the `authenticate` block returns falsy, HTTP Basic auth is used as a fallback.
 
 ## Roadmap
 
 Planned features, roughly ordered by priority:
-
-**Medium-term**
 
 **Larger scope**
 - CSV export of any filtered view (jobs, failed jobs, history)
