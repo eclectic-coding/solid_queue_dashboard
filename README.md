@@ -47,6 +47,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **Dark mode** — ☽/☀ toggle in the header; preference persists to `localStorage` and defaults to the OS `prefers-color-scheme` on first visit; zero extra dependencies — implemented via CSS custom properties and a small Stimulus controller
 - **Dashboard quick actions** — "Retry All Failed" and "Discard All Blocked" cards appear on the dashboard only when the respective count is non-zero; one-click bulk operations with confirm dialogs, keeping the dashboard clean when everything is healthy
 - **CSV export** — "Export CSV" button on the jobs, failed jobs, and history pages downloads all records matching the current filters; columns are tailored per view
+- **Slow job detection** — when `slow_job_threshold` is configured, claimed jobs running longer than the threshold are flagged with an orange row, a "slow" badge, and a "Running For" duration column on the Running tab; a "Slow Jobs" warning card appears on the dashboard with a link to the Running tab
 
 ## Screenshots
 
@@ -96,6 +97,7 @@ SolidQueueWeb.configure do |config|
   config.dashboard_refresh_interval = 10_000 # dashboard auto-refresh in ms (default: 5_000)
   config.default_refresh_interval   = 30_000 # jobs/processes/history auto-refresh in ms (default: 10_000)
   config.search_results_limit       = 10     # max results per status in global search (default: 25)
+  config.slow_job_threshold         = 5.minutes # flag claimed jobs running longer than this (default: nil = disabled)
 end
 
 SolidQueueWeb.authenticate do
@@ -110,9 +112,6 @@ No authentication is enforced by default. When the `authenticate` block returns 
 ## Roadmap
 
 Planned features, roughly ordered by priority:  
-
-**Observability**
-- Slow job detection — flag jobs exceeding a configurable duration threshold
 
 **Operations**
 - Scheduled job management — reschedule a job to run immediately, or push its `scheduled_at` forward
