@@ -1,6 +1,6 @@
 module SolidQueueWeb
   class DashboardStats
-    attr_reader :stats, :throughput, :sparkline, :depth_sparkline
+    attr_reader :counts, :throughput, :sparkline, :depth_sparkline
 
     def initialize
       @now = Time.current
@@ -10,7 +10,7 @@ module SolidQueueWeb
     private
 
     def compute
-      @stats = {
+      @counts = {
         ready:     SolidQueue::ReadyExecution.count,
         scheduled: SolidQueue::ScheduledExecution.count,
         claimed:   SolidQueue::ClaimedExecution.count,

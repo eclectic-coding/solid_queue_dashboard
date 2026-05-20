@@ -3,61 +3,61 @@
 
 <div class="sqd-stats">
   <%= link_to jobs_path(status: "ready"), class: "sqd-stat sqd-stat--ready sqd-stat--link" do %>
-    <div class="sqd-stat__value"><%= @stats[:ready] %></div>
+    <div class="sqd-stat__value"><%= @stats.counts[:ready] %></div>
     <div class="sqd-stat__label">Ready</div>
   <% end %>
   <%= link_to jobs_path(status: "scheduled"), class: "sqd-stat sqd-stat--scheduled sqd-stat--link" do %>
-    <div class="sqd-stat__value"><%= @stats[:scheduled] %></div>
+    <div class="sqd-stat__value"><%= @stats.counts[:scheduled] %></div>
     <div class="sqd-stat__label">Scheduled</div>
   <% end %>
   <%= link_to jobs_path(status: "claimed"), class: "sqd-stat sqd-stat--claimed sqd-stat--link" do %>
-    <div class="sqd-stat__value"><%= @stats[:claimed] %></div>
+    <div class="sqd-stat__value"><%= @stats.counts[:claimed] %></div>
     <div class="sqd-stat__label">Running</div>
   <% end %>
   <%= link_to jobs_path(status: "blocked"), class: "sqd-stat sqd-stat--blocked sqd-stat--link" do %>
-    <div class="sqd-stat__value"><%= @stats[:blocked] %></div>
+    <div class="sqd-stat__value"><%= @stats.counts[:blocked] %></div>
     <div class="sqd-stat__label">Blocked</div>
   <% end %>
   <%= link_to failed_jobs_path, class: "sqd-stat sqd-stat--failed sqd-stat--link" do %>
-    <div class="sqd-stat__value"><%= @stats[:failed] %></div>
+    <div class="sqd-stat__value"><%= @stats.counts[:failed] %></div>
     <div class="sqd-stat__label">Failed</div>
   <% end %>
   <%= link_to queues_path, class: "sqd-stat sqd-stat--queues sqd-stat--link" do %>
-    <div class="sqd-stat__value"><%= @stats[:queues] %></div>
+    <div class="sqd-stat__value"><%= @stats.counts[:queues] %></div>
     <div class="sqd-stat__label">Queues</div>
   <% end %>
   <%= link_to recurring_tasks_path, class: "sqd-stat sqd-stat--recurring sqd-stat--link" do %>
-    <div class="sqd-stat__value"><%= @stats[:recurring] %></div>
+    <div class="sqd-stat__value"><%= @stats.counts[:recurring] %></div>
     <div class="sqd-stat__label">Recurring</div>
   <% end %>
   <%= link_to processes_path, class: "sqd-stat sqd-stat--processes sqd-stat--link" do %>
-    <div class="sqd-stat__value"><%= @stats[:processes] %></div>
+    <div class="sqd-stat__value"><%= @stats.counts[:processes] %></div>
     <div class="sqd-stat__label">Processes</div>
   <% end %>
   <%= link_to history_path(period: "1h"), class: "sqd-stat sqd-stat--done sqd-stat--link" do %>
-    <div class="sqd-stat__value"><%= @throughput[:completed_1h] %></div>
+    <div class="sqd-stat__value"><%= @stats.throughput[:completed_1h] %></div>
     <div class="sqd-stat__label">Done (1h)</div>
   <% end %>
   <%= link_to history_path(period: "24h"), class: "sqd-stat sqd-stat--done sqd-stat--link" do %>
-    <div class="sqd-stat__value"><%= @throughput[:completed_24h] %></div>
+    <div class="sqd-stat__value"><%= @stats.throughput[:completed_24h] %></div>
     <div class="sqd-stat__label">Done (24h)</div>
   <% end %>
 </div>
 
-<% max_val = [@sparkline.max, 1].max %>
+<% max_val = [@stats.sparkline.max, 1].max %>
 <div class="sqd-card" style="margin-bottom: 1rem;">
   <div class="sqd-card__header">
     <span class="sqd-card__title">Throughput &mdash; Last 12 Hours</span>
     <div class="sqd-throughput__summary">
-      <span>1h: <strong><%= @throughput[:completed_1h] %></strong></span>
-      <span>24h: <strong><%= @throughput[:completed_24h] %></strong></span>
+      <span>1h: <strong><%= @stats.throughput[:completed_1h] %></strong></span>
+      <span>24h: <strong><%= @stats.throughput[:completed_24h] %></strong></span>
     </div>
   </div>
-  <% if @throughput[:completed_24h] == 0 %>
+  <% if @stats.throughput[:completed_24h] == 0 %>
     <div class="sqd-sparkline__empty">No completed jobs in the last 24 hours</div>
   <% else %>
     <div class="sqd-sparkline" aria-label="Jobs completed per hour over the last 12 hours">
-      <% @sparkline.each_with_index do |count, i| %>
+      <% @stats.sparkline.each_with_index do |count, i| %>
         <% pct = (count.to_f / max_val * 100).round %>
         <% hour_start = (12 - i).hours.ago %>
         <% show_tick = [0, 3, 6, 9, 11].include?(i) %>
@@ -74,8 +74,8 @@
   <% end %>
 </div>
 
-<% current_depth = @stats[:ready] + @stats[:scheduled] + @stats[:claimed] + @stats[:blocked] + @stats[:failed] %>
-<% max_depth = [@depth_sparkline.max, 1].max %>
+<% current_depth = @stats.counts[:ready] + @stats.counts[:scheduled] + @stats.counts[:claimed] + @stats.counts[:blocked] + @stats.counts[:failed] %>
+<% max_depth = [@stats.depth_sparkline.max, 1].max %>
 <div class="sqd-card" style="margin-bottom: 1rem;">
   <div class="sqd-card__header">
     <span class="sqd-card__title">Queue Depth &mdash; Last 12 Hours</span>
@@ -83,11 +83,11 @@
       <span>Now: <strong><%= current_depth %></strong></span>
     </div>
   </div>
-  <% if @depth_sparkline.all?(&:zero?) %>
+  <% if @stats.depth_sparkline.all?(&:zero?) %>
     <div class="sqd-sparkline__empty">No active jobs in the last 12 hours</div>
   <% else %>
     <div class="sqd-sparkline" aria-label="Queue depth over the last 12 hours">
-      <% @depth_sparkline.each_with_index do |depth, i| %>
+      <% @stats.depth_sparkline.each_with_index do |depth, i| %>
         <% pct = (depth.to_f / max_depth * 100).round %>
         <% t = i == 11 ? Time.current : (12 - i).hours.ago %>
         <% show_tick = [0, 3, 6, 9, 11].include?(i) %>
@@ -118,37 +118,37 @@
     </div>
   </div>
 
-  <% if @stats[:failed] > 0 %>
+  <% if @stats.counts[:failed] > 0 %>
     <div class="sqd-card">
       <div class="sqd-card__header">
         <span class="sqd-card__title">Failed Jobs</span>
       </div>
       <div style="padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
         <p style="color: var(--danger); font-size: 13px;">
-          <%= pluralize(@stats[:failed], "failed job") %> need attention.
+          <%= pluralize(@stats.counts[:failed], "failed job") %> need attention.
         </p>
         <%= button_to "Retry All Failed", retry_all_failed_path,
               method: :post,
               class: "sqd-btn sqd-btn--primary",
-              data: { confirm: "Retry all #{@stats[:failed]} failed #{"job".pluralize(@stats[:failed])}?" } %>
+              data: { confirm: "Retry all #{@stats.counts[:failed]} failed #{"job".pluralize(@stats.counts[:failed])}?" } %>
         <%= link_to "Review →", failed_jobs_path, class: "sqd-btn sqd-btn--muted" %>
       </div>
     </div>
   <% end %>
 
-  <% if @stats[:blocked] > 0 %>
+  <% if @stats.counts[:blocked] > 0 %>
     <div class="sqd-card">
       <div class="sqd-card__header">
         <span class="sqd-card__title">Blocked Jobs</span>
       </div>
       <div style="padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
         <p style="color: var(--warning); font-size: 13px;">
-          <%= pluralize(@stats[:blocked], "blocked job") %>.
+          <%= pluralize(@stats.counts[:blocked], "blocked job") %>.
         </p>
         <%= button_to "Discard All Blocked", discard_all_blocked_path,
               method: :post,
               class: "sqd-btn sqd-btn--danger",
-              data: { confirm: "Discard all #{@stats[:blocked]} blocked #{"job".pluralize(@stats[:blocked])}? This cannot be undone." } %>
+              data: { confirm: "Discard all #{@stats.counts[:blocked]} blocked #{"job".pluralize(@stats.counts[:blocked])}? This cannot be undone." } %>
         <%= link_to "Review →", jobs_path(status: "blocked"), class: "sqd-btn sqd-btn--muted" %>
       </div>
     </div>

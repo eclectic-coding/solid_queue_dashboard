@@ -1,11 +1,7 @@
 module SolidQueueWeb
   class DashboardController < ApplicationController
     def index
-      stats            = DashboardStats.new
-      @stats           = stats.stats
-      @throughput      = stats.throughput
-      @sparkline       = stats.sparkline
-      @depth_sparkline = stats.depth_sparkline
+      @stats = DashboardStats.new
     end
 
     def retry_all_failed
