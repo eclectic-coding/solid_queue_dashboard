@@ -109,10 +109,22 @@ No authentication is enforced by default. When the `authenticate` block returns 
 
 ## Roadmap
 
-Planned features, roughly ordered by priority:
+Planned features, roughly ordered by priority:  
 
-**Larger scope**
+**Observability**
+- Job failure rate chart — sparkline per queue showing failure percentage over time, mirroring the throughput chart
+- Queue depth trend — historical queue size over time, not just the current snapshot
+- Slow job detection — flag jobs exceeding a configurable duration threshold
+
+**Operations**
+- Scheduled job management — reschedule a job to run immediately, or push its `scheduled_at` forward
+- Bulk retry with delay — retry all failed jobs with a configurable stagger to avoid thundering herd
+- Admin audit log — record who retried or discarded which jobs and when (requires host-app user identity)
+
+**Infrastructure**
 - Webhook / alert config — POST to a URL when the failure count exceeds a threshold
+- Multi-database support — when Solid Queue runs on a separate database from the host app
+- Read replica support — route dashboard queries to a replica to avoid impacting the primary
 
 Pull requests for any of these are welcome. See [Contributing](#contributing) below.
 
