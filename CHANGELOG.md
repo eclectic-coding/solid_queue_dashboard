@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-05-20
+
 ### Added
 
 - Queue latency detail — oldest ready job age per queue; replaces the verbose `human_latency` string with `format_duration` output (e.g. "1h 12m"); color-coded orange above 1 hour, red above 24 hours; hovering shows the absolute UTC timestamp of the oldest waiting job; empty queues show "—"
@@ -157,7 +159,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI workflow with lint (RuboCop) and test (RSpec) matrix across Ruby 3.3, 3.4, and 4.0
 - `bin/release` script for versioned gem releases
 
-[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.7.0
 [0.6.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.6.0
 [0.5.5]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.5.5
 [0.5.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.5.0
