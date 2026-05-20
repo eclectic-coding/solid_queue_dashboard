@@ -71,11 +71,28 @@ puts "Seeding claimed (running) jobs..."
     arguments: { batch: i + 1 }.to_json,
     priority: 0,
     active_job_id: SecureRandom.uuid,
-    created_at: rand(1..10).minutes.ago,
-    updated_at: rand(1..10).minutes.ago
+    created_at: rand(1..4).minutes.ago,
+    updated_at: rand(1..4).minutes.ago
   )
   job.ready_execution&.destroy
   SolidQueue::ClaimedExecution.create!(job: job, process: workers.sample, created_at: job.created_at)
+end
+
+puts "Seeding slow claimed jobs (for slow job detection)..."
+# These exceed a 5-minute threshold — visible as orange rows when slow_job_threshold is configured
+slow_durations = [8.minutes, 20.minutes, 45.minutes]
+slow_durations.each_with_index do |duration, i|
+  job = SolidQueue::Job.create!(
+    queue_name: queues.sample,
+    class_name: job_classes.sample,
+    arguments: { slow_job: true, idx: i }.to_json,
+    priority: 0,
+    active_job_id: SecureRandom.uuid,
+    created_at: duration.ago,
+    updated_at: duration.ago
+  )
+  job.ready_execution&.destroy
+  SolidQueue::ClaimedExecution.create!(job: job, process: workers.sample, created_at: duration.ago)
 end
 
 puts "Seeding failed jobs..."
