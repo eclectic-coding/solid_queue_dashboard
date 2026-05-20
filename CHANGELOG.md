@@ -64,15 +64,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Blocked job detail: job show page displays "Blocked Until" (`BlockedExecution#expires_at`) when the job has a blocked execution
 - Queue-scoped jobs view at `/jobs/queues/:queue_name/list` — dedicated `Queues::JobsController` with status tabs, class name search, per-row discard (Turbo Stream), and Discard All scoped to the queue; navigated to by clicking queue names on the global jobs list
 
-### Fixed
-
-- Job detail links inside the turbo frame on the jobs index rendered "Content missing" because the show page has no matching frame; fixed with `data-turbo-frame="_top"` so navigation breaks out to a full page load
-
 ### Changed
 
 - `JobsController#index` no longer filters by queue — queue filtering is owned by `Queues::JobsController`
 - `JobsController#show` no longer assigns `@failed_execution` / `@blocked_execution`; view reads associations directly from `@job` (already eager-loaded)
 - Removed stale `queue: @queue` from status tab links in the jobs index (param was always `nil` after the queue controller refactor)
+
+### Fixed
+
+- Job detail links inside the turbo frame on the jobs index rendered "Content missing" because the show page has no matching frame; fixed with `data-turbo-frame="_top"` so navigation breaks out to a full page load
 
 ## [0.5.0] - 2026-05-19
 
