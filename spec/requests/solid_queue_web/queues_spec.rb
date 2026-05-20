@@ -91,11 +91,11 @@ RSpec.describe "Queues", type: :request do
     end
   end
 
-  describe "POST /jobs/queues/:name/resume" do
+  describe "DELETE /jobs/queues/:name/pause" do
     before { SolidQueue::Pause.create!(queue_name: "default") }
 
     it "resumes the queue and redirects" do
-      post "/jobs/queues/default/resume"
+      delete "/jobs/queues/default/pause"
       expect(response).to redirect_to("/jobs/queues")
       follow_redirect!
       expect(response.body).to include("resumed")
@@ -103,13 +103,13 @@ RSpec.describe "Queues", type: :request do
 
     it "removes the Pause record" do
       expect {
-        post "/jobs/queues/default/resume"
+        delete "/jobs/queues/default/pause"
       }.to change(SolidQueue::Pause, :count).by(-1)
     end
 
     it "handles resume failure gracefully" do
       allow_any_instance_of(SolidQueue::Queue).to receive(:resume).and_raise(RuntimeError, "boom")
-      post "/jobs/queues/default/resume"
+      delete "/jobs/queues/default/pause"
       expect(response).to redirect_to("/jobs/queues")
       follow_redirect!
       expect(response.body).to include("Could not resume queue")
