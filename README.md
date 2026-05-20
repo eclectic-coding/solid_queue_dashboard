@@ -97,6 +97,26 @@ end
 
 HTTP Basic authentication is used as a fallback when the block returns falsy.
 
+## Roadmap
+
+Planned features, roughly ordered by priority:
+
+**Near-term**
+- Queue throughput columns on the Queues page — Completed (24h) and Failed (24h) per queue
+- Auto-refresh on the Job History page
+- Dark mode — CSS custom properties are already structured for it; toggle persists to `localStorage`
+
+**Medium-term**
+- Queue latency detail — oldest ready job age per queue on the Queues page
+- Dashboard quick actions — Retry All Failed / Clear All Blocked directly from the dashboard
+- Configurable page size — `?per=25|50|100` via Pagy's built-in support
+
+**Larger scope**
+- CSV export of any filtered view (jobs, failed jobs, history)
+- Webhook / alert config — POST to a URL when the failure count exceeds a threshold
+
+Pull requests for any of these are welcome. See [Contributing](#contributing) below.
+
 ## Contributing
 
 Bug reports and pull requests are welcome on [GitHub](https://github.com/eclectic-coding/solid_queue_web).
