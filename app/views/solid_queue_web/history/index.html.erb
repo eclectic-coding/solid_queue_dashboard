@@ -1,0 +1,66 @@
+<div class="sqd-page-header">
+  <h1 class="sqd-page-title">Job History</h1>
+</div>
+
+<form class="sqd-search" action="<%= history_path %>" method="get" data-controller="search">
+  <% if @queue.present? %>
+    <input type="hidden" name="queue" value="<%= @queue %>">
+  <% end %>
+  <input type="hidden" name="period" value="<%= @period %>">
+  <input class="sqd-search__input" type="search" name="q" value="<%= @search %>"
+         placeholder="Filter by job class…" autocomplete="off" aria-label="Filter by job class"
+         data-action="input->search#filter">
+  <button type="submit" class="sqd-btn sqd-btn--muted">Search</button>
+  <% if @search.present? %>
+    <%= link_to "Clear", history_path(queue: @queue, period: @period), class: "sqd-btn sqd-btn--muted" %>
+  <% end %>
+  <div class="sqd-period-filter" role="group" aria-label="Time period">
+    <%= link_to "All",  history_path(queue: @queue, q: @search),                      class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil } %>
+    <%= link_to "1h",   history_path(queue: @queue, q: @search, period: "1h"),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil } %>
+    <%= link_to "24h",  history_path(queue: @queue, q: @search, period: "24h"), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil } %>
+    <%= link_to "7d",   history_path(queue: @queue, q: @search, period: "7d"),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil } %>
+  </div>
+</form>
+
+<% if @queue.present? %>
+  <p style="margin-top: 0.5rem; font-size: 13px; color: var(--muted);">
+    Filtering by queue: <strong><%= @queue %></strong> &mdash;
+    <%= link_to "Clear filter", history_path(q: @search, period: @period) %>
+  </p>
+<% end %>
+
+<% if @pagy.last > 1 %>
+  <%= @pagy.series_nav.html_safe %>
+<% end %>
+
+<% if @jobs.any? %>
+  <div class="sqd-card">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Job Class</th>
+          <th scope="col">Queue</th>
+          <th scope="col">Duration</th>
+          <th scope="col">Finished At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @jobs.each do |job| %>
+          <tr>
+            <td><%= link_to job.class_name, job_path(job) %></td>
+            <td>
+              <%= link_to job.queue_name, history_path(queue: job.queue_name, q: @search, period: @period),
+                    class: "sqd-mono", style: "color: inherit;" %>
+            </td>
+            <td class="sqd-mono"><%= format_duration(job.finished_at - job.created_at) %></td>
+            <td class="sqd-mono"><%= job.finished_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="sqd-card">
+    <div class="sqd-empty">No finished jobs found.</div>
+  </div>
+<% end %>

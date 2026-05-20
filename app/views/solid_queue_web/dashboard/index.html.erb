@@ -34,14 +34,14 @@
     <div class="sqd-stat__value"><%= @stats[:processes] %></div>
     <div class="sqd-stat__label">Processes</div>
   <% end %>
-  <div class="sqd-stat sqd-stat--done">
+  <%= link_to history_path(period: "1h"), class: "sqd-stat sqd-stat--done sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @throughput[:completed_1h] %></div>
     <div class="sqd-stat__label">Done (1h)</div>
-  </div>
-  <div class="sqd-stat sqd-stat--done">
+  <% end %>
+  <%= link_to history_path(period: "24h"), class: "sqd-stat sqd-stat--done sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @throughput[:completed_24h] %></div>
     <div class="sqd-stat__label">Done (24h)</div>
-  </div>
+  <% end %>
 </div>
 
 <% max_val = [@sparkline.max, 1].max %>

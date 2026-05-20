@@ -2,6 +2,7 @@ SolidQueueWeb::Engine.routes.draw do
   root to: "dashboard#index"
 
   get "search", to: "search#index", as: :search
+  get "history", to: "history#index", as: :history
 
   resources :recurring_tasks, only: [:index]
   resources :processes, only: [:index]
