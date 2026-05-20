@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dark mode — a ☽/☀ toggle button in the header switches between light and dark themes; preference persists to `localStorage` and falls back to the OS `prefers-color-scheme` on first visit; implemented via a `[data-theme="dark"]` attribute on `<html>` so all CSS custom properties inherit the new palette automatically; badge and flash hardcoded hex colors get explicit dark-mode overrides in a new `_12_dark_mode.css` partial; powered by a new Stimulus `theme_controller`
 - Configurable settings via `SolidQueueWeb.configure` — `page_size` (Pagy limit, default 25), `dashboard_refresh_interval` (ms, default 5 000), `default_refresh_interval` (ms, default 10 000 — applies to jobs, processes, and history pages), `search_results_limit` (max results per status in global search, default 25); all settings have safe defaults so zero host-app configuration is required
 
+### Changed
+
+- `FailedJobsController#destroy` and `#discard_all` consolidated into a single `destroy` action branching on `params[:id]`; `discard_all` route maps to `destroy` via `action:` option
+- `FailedJobsController#retry` and `#retry_all` extracted into a new `RetryFailedJobsController#create` action with the same single/bulk branching pattern
+- `JobsController#destroy` and `#discard_all` consolidated the same way, preserving the Turbo Stream response for the single-job path
+
 ## [0.7.0] - 2026-05-20
 
 ### Added

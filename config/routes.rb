@@ -25,7 +25,7 @@ SolidQueueWeb::Engine.routes.draw do
   resource :job_selection, path: "list/selection", only: [:destroy], controller: "jobs/selections"
   resources :jobs, path: "list", only: [:index, :show, :destroy] do
     collection do
-      post :discard_all
+      post :discard_all, action: :destroy
     end
   end
 
@@ -33,11 +33,11 @@ SolidQueueWeb::Engine.routes.draw do
            controller: "failed_jobs/selections"
   resources :failed_jobs, only: [:index, :destroy] do
     collection do
-      post :retry_all
-      post :discard_all
+      post :retry_all,   to: "retry_failed_jobs#create"
+      post :discard_all, action: :destroy
     end
     member do
-      post :retry
+      post :retry, to: "retry_failed_jobs#create"
     end
   end
 end

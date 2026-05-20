@@ -1,6 +1,6 @@
 module SolidQueueWeb
   class JobsController < ApplicationController
-    before_action :set_status, only: [:destroy, :discard_all, :discard_selected]
+    before_action :set_status, only: [:destroy, :discard_selected]
 
     def index
       @status = params[:status].presence_in(Job::STATUSES) || "ready"
@@ -30,29 +30,25 @@ module SolidQueueWeb
 
     def destroy
       model = execution_model_for!(@status)
-      @execution = model.find(params[:id])
-      @execution.discard
-      @remaining_count = filtered_scope(model).count
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to jobs_path(status: @status, period: @period), notice: "Job discarded." }
+      if params[:id]
+        @execution = model.find(params[:id])
+        @execution.discard
+        @remaining_count = filtered_scope(model).count
+        respond_to do |format|
+          format.turbo_stream
+          format.html { redirect_to jobs_path(status: @status, period: @period), notice: "Job discarded." }
+        end
+      else
+        jobs = filtered_scope(model).map(&:job)
+        model.discard_all_from_jobs(jobs)
+        redirect_to jobs_path(status: @status, period: @period),
+          notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
       end
     rescue ArgumentError => e
       redirect_to jobs_path(status: @status, period: @period), alert: e.message
     rescue => e
-      redirect_to jobs_path(status: @status, period: @period), alert: "Could not discard job: #{e.message}"
-    end
-
-    def discard_all
-      model = execution_model_for!(@status)
-      jobs = filtered_scope(model).map(&:job)
-      model.discard_all_from_jobs(jobs)
       redirect_to jobs_path(status: @status, period: @period),
-        notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
-    rescue ArgumentError => e
-      redirect_to jobs_path(status: @status, period: @period), alert: e.message
-    rescue => e
-      redirect_to jobs_path(status: @status, period: @period), alert: "Could not discard jobs: #{e.message}"
+        alert: "Could not discard #{params[:id] ? "job" : "jobs"}: #{e.message}"
     end
 
     private
