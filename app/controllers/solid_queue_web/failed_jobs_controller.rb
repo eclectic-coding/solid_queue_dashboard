@@ -1,6 +1,6 @@
 module SolidQueueWeb
   class FailedJobsController < ApplicationController
-    before_action :set_filter_params, only: [:index, :retry_all, :discard_all]
+    before_action :set_filter_params, only: [:index, :retry, :destroy]
 
     def index
       respond_to do |format|
@@ -14,33 +14,17 @@ module SolidQueueWeb
     end
 
     def retry
-      execution = SolidQueue::FailedExecution.find(params[:id])
-      execution.retry
-      redirect_to failed_jobs_path, notice: "Job queued for retry."
+      executions = params[:id] ? [SolidQueue::FailedExecution.find(params[:id])] : filtered_scope.to_a
+      perform_retry(executions)
     rescue => e
       redirect_to failed_jobs_path, alert: "Could not retry job: #{e.message}"
     end
 
     def destroy
-      execution = SolidQueue::FailedExecution.find(params[:id])
-      execution.discard
-      redirect_to failed_jobs_path, notice: "Job discarded."
+      executions = params[:id] ? [SolidQueue::FailedExecution.find(params[:id])] : filtered_scope.to_a
+      perform_discard(executions)
     rescue => e
       redirect_to failed_jobs_path, alert: "Could not discard job: #{e.message}"
-    end
-
-    def retry_all
-      jobs = filtered_scope.map(&:job)
-      SolidQueue::FailedExecution.retry_all(jobs)
-      redirect_to failed_jobs_path(queue: @queue, q: @search, period: @period),
-        notice: "#{jobs.size} #{"job".pluralize(jobs.size)} queued for retry."
-    end
-
-    def discard_all
-      jobs = filtered_scope.map(&:job)
-      SolidQueue::FailedExecution.discard_all_from_jobs(jobs)
-      redirect_to failed_jobs_path(queue: @queue, q: @search, period: @period),
-        notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
     end
 
     private
@@ -56,6 +40,20 @@ module SolidQueueWeb
                   execution.created_at.iso8601]
         end
       end
+    end
+
+    def perform_retry(executions)
+      jobs = executions.map(&:job)
+      SolidQueue::FailedExecution.retry_all(jobs)
+      redirect_to failed_jobs_path(queue: @queue, q: @search, period: @period),
+        notice: "#{jobs.size} #{"job".pluralize(jobs.size)} queued for retry."
+    end
+
+    def perform_discard(executions)
+      jobs = executions.map(&:job)
+      SolidQueue::FailedExecution.discard_all_from_jobs(jobs)
+      redirect_to failed_jobs_path(queue: @queue, q: @search, period: @period),
+        notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
     end
 
     def set_filter_params

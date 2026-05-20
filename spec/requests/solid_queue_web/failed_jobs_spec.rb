@@ -152,7 +152,7 @@ RSpec.describe "FailedJobs", type: :request do
     end
 
     it "handles retry failure gracefully" do
-      allow_any_instance_of(SolidQueue::FailedExecution).to receive(:retry).and_raise(RuntimeError, "boom")
+      allow(SolidQueue::FailedExecution).to receive(:retry_all).and_raise(RuntimeError, "boom")
       post "/jobs/failed_jobs/#{execution.id}/retry"
       expect(response).to redirect_to("/jobs/failed_jobs")
       follow_redirect!
@@ -176,7 +176,7 @@ RSpec.describe "FailedJobs", type: :request do
     end
 
     it "handles discard failure gracefully" do
-      allow_any_instance_of(SolidQueue::FailedExecution).to receive(:discard).and_raise(RuntimeError, "boom")
+      allow(SolidQueue::FailedExecution).to receive(:discard_all_from_jobs).and_raise(RuntimeError, "boom")
       delete "/jobs/failed_jobs/#{execution.id}"
       expect(response).to redirect_to("/jobs/failed_jobs")
       follow_redirect!
