@@ -25,7 +25,7 @@ SolidQueueWeb::Engine.routes.draw do
   resource :job_selection, path: "list/selection", only: [:destroy], controller: "jobs/selections"
   resources :jobs, path: "list", only: [:index, :show, :destroy] do
     collection do
-      post :discard_all
+      post :discard_all, action: :destroy
     end
   end
 
