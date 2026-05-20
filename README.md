@@ -34,7 +34,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 ## Features
 
 - **Dashboard** — stat cards showing counts for ready, scheduled, running, blocked, and failed jobs, plus queues, recurring tasks, and processes; "Done (1h)" and "Done (24h)" throughput cards; a "Throughput — Last 12 Hours" bar chart showing completed-job counts per hour (pure CSS, no charting library); auto-refreshes every 5 seconds
-- **Queues** — all queues sorted by name with size; oldest ready job latency (color-coded, with UTC timestamp tooltip); Done (24h) and Failed (24h) throughput counts; pause/resume controls
+- **Queues** — all queues sorted by name with size; oldest ready job latency (color-coded, with UTC timestamp tooltip); Done (24h) and Failed (24h) throughput counts; a mini 12-bar failure rate sparkline per queue showing failure % per hour over the last 12 hours; pause/resume controls
 - **Jobs** — filterable by status (ready, scheduled, claimed, blocked, failed) and by queue; search by job class name with dynamic auto-submit; time-based period filter (1 h / 24 h / 7 d); discard individual or all jobs; Turbo Frame navigation so only the table updates on filter or search; auto-refreshes every 10 seconds
 - **Failed jobs** — list of failed executions with error details; search by class name; filter by queue; time-based period filter; retry or discard individually or in bulk
 - **Job detail** — full arguments, timestamps, blocked-until date, and error backtrace; action buttons based on job status
@@ -112,7 +112,6 @@ No authentication is enforced by default. When the `authenticate` block returns 
 Planned features, roughly ordered by priority:  
 
 **Observability**
-- Job failure rate chart — sparkline per queue showing failure percentage over time, mirroring the throughput chart
 - Queue depth trend — historical queue size over time, not just the current snapshot
 - Slow job detection — flag jobs exceeding a configurable duration threshold
 
