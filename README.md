@@ -98,16 +98,25 @@ end
 
 HTTP Basic authentication is used as a fallback when the block returns falsy.
 
+## Configuration
+
+All settings are optional — the dashboard works with zero configuration. To override defaults, add a block to an initializer (e.g. `config/initializers/solid_queue_web.rb`):
+
+```ruby
+SolidQueueWeb.configure do |config|
+  config.page_size                  = 50     # rows per page across all paginated views (default: 25)
+  config.dashboard_refresh_interval = 10_000 # dashboard auto-refresh in ms (default: 5_000)
+  config.default_refresh_interval   = 30_000 # jobs/processes/history auto-refresh in ms (default: 10_000)
+  config.search_results_limit       = 10     # max results per status in global search (default: 25)
+end
+```
+
 ## Roadmap
 
 Planned features, roughly ordered by priority:
 
-**Near-term**
-- Add user initializer support for overrides of default dashboard refresh intervals, CONSTANTS, etc.
-
 **Medium-term**
 - Dashboard quick actions — Retry All Failed / Clear All Blocked directly from the dashboard
-- Configurable page size — `?per=25|50|100` via Pagy's built-in support
 
 **Larger scope**
 - CSV export of any filtered view (jobs, failed jobs, history)
