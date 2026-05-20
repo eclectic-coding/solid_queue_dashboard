@@ -127,7 +127,7 @@
         <p style="color: var(--danger); font-size: 13px;">
           <%= pluralize(@stats.counts[:failed], "failed job") %> need attention.
         </p>
-        <%= button_to "Retry All Failed", retry_all_failed_path,
+        <%= button_to "Retry All Failed", retry_all_failed_jobs_path,
               method: :post,
               class: "sqd-btn sqd-btn--primary",
               data: { confirm: "Retry all #{@stats.counts[:failed]} failed #{"job".pluralize(@stats.counts[:failed])}?" } %>
@@ -145,8 +145,8 @@
         <p style="color: var(--warning); font-size: 13px;">
           <%= pluralize(@stats.counts[:blocked], "blocked job") %>.
         </p>
-        <%= button_to "Discard All Blocked", discard_all_blocked_path,
-              method: :post,
+        <%= button_to "Discard All Blocked", blocked_jobs_path,
+              method: :delete,
               class: "sqd-btn sqd-btn--danger",
               data: { confirm: "Discard all #{@stats.counts[:blocked]} blocked #{"job".pluralize(@stats.counts[:blocked])}? This cannot be undone." } %>
         <%= link_to "Review →", jobs_path(status: "blocked"), class: "sqd-btn sqd-btn--muted" %>
