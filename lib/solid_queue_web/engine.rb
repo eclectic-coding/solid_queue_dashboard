@@ -22,8 +22,10 @@ module SolidQueueWeb
       end
     end
 
-    initializer "solid_queue_web.pagy" do
-      Pagy::OPTIONS[:limit] = 25
+    initializer "solid_queue_web.pagy" do |app|
+      app.config.after_initialize do
+        Pagy::OPTIONS[:limit] = SolidQueueWeb.page_size
+      end
     end
   end
 end

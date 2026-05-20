@@ -27,8 +27,8 @@
           <span class="sqd-badge sqd-badge--<%= status %>"><%= status %></span>
           <span class="sqd-muted-text">
             <%= pluralize(data[:total], "match", "matches") %>
-            <% if data[:total] > SolidQueueWeb::SearchController::LIMIT %>
-              &mdash; showing first <%= SolidQueueWeb::SearchController::LIMIT %>
+            <% if data[:total] > SolidQueueWeb.search_results_limit %>
+              &mdash; showing first <%= SolidQueueWeb.search_results_limit %>
             <% end %>
           </span>
           <% if status == "failed" %>
