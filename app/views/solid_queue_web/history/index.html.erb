@@ -1,3 +1,4 @@
+<%= turbo_frame_tag "history-table", data: { controller: "refresh", refresh_interval_value: 10000 } do %>
 <div class="sqd-page-header">
   <h1 class="sqd-page-title">Job History</h1>
 </div>
@@ -62,4 +63,5 @@
 
 <% if @pagy.last > 1 %>
   <%= @pagy.series_nav.html_safe %>
+<% end %>
 <% end %>

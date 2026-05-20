@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Auto-refresh on the Job History page — wraps the page in a turbo-frame polled every 10 seconds, matching the jobs and processes pages; pauses when the browser tab is hidden
 - Job History page (`/jobs/history`) — browsable list of all finished jobs (`finished_at IS NOT NULL`) ordered by most-recent-first; columns show class name (links to job detail), queue (clickable queue filter), duration (formatted as `Xs`, `Xm Xs`, or `Xh Xm`), and finished timestamp; filterable by time period (1h / 24h / 7d), queue name, and class name search; paginated; "Done (1h)" and "Done (24h)" dashboard stat cards now link to the history page pre-filtered by period; "History" nav link added between Jobs and Failed
 - Throughput section on the dashboard — "Done (1h)" and "Done (24h)" stat cards show completed-job counts; a full-width "Throughput — Last 12 Hours" card displays a pure-CSS bar chart (12 hourly buckets, oldest left → newest right, tick labels every 3 bars) with no JavaScript or charting library; powered by a single `pluck(:finished_at)` query with Ruby-side grouping for DB-agnostic compatibility; seed data updated with a realistic daily-pattern distribution so the chart shows meaningful data out of the box
 
