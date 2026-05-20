@@ -220,6 +220,26 @@ RSpec.describe "Jobs", type: :request do
     end
   end
 
+  describe "GET /jobs/list.csv (CSV export)" do
+    it "returns a CSV file" do
+      get "/jobs/list", params: { status: "ready" }, headers: { "Accept" => "text/csv" }
+      expect(response).to have_http_status(:ok)
+      expect(response.content_type).to include("text/csv")
+    end
+
+    it "includes the job class name and queue" do
+      get "/jobs/list", params: { status: "ready", format: :csv }
+      expect(response.body).to include("TestJob")
+      expect(response.body).to include("default")
+    end
+
+    it "includes CSV headers" do
+      get "/jobs/list", params: { status: "ready", format: :csv }
+      expect(response.body).to include("class_name")
+      expect(response.body).to include("queue_name")
+    end
+  end
+
   describe "POST /jobs/list/discard_all" do
     it "discards all ready jobs and redirects" do
       post "/jobs/list/discard_all", params: { status: "ready" }

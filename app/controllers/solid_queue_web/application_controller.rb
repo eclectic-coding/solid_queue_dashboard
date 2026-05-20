@@ -1,3 +1,5 @@
+require "csv"
+
 module SolidQueueWeb
   class ApplicationController < ActionController::Base
     include Pagy::Method

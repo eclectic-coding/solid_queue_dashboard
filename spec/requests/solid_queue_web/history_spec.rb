@@ -89,4 +89,25 @@ RSpec.describe "Job History", type: :request do
       expect(response.body).not_to include("CleanupJob")
     end
   end
+
+  describe "GET /jobs/history.csv (CSV export)" do
+    it "returns a CSV file" do
+      get "/jobs/history", params: { format: :csv }
+      expect(response).to have_http_status(:ok)
+      expect(response.content_type).to include("text/csv")
+    end
+
+    it "includes job class, queue, duration, and finished_at" do
+      finished_job(class_name: "ExportJob", queue_name: "default")
+      get "/jobs/history", params: { format: :csv }
+      expect(response.body).to include("ExportJob")
+      expect(response.body).to include("default")
+    end
+
+    it "includes CSV headers" do
+      get "/jobs/history", params: { format: :csv }
+      expect(response.body).to include("class_name")
+      expect(response.body).to include("finished_at")
+    end
+  end
 end
