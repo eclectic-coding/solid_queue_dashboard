@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-05-20
+
 ### Added
 
 - Failure rate sparkline per queue — a mini 12-bar chart in the Queues table shows the percentage of jobs that failed (vs. completed) in each of the last 12 hours; bars are red, sized proportionally to the failure rate (0–100 %), and include a tooltip with the hour label and exact percentage; empty hours render as a faint border-colored bar; queues with no activity in the last 12 hours show "—"
@@ -185,7 +187,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI workflow with lint (RuboCop) and test (RSpec) matrix across Ruby 3.3, 3.4, and 4.0
 - `bin/release` script for versioned gem releases
 
-[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.9.0
 [0.8.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.8.0
 [0.7.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.7.0
 [0.6.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.6.0
