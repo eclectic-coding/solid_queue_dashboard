@@ -28,7 +28,7 @@ RSpec.describe "Jobs", type: :request do
       ready_job.ready_execution&.destroy
       SolidQueue::FailedExecution.create!(
         job: ready_job,
-        error: { exception_class: "RuntimeError", message: "boom", backtrace: [ "app/jobs/test_job.rb:1" ] }
+        error: { exception_class: "RuntimeError", message: "boom", backtrace: ["app/jobs/test_job.rb:1"] }
       )
       get "/jobs/list/#{ready_job.id}"
       expect(response.body).to include("RuntimeError")

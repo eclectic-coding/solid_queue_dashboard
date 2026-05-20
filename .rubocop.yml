@@ -12,3 +12,7 @@ AllCops:
 # # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
 # Layout/SpaceInsideArrayLiteralBrackets:
 #   Enabled: false
+
+Layout/SpaceInsideArrayLiteralBrackets:
+  Enabled: true
+  EnforcedStyle: no_space

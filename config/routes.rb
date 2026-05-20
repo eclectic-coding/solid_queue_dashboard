@@ -3,14 +3,14 @@ SolidQueueWeb::Engine.routes.draw do
 
   get "search", to: "search#index", as: :search
 
-  resources :recurring_tasks, only: [ :index ]
-  resources :processes, only: [ :index ]
-  resources :queues, only: [ :index ], param: :name do
+  resources :recurring_tasks, only: [:index]
+  resources :processes, only: [:index]
+  resources :queues, only: [:index], param: :name do
     member do
       post :pause
       post :resume
     end
-    resources :jobs, path: "list", only: [ :index, :destroy ], controller: "queues/jobs" do
+    resources :jobs, path: "list", only: [:index, :destroy], controller: "queues/jobs" do
       collection do
         post :discard_all
       end
@@ -19,16 +19,16 @@ SolidQueueWeb::Engine.routes.draw do
 
   # Singular selection resources must be defined before the member routes of their
   # parent resources, otherwise DELETE /list/selection matches /list/:id first.
-  resource :job_selection, path: "list/selection", only: [ :destroy ], controller: "jobs/selections"
-  resources :jobs, path: "list", only: [ :index, :show, :destroy ] do
+  resource :job_selection, path: "list/selection", only: [:destroy], controller: "jobs/selections"
+  resources :jobs, path: "list", only: [:index, :show, :destroy] do
     collection do
       post :discard_all
     end
   end
 
-  resource :failed_job_selection, path: "failed_jobs/selection", only: [ :create, :destroy ],
+  resource :failed_job_selection, path: "failed_jobs/selection", only: [:create, :destroy],
            controller: "failed_jobs/selections"
-  resources :failed_jobs, only: [ :index, :destroy ] do
+  resources :failed_jobs, only: [:index, :destroy] do
     collection do
       post :retry_all
       post :discard_all

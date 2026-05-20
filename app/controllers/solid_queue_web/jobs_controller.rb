@@ -1,6 +1,6 @@
 module SolidQueueWeb
   class JobsController < ApplicationController
-    before_action :set_status, only: [ :destroy, :discard_all, :discard_selected ]
+    before_action :set_status, only: [:destroy, :discard_all, :discard_selected]
 
     def index
       @status = params[:status].presence_in(Job::STATUSES) || "ready"

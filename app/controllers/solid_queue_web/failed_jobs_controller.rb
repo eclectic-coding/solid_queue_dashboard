@@ -1,6 +1,6 @@
 module SolidQueueWeb
   class FailedJobsController < ApplicationController
-    before_action :set_filter_params, only: [ :index, :retry_all, :discard_all ]
+    before_action :set_filter_params, only: [:index, :retry_all, :discard_all]
 
     def index
       @pagy, @failed_jobs = pagy(filtered_scope.order(created_at: :desc))
