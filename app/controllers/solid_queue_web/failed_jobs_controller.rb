@@ -3,7 +3,14 @@ module SolidQueueWeb
     before_action :set_filter_params, only: [:index, :retry_all, :discard_all]
 
     def index
-      @pagy, @failed_jobs = pagy(filtered_scope.order(created_at: :desc))
+      respond_to do |format|
+        format.html { @pagy, @failed_jobs = pagy(filtered_scope.order(created_at: :desc)) }
+        format.csv do
+          send_data failed_jobs_csv,
+                    filename: "failed-jobs-#{Date.today}.csv",
+                    type: "text/csv", disposition: "attachment"
+        end
+      end
     end
 
     def retry
@@ -37,6 +44,19 @@ module SolidQueueWeb
     end
 
     private
+
+    def failed_jobs_csv
+      CSV.generate(headers: true) do |csv|
+        csv << %w[id class_name queue_name error_class error_message failed_at]
+        filtered_scope.order(created_at: :desc).each do |execution|
+          job   = execution.job
+          error = execution.error || {}
+          csv << [job.id, job.class_name, job.queue_name,
+                  error["exception_class"], error["message"],
+                  execution.created_at.iso8601]
+        end
+      end
+    end
 
     def set_filter_params
       @queue  = params[:queue].presence

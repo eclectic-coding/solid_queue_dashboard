@@ -221,6 +221,27 @@ RSpec.describe "FailedJobs", type: :request do
     end
   end
 
+  describe "GET /jobs/failed_jobs.csv (CSV export)" do
+    it "returns a CSV file" do
+      get "/jobs/failed_jobs", params: { format: :csv }
+      expect(response).to have_http_status(:ok)
+      expect(response.content_type).to include("text/csv")
+    end
+
+    it "includes the job class name, queue, and error details" do
+      get "/jobs/failed_jobs", params: { format: :csv }
+      expect(response.body).to include("TestJob")
+      expect(response.body).to include("default")
+      expect(response.body).to include("RuntimeError")
+    end
+
+    it "includes CSV headers" do
+      get "/jobs/failed_jobs", params: { format: :csv }
+      expect(response.body).to include("class_name")
+      expect(response.body).to include("error_class")
+    end
+  end
+
   describe "POST /jobs/failed_jobs/discard_all" do
     it "discards all failed jobs and redirects" do
       post "/jobs/failed_jobs/discard_all"

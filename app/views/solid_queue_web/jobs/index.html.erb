@@ -11,13 +11,17 @@
     <%= link_to "Blocked",   jobs_path(status: "blocked",   q: @search, period: @period), class: @status == "blocked"   ? "active" : "" %>
     <%= link_to "Failed",    jobs_path(status: "failed",    q: @search, period: @period), class: @status == "failed"    ? "active" : "" %>
   </div>
-  <% if discardable && @jobs.any? %>
+  <% if @jobs.any? %>
     <div class="sqd-actions">
-      <%= button_to "Discard All", discard_all_jobs_path,
-            method: :post,
-            params: { status: @status, period: @period },
-            class: "sqd-btn sqd-btn--danger",
-            data: { confirm: "Discard all #{@jobs.size} #{@status} jobs? This cannot be undone." } %>
+      <%= link_to "Export CSV", jobs_path(format: :csv, status: @status, q: @search, period: @period),
+            class: "sqd-btn sqd-btn--muted", data: { turbo: false } %>
+      <% if discardable %>
+        <%= button_to "Discard All", discard_all_jobs_path,
+              method: :post,
+              params: { status: @status, period: @period },
+              class: "sqd-btn sqd-btn--danger",
+              data: { confirm: "Discard all #{@jobs.size} #{@status} jobs? This cannot be undone." } %>
+      <% end %>
     </div>
   <% end %>
 </div>

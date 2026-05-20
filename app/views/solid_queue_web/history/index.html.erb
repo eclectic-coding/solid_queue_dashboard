@@ -1,6 +1,12 @@
 <%= turbo_frame_tag "history-table", data: { controller: "refresh", refresh_interval_value: SolidQueueWeb.default_refresh_interval } do %>
 <div class="sqd-page-header">
   <h1 class="sqd-page-title">Job History</h1>
+  <% if @jobs.any? %>
+    <div class="sqd-actions">
+      <%= link_to "Export CSV", history_path(format: :csv, queue: @queue, q: @search, period: @period),
+            class: "sqd-btn sqd-btn--muted", data: { turbo: false } %>
+    </div>
+  <% end %>
 </div>
 
 <form class="sqd-search" action="<%= history_path %>" method="get" data-controller="search">

@@ -6,10 +6,19 @@ module SolidQueueWeb
       @status = params[:status].presence_in(Job::STATUSES) || "ready"
       @search = params[:q].presence
       @period = params[:period].presence_in(PERIOD_DURATIONS.keys)
-      @jobs   = Job::EXECUTION_MODELS[@status].includes(:job)
-      @jobs   = @jobs.references(:job).where("solid_queue_jobs.class_name LIKE ?", "%#{@search}%") if @search.present?
-      @jobs   = @jobs.references(:job).where("solid_queue_jobs.created_at >= ?", PERIOD_DURATIONS[@period].ago) if @period.present?
-      @pagy, @jobs = pagy(@jobs.order(created_at: :desc))
+      scope = Job::EXECUTION_MODELS[@status].includes(:job)
+      scope = scope.references(:job).where("solid_queue_jobs.class_name LIKE ?", "%#{@search}%") if @search.present?
+      scope = scope.references(:job).where("solid_queue_jobs.created_at >= ?", PERIOD_DURATIONS[@period].ago) if @period.present?
+      scope = scope.order(created_at: :desc)
+
+      respond_to do |format|
+        format.html { @pagy, @jobs = pagy(scope) }
+        format.csv do
+          send_data jobs_csv(scope),
+                    filename: "jobs-#{@status}-#{Date.today}.csv",
+                    type: "text/csv", disposition: "attachment"
+        end
+      end
     end
 
     def show
@@ -47,6 +56,16 @@ module SolidQueueWeb
     end
 
     private
+
+    def jobs_csv(scope)
+      CSV.generate(headers: true) do |csv|
+        csv << %w[id class_name queue_name status priority enqueued_at]
+        scope.each do |execution|
+          job = execution.job
+          csv << [job.id, job.class_name, job.queue_name, @status, job.priority, job.created_at.iso8601]
+        end
+      end
+    end
 
     def derive_status(job)
       return "failed"    if job.failed_execution.present?

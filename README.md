@@ -46,6 +46,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **Job history** — browsable list of all finished jobs with class name, queue, duration, and finished timestamp; filterable by period (1h / 24h / 7d), queue, and class name search; Done (1h) / Done (24h) dashboard cards link directly to the filtered history view; auto-refreshes every 10 seconds
 - **Dark mode** — ☽/☀ toggle in the header; preference persists to `localStorage` and defaults to the OS `prefers-color-scheme` on first visit; zero extra dependencies — implemented via CSS custom properties and a small Stimulus controller
 - **Dashboard quick actions** — "Retry All Failed" and "Discard All Blocked" cards appear on the dashboard only when the respective count is non-zero; one-click bulk operations with confirm dialogs, keeping the dashboard clean when everything is healthy
+- **CSV export** — "Export CSV" button on the jobs, failed jobs, and history pages downloads all records matching the current filters; columns are tailored per view
 
 ## Screenshots
 
@@ -111,7 +112,6 @@ No authentication is enforced by default. When the `authenticate` block returns 
 Planned features, roughly ordered by priority:
 
 **Larger scope**
-- CSV export of any filtered view (jobs, failed jobs, history)
 - Webhook / alert config — POST to a URL when the failure count exceeds a threshold
 
 Pull requests for any of these are welcome. See [Contributing](#contributing) below.

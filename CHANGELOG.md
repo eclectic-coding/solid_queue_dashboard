@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- CSV export on the jobs, failed jobs, and history pages — an "Export CSV" button downloads all records matching the current filters (status, queue, search term, period) as a named `.csv` file; columns are tailored per view (enqueued_at for jobs, error details for failed jobs, duration and finished_at for history)
 - Dashboard quick actions — "Retry All Failed" and "Discard All Blocked" buttons appear as cards on the dashboard when the respective count is non-zero; each includes a confirm dialog and redirects back to the dashboard with a count notice; cards are hidden when everything is healthy
 - Dark mode — a ☽/☀ toggle button in the header switches between light and dark themes; preference persists to `localStorage` and falls back to the OS `prefers-color-scheme` on first visit; implemented via a `[data-theme="dark"]` attribute on `<html>` so all CSS custom properties inherit the new palette automatically; badge and flash hardcoded hex colors get explicit dark-mode overrides in a new `_12_dark_mode.css` partial; powered by a new Stimulus `theme_controller`
 - Configurable settings via `SolidQueueWeb.configure` — `page_size` (Pagy limit, default 25), `dashboard_refresh_interval` (ms, default 5 000), `default_refresh_interval` (ms, default 10 000 — applies to jobs, processes, and history pages), `search_results_limit` (max results per status in global search, default 25); all settings have safe defaults so zero host-app configuration is required
