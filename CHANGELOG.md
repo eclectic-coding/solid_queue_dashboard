@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-05-20
+
 ### Added
 
 - CSV export on the jobs, failed jobs, and history pages — an "Export CSV" button downloads all records matching the current filters (status, queue, search term, period) as a named `.csv` file; columns are tailored per view (enqueued_at for jobs, error details for failed jobs, duration and finished_at for history)
@@ -172,7 +174,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI workflow with lint (RuboCop) and test (RSpec) matrix across Ruby 3.3, 3.4, and 4.0
 - `bin/release` script for versioned gem releases
 
-[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.8.0
 [0.7.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.7.0
 [0.6.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.6.0
 [0.5.5]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.5.5
