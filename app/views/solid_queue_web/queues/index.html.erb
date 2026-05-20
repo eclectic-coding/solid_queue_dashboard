@@ -12,6 +12,7 @@
           <th scope="col">Latency</th>
           <th scope="col">Done (24h)</th>
           <th scope="col">Failed (24h)</th>
+          <th scope="col">Failure Rate (12h)</th>
           <th scope="col">Status</th>
           <th scope="col"><span class="sqd-sr-only">Actions</span></th>
         </tr>
@@ -34,6 +35,22 @@
             </td>
             <td style="color: var(--success);"><%= @completed_24h[queue.name] || 0 %></td>
             <td style="color: <%= (@failed_24h[queue.name] || 0) > 0 ? "var(--danger)" : "inherit" %>;"><%= @failed_24h[queue.name] || 0 %></td>
+            <td>
+              <% sparkline = @failure_sparklines[queue.name] %>
+              <% if sparkline.any? %>
+                <div class="sqd-mini-sparkline" aria-label="Failure rate last 12 hours for <%= queue.name %>">
+                  <% sparkline.each_with_index do |rate, i| %>
+                    <% pct = rate || 0 %>
+                    <% hour_label = (12 - i).hours.ago.strftime("%-I%p").downcase %>
+                    <div class="sqd-mini-sparkline__bar sqd-mini-sparkline__bar--<%= rate ? "data" : "empty" %>"
+                         style="height: <%= [pct, 2].max %>%"
+                         title="<%= hour_label %>: <%= rate ? "#{rate}% failure rate" : "no data" %>"></div>
+                  <% end %>
+                </div>
+              <% else %>
+                <span style="color: var(--muted)">—</span>
+              <% end %>
+            </td>
             <td>
               <% if queue.paused? %>
                 <span class="sqd-badge sqd-badge--paused">Paused</span>

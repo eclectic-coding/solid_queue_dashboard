@@ -2,21 +2,11 @@ module SolidQueueWeb
   class QueuesController < ApplicationController
     def index
       @queues = SolidQueue::Queue.all.sort_by(&:name)
-
-      now = Time.current
-      @completed_24h = SolidQueue::Job
-        .where(finished_at: 24.hours.ago..now)
-        .group(:queue_name)
-        .count
-      @failed_24h = SolidQueue::FailedExecution
-        .joins(:job)
-        .where(created_at: 24.hours.ago..now)
-        .group("solid_queue_jobs.queue_name")
-        .count
-      @oldest_ready = SolidQueue::ReadyExecution
-        .joins(:job)
-        .group("solid_queue_jobs.queue_name")
-        .minimum("solid_queue_jobs.created_at")
+      stats = QueueStats.new(@queues)
+      @completed_24h      = stats.completed_24h
+      @failed_24h         = stats.failed_24h
+      @oldest_ready       = stats.oldest_ready
+      @failure_sparklines = stats.failure_sparklines
     end
 
     def pause
