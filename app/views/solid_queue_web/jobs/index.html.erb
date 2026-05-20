@@ -28,7 +28,6 @@
   <input class="sqd-search__input" type="search" name="q" value="<%= @search %>"
          placeholder="Filter by job class…" autocomplete="off" aria-label="Filter by job class"
          data-action="input->search#filter">
-  <button type="submit" class="sqd-btn sqd-btn--muted">Search</button>
   <% if @search.present? %>
     <%= link_to "Clear", jobs_path(status: @status, period: @period), class: "sqd-btn sqd-btn--muted" %>
   <% end %>

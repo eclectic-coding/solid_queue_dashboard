@@ -43,6 +43,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **Processes** — workers, dispatchers, and supervisors with heartbeat health status; auto-refreshes every 10 seconds
 - **Global search** — search across all job statuses at once by class name substring; results grouped by status with match count and direct links to filtered views; native datalist autocomplete pre-populated from all known job classes; auto-submits on selection
 - **Targeted bulk actions** — checkboxes on the jobs and failed jobs lists for selecting individual rows; selection bar shows count and action buttons ("Discard Selected" for jobs, "Retry Selected" / "Discard Selected" for failed jobs); select-all checkbox in the table header
+- **Job history** — browsable list of all finished jobs with class name, queue, duration, and finished timestamp; filterable by period (1h / 24h / 7d), queue, and class name search; Done (1h) / Done (24h) dashboard cards link directly to the filtered history view
 
 ## Screenshots
 
