@@ -137,7 +137,7 @@ RSpec.describe "FailedJobs", type: :request do
     end
   end
 
-  describe "POST /jobs/failed_jobs/:id/retry" do
+  describe "POST /jobs/failed_jobs/:id/retry (RetryFailedJobsController#create)" do
     it "retries the job and redirects" do
       post "/jobs/failed_jobs/#{execution.id}/retry"
       expect(response).to redirect_to("/jobs/failed_jobs")
@@ -184,7 +184,7 @@ RSpec.describe "FailedJobs", type: :request do
     end
   end
 
-  describe "POST /jobs/failed_jobs/retry_all" do
+  describe "POST /jobs/failed_jobs/retry_all (RetryFailedJobsController#create)" do
     it "retries all failed jobs and redirects" do
       post "/jobs/failed_jobs/retry_all"
       expect(response).to redirect_to("/jobs/failed_jobs")

@@ -1,6 +1,6 @@
 module SolidQueueWeb
   class FailedJobsController < ApplicationController
-    before_action :set_filter_params, only: [:index, :retry, :destroy]
+    before_action :set_filter_params, only: [:index, :destroy]
 
     def index
       respond_to do |format|
@@ -11,13 +11,6 @@ module SolidQueueWeb
                     type: "text/csv", disposition: "attachment"
         end
       end
-    end
-
-    def retry
-      executions = params[:id] ? [SolidQueue::FailedExecution.find(params[:id])] : filtered_scope.to_a
-      perform_retry(executions)
-    rescue => e
-      redirect_to failed_jobs_path, alert: "Could not retry job: #{e.message}"
     end
 
     def destroy
@@ -40,13 +33,6 @@ module SolidQueueWeb
                   execution.created_at.iso8601]
         end
       end
-    end
-
-    def perform_retry(executions)
-      jobs = executions.map(&:job)
-      SolidQueue::FailedExecution.retry_all(jobs)
-      redirect_to failed_jobs_path(queue: @queue, q: @search, period: @period),
-        notice: "#{jobs.size} #{"job".pluralize(jobs.size)} queued for retry."
     end
 
     def perform_discard(executions)

@@ -33,11 +33,11 @@ SolidQueueWeb::Engine.routes.draw do
            controller: "failed_jobs/selections"
   resources :failed_jobs, only: [:index, :destroy] do
     collection do
-      post :retry_all,   action: :retry
+      post :retry_all,   to: "retry_failed_jobs#create"
       post :discard_all, action: :destroy
     end
     member do
-      post :retry
+      post :retry, to: "retry_failed_jobs#create"
     end
   end
 end
