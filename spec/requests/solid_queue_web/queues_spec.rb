@@ -20,6 +20,40 @@ RSpec.describe "Queues", type: :request do
       get "/jobs/queues"
       expect(response.body).to include("default")
     end
+
+    it "shows Done (24h) and Failed (24h) columns" do
+      get "/jobs/queues"
+      expect(response.body).to include("Done (24h)")
+      expect(response.body).to include("Failed (24h)")
+    end
+
+    it "shows completed count for a queue" do
+      job = SolidQueue::Job.new(
+        queue_name: "default", class_name: "TestJob",
+        arguments: {}.to_json, priority: 0, active_job_id: SecureRandom.uuid
+      )
+      job.finished_at = 1.hour.ago
+      job.created_at  = 2.hours.ago
+      job.updated_at  = 1.hour.ago
+      job.save!(validate: false)
+
+      get "/jobs/queues"
+      expect(response.body).to include("Done (24h)")
+    end
+
+    it "shows failed count for a queue" do
+      failed_job = SolidQueue::Job.create!(
+        queue_name: "default", class_name: "TestJob",
+        arguments: {}.to_json, active_job_id: SecureRandom.uuid
+      )
+      SolidQueue::FailedExecution.create!(
+        job: failed_job,
+        error: { exception_class: "RuntimeError", message: "boom", backtrace: [] }
+      )
+
+      get "/jobs/queues"
+      expect(response.body).to include("Failed (24h)")
+    end
   end
 
   describe "POST /jobs/queues/:name/pause" do
