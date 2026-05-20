@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Dark mode — a ☽/☀ toggle button in the header switches between light and dark themes; preference persists to `localStorage` and falls back to the OS `prefers-color-scheme` on first visit; implemented via a `[data-theme="dark"]` attribute on `<html>` so all CSS custom properties inherit the new palette automatically; badge and flash hardcoded hex colors get explicit dark-mode overrides in a new `_12_dark_mode.css` partial; powered by a new Stimulus `theme_controller`
+
 ## [0.7.0] - 2026-05-20
 
 ### Added
