@@ -106,6 +106,26 @@ errors = [
   )
 end
 
+puts "Seeding recent failed jobs (for failure rate sparkline)..."
+3.times do |i|
+  err = errors[i % errors.size]
+  job = SolidQueue::Job.create!(
+    queue_name: queues.sample,
+    class_name: job_classes.sample,
+    arguments: { recent_fail: true, idx: i }.to_json,
+    priority: 0,
+    active_job_id: SecureRandom.uuid,
+    created_at: rand(1..10).hours.ago,
+    updated_at: rand(1..10).hours.ago
+  )
+  job.ready_execution&.destroy
+  SolidQueue::FailedExecution.create!(
+    job: job,
+    error: { exception_class: err[:class], message: err[:message], backtrace: ["app/jobs/#{job.class_name.underscore}.rb:42"] },
+    created_at: job.created_at
+  )
+end
+
 puts "Seeding blocked jobs..."
 # Skip set_expires_at callback which requires a real ActiveJob class to exist
 SolidQueue::BlockedExecution.skip_callback(:create, :before, :set_expires_at)

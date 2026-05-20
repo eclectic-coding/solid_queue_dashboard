@@ -66,3 +66,28 @@
 }
 
 .sqd-stat--done .sqd-stat__value { color: var(--success); }
+
+.sqd-mini-sparkline {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 28px;
+  width: 88px;
+}
+
+.sqd-mini-sparkline__bar {
+  flex: 1;
+  background: var(--danger);
+  border-radius: 1px 1px 0 0;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+.sqd-mini-sparkline__bar:hover {
+  opacity: 1;
+}
+
+.sqd-mini-sparkline__bar--empty {
+  background: var(--border);
+  opacity: 0.5;
+}
