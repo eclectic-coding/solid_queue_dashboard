@@ -8,13 +8,10 @@ SolidQueueWeb::Engine.routes.draw do
   resources :recurring_tasks, only: [:index]
   resources :processes, only: [:index]
   resources :queues, only: [:index], param: :name do
-    member do
-      post :pause
-      post :resume
-    end
+    resource :pause, only: [:create, :destroy], controller: "queues/pauses"
     resources :jobs, path: "list", only: [:index, :destroy], controller: "queues/jobs" do
       collection do
-        post :discard_all
+        post :discard_all, action: :destroy
       end
     end
   end
