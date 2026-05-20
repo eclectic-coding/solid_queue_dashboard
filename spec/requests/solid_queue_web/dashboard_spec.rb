@@ -46,6 +46,74 @@ RSpec.describe "Dashboard", type: :request do
     end
   end
 
+  describe "POST /jobs/retry_all_failed" do
+    let!(:failed_job) do
+      j = SolidQueue::Job.create!(
+        queue_name: "default", class_name: "TestJob",
+        arguments: {}.to_json, active_job_id: SecureRandom.uuid
+      )
+      SolidQueue::FailedExecution.create!(
+        job: j,
+        error: { exception_class: "RuntimeError", message: "boom", backtrace: [] }
+      )
+      j
+    end
+
+    it "retries all failed jobs and redirects to the dashboard" do
+      post "/jobs/retry_all_failed"
+      expect(response).to redirect_to("/jobs/")
+      follow_redirect!
+      expect(response.body).to include("queued for retry")
+    end
+
+    it "removes the failed execution" do
+      expect { post "/jobs/retry_all_failed" }.to change(SolidQueue::FailedExecution, :count).by(-1)
+    end
+
+    it "handles failure gracefully" do
+      allow(SolidQueue::FailedExecution).to receive(:retry_all).and_raise(RuntimeError, "boom")
+      post "/jobs/retry_all_failed"
+      expect(response).to redirect_to("/jobs/")
+      follow_redirect!
+      expect(response.body).to include("Could not retry failed jobs")
+    end
+  end
+
+  describe "POST /jobs/discard_all_blocked" do
+    let!(:blocked_job) do
+      j = SolidQueue::Job.create!(
+        queue_name: "default", class_name: "TestJob",
+        arguments: {}.to_json, active_job_id: SecureRandom.uuid
+      )
+      j.ready_execution&.destroy
+      j.update!(concurrency_key: "TestJob/1")
+      allow_any_instance_of(SolidQueue::BlockedExecution).to receive(:set_expires_at)
+      SolidQueue::BlockedExecution.create!(
+        job: j, queue_name: j.queue_name, priority: j.priority, expires_at: 1.hour.from_now
+      )
+      j
+    end
+
+    it "discards all blocked jobs and redirects to the dashboard" do
+      post "/jobs/discard_all_blocked"
+      expect(response).to redirect_to("/jobs/")
+      follow_redirect!
+      expect(response.body).to include("discarded")
+    end
+
+    it "removes the blocked execution" do
+      expect { post "/jobs/discard_all_blocked" }.to change(SolidQueue::BlockedExecution, :count).by(-1)
+    end
+
+    it "handles failure gracefully" do
+      allow(SolidQueue::BlockedExecution).to receive(:discard_all_from_jobs).and_raise(RuntimeError, "boom")
+      post "/jobs/discard_all_blocked"
+      expect(response).to redirect_to("/jobs/")
+      follow_redirect!
+      expect(response.body).to include("Could not discard blocked jobs")
+    end
+  end
+
   describe "authentication" do
     after { SolidQueueWeb.instance_variable_set(:@authenticate, nil) }
 

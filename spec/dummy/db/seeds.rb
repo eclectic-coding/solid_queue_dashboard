@@ -106,6 +106,34 @@ errors = [
   )
 end
 
+puts "Seeding blocked jobs..."
+# Skip set_expires_at callback which requires a real ActiveJob class to exist
+SolidQueue::BlockedExecution.skip_callback(:create, :before, :set_expires_at)
+begin
+  5.times do |i|
+    job = SolidQueue::Job.create!(
+      queue_name: queues.sample,
+      class_name: job_classes.sample,
+      arguments: { item_id: i + 1 }.to_json,
+      priority: 0,
+      active_job_id: SecureRandom.uuid,
+      concurrency_key: "#{job_classes.sample}/#{i + 1}",
+      created_at: rand(1..12).hours.ago,
+      updated_at: rand(1..12).hours.ago
+    )
+    job.ready_execution&.destroy
+    SolidQueue::BlockedExecution.create!(
+      job: job,
+      queue_name: job.queue_name,
+      priority: job.priority,
+      expires_at: rand(1..4).hours.from_now,
+      created_at: job.created_at
+    )
+  end
+ensure
+  SolidQueue::BlockedExecution.set_callback(:create, :before, :set_expires_at)
+end
+
 puts "Seeding finished jobs (for throughput chart)..."
 # Recent jobs — guaranteed within last 30 minutes so Done (1h) is non-zero
 5.times do |i|
@@ -147,6 +175,7 @@ puts "Done! Created:"
 puts "  #{SolidQueue::ReadyExecution.count} ready jobs"
 puts "  #{SolidQueue::ScheduledExecution.count} scheduled jobs"
 puts "  #{SolidQueue::ClaimedExecution.count} claimed (running) jobs"
+puts "  #{SolidQueue::BlockedExecution.count} blocked jobs"
 puts "  #{SolidQueue::FailedExecution.count} failed jobs"
 puts "  #{SolidQueue::Process.count} processes"
 puts "  #{SolidQueue::Job.where.not(finished_at: nil).count} finished jobs"

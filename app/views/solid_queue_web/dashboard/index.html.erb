@@ -74,7 +74,7 @@
   <% end %>
 </div>
 
-<div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
   <div class="sqd-card">
     <div class="sqd-card__header">
       <span class="sqd-card__title">Quick Links</span>
@@ -91,13 +91,35 @@
   <% if @stats[:failed] > 0 %>
     <div class="sqd-card">
       <div class="sqd-card__header">
-        <span class="sqd-card__title">Attention Required</span>
+        <span class="sqd-card__title">Failed Jobs</span>
       </div>
-      <div style="padding: 1rem;">
-        <p style="color: var(--danger); margin-bottom: 0.75rem;">
+      <div style="padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+        <p style="color: var(--danger); font-size: 13px;">
           <%= pluralize(@stats[:failed], "failed job") %> need attention.
         </p>
-        <%= link_to "Review failed jobs →", failed_jobs_path, class: "sqd-btn sqd-btn--danger" %>
+        <%= button_to "Retry All Failed", retry_all_failed_path,
+              method: :post,
+              class: "sqd-btn sqd-btn--primary",
+              data: { confirm: "Retry all #{@stats[:failed]} failed #{"job".pluralize(@stats[:failed])}?" } %>
+        <%= link_to "Review →", failed_jobs_path, class: "sqd-btn sqd-btn--muted" %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @stats[:blocked] > 0 %>
+    <div class="sqd-card">
+      <div class="sqd-card__header">
+        <span class="sqd-card__title">Blocked Jobs</span>
+      </div>
+      <div style="padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+        <p style="color: var(--warning); font-size: 13px;">
+          <%= pluralize(@stats[:blocked], "blocked job") %>.
+        </p>
+        <%= button_to "Discard All Blocked", discard_all_blocked_path,
+              method: :post,
+              class: "sqd-btn sqd-btn--danger",
+              data: { confirm: "Discard all #{@stats[:blocked]} blocked #{"job".pluralize(@stats[:blocked])}? This cannot be undone." } %>
+        <%= link_to "Review →", jobs_path(status: "blocked"), class: "sqd-btn sqd-btn--muted" %>
       </div>
     </div>
   <% end %>
