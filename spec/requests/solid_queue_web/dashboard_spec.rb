@@ -46,6 +46,38 @@ RSpec.describe "Dashboard", type: :request do
     end
   end
 
+  describe "slow jobs card" do
+    after { SolidQueueWeb.slow_job_threshold = nil }
+
+    it "shows the slow jobs card when threshold is set and jobs exceed it" do
+      process = SolidQueue::Process.create!(
+        kind: "Worker", pid: 99_998, hostname: "test-host",
+        name: "worker-slow-test", last_heartbeat_at: Time.current
+      )
+      job = SolidQueue::Job.create!(
+        queue_name: "default", class_name: "SlowJob",
+        arguments: {}, active_job_id: SecureRandom.uuid
+      )
+      execution = SolidQueue::ClaimedExecution.create!(job: job, process: process)
+      execution.update_columns(created_at: 10.minutes.ago)
+      SolidQueueWeb.slow_job_threshold = 1.second
+
+      get "/jobs"
+      expect(response.body).to include("Slow Jobs")
+    end
+
+    it "does not show the slow jobs card when threshold is not configured" do
+      get "/jobs"
+      expect(response.body).not_to include("Slow Jobs")
+    end
+
+    it "does not show the slow jobs card when no jobs exceed the threshold" do
+      SolidQueueWeb.slow_job_threshold = 1.hour
+      get "/jobs"
+      expect(response.body).not_to include("Slow Jobs")
+    end
+  end
+
   describe "authentication" do
     after { SolidQueueWeb.instance_variable_set(:@authenticate, nil) }
 

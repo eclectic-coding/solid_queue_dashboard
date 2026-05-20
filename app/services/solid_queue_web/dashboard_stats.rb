@@ -1,6 +1,6 @@
 module SolidQueueWeb
   class DashboardStats
-    attr_reader :counts, :throughput, :sparkline, :depth_sparkline
+    attr_reader :counts, :throughput, :sparkline, :depth_sparkline, :slow_jobs_count
 
     def initialize
       @now = Time.current
@@ -31,6 +31,9 @@ module SolidQueueWeb
         to   = i == 11 ? @now : (11 - i).hours.ago
         finished_times.count { |t| t >= from && t < to }
       end
+
+      threshold = SolidQueueWeb.slow_job_threshold
+      @slow_jobs_count = threshold ? SolidQueue::ClaimedExecution.where("created_at <= ?", threshold.ago).count : 0
 
       job_timestamps = SolidQueue::Job
         .where("created_at >= ? OR finished_at IS NULL", 72.hours.ago)

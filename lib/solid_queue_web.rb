@@ -4,7 +4,8 @@ require "solid_queue_web/engine"
 
 module SolidQueueWeb
   class << self
-    attr_writer :page_size, :dashboard_refresh_interval, :default_refresh_interval, :search_results_limit
+    attr_writer :page_size, :dashboard_refresh_interval, :default_refresh_interval, :search_results_limit,
+                :slow_job_threshold
 
     def page_size
       @page_size || 25
@@ -20,6 +21,10 @@ module SolidQueueWeb
 
     def search_results_limit
       @search_results_limit || 25
+    end
+
+    def slow_job_threshold
+      @slow_job_threshold
     end
 
     def configure

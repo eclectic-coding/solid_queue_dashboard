@@ -50,3 +50,7 @@ tbody tr:hover { background: var(--bg); }
   padding: 3rem 1rem;
   color: var(--muted);
 }
+
+.sqd-row--slow { background: rgba(253, 126, 20, 0.07); }
+.sqd-row--slow:hover { background: rgba(253, 126, 20, 0.13); }
+.sqd-slow-duration { color: var(--warning); font-weight: 600; }

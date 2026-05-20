@@ -269,4 +269,57 @@ RSpec.describe "Jobs", type: :request do
       expect(response.body).to include("Could not discard jobs")
     end
   end
+
+  describe "slow job detection (claimed tab)" do
+    let!(:worker_process) do
+      SolidQueue::Process.create!(
+        kind: "Worker", pid: 99_999, hostname: "test-host",
+        name: "worker-test", last_heartbeat_at: Time.current
+      )
+    end
+
+    let!(:claimed_job) do
+      SolidQueue::Job.create!(
+        queue_name: "default", class_name: "SlowJob",
+        arguments: {}, active_job_id: SecureRandom.uuid
+      )
+    end
+
+    let!(:claimed_execution) do
+      SolidQueue::ClaimedExecution.create!(job: claimed_job, process: worker_process)
+    end
+
+    after { SolidQueueWeb.slow_job_threshold = nil }
+
+    it "shows the Running For column on the claimed tab" do
+      get "/jobs/list", params: { status: "claimed" }
+      expect(response.body).to include("Running For")
+    end
+
+    it "does not show the Running For column on other tabs" do
+      get "/jobs/list", params: { status: "ready" }
+      expect(response.body).not_to include("Running For")
+    end
+
+    it "highlights slow jobs when threshold is configured and exceeded" do
+      SolidQueueWeb.slow_job_threshold = 1.second
+      claimed_execution.update_columns(created_at: 10.minutes.ago)
+
+      get "/jobs/list", params: { status: "claimed" }
+      expect(response.body).to include('class="sqd-row--slow"')
+      expect(response.body).to include("sqd-badge--slow")
+    end
+
+    it "does not highlight jobs within the threshold" do
+      SolidQueueWeb.slow_job_threshold = 1.hour
+      get "/jobs/list", params: { status: "claimed" }
+      expect(response.body).not_to include('class="sqd-row--slow"')
+    end
+
+    it "does not highlight any row when threshold is not configured" do
+      claimed_execution.update_columns(created_at: 10.hours.ago)
+      get "/jobs/list", params: { status: "claimed" }
+      expect(response.body).not_to include('class="sqd-row--slow"')
+    end
+  end
 end
