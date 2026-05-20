@@ -1,7 +1,6 @@
 SolidQueueWeb::Engine.routes.draw do
   root to: "dashboard#index"
-  post "retry_all_failed",    to: "dashboard#retry_all_failed",    as: :retry_all_failed
-  post "discard_all_blocked", to: "dashboard#discard_all_blocked", as: :discard_all_blocked
+  resource :blocked_jobs, only: [:destroy]
 
   get "search", to: "search#index", as: :search
   get "history", to: "history#index", as: :history

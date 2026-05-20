@@ -33,7 +33,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 
 ## Features
 
-- **Dashboard** — stat cards showing counts for ready, scheduled, running, blocked, and failed jobs, plus queues, recurring tasks, and processes; "Done (1h)" and "Done (24h)" throughput cards; a "Throughput — Last 12 Hours" bar chart showing completed-job counts per hour (pure CSS, no charting library); auto-refreshes every 5 seconds
+- **Dashboard** — stat cards showing counts for ready, scheduled, running, blocked, and failed jobs, plus queues, recurring tasks, and processes; "Done (1h)" and "Done (24h)" throughput cards; a "Throughput — Last 12 Hours" bar chart (blue) and a "Queue Depth — Last 12 Hours" bar chart (purple) showing hourly snapshots of active job count; pure CSS, no charting library; auto-refreshes every 5 seconds
 - **Queues** — all queues sorted by name with size; oldest ready job latency (color-coded, with UTC timestamp tooltip); Done (24h) and Failed (24h) throughput counts; a mini 12-bar failure rate sparkline per queue showing failure % per hour over the last 12 hours; pause/resume controls
 - **Jobs** — filterable by status (ready, scheduled, claimed, blocked, failed) and by queue; search by job class name with dynamic auto-submit; time-based period filter (1 h / 24 h / 7 d); discard individual or all jobs; Turbo Frame navigation so only the table updates on filter or search; auto-refreshes every 10 seconds
 - **Failed jobs** — list of failed executions with error details; search by class name; filter by queue; time-based period filter; retry or discard individually or in bulk
@@ -112,7 +112,6 @@ No authentication is enforced by default. When the `authenticate` block returns 
 Planned features, roughly ordered by priority:  
 
 **Observability**
-- Queue depth trend — historical queue size over time, not just the current snapshot
 - Slow job detection — flag jobs exceeding a configurable duration threshold
 
 **Operations**
@@ -124,6 +123,9 @@ Planned features, roughly ordered by priority:
 - Webhook / alert config — POST to a URL when the failure count exceeds a threshold
 - Multi-database support — when Solid Queue runs on a separate database from the host app
 - Read replica support — route dashboard queries to a replica to avoid impacting the primary
+
+**Code quality**
+- Rails controller conventions — complete the 7-action refactor: `QueuesController#pause` / `#resume` → `Queues::PausesController#create` / `#destroy`; `Queues::JobsController#discard_all` → map to `#destroy` matching the pattern already applied to `JobsController`
 
 Pull requests for any of these are welcome. See [Contributing](#contributing) below.
 
