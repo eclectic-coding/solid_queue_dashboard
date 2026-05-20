@@ -49,7 +49,7 @@
       <tbody>
         <% @jobs.each do |job| %>
           <tr>
-            <td><%= link_to job.class_name, job_path(job) %></td>
+            <td><%= link_to job.class_name, job_path(job), class: "sqd-table-link" %></td>
             <td>
               <%= link_to job.queue_name, history_path(queue: job.queue_name, q: @search, period: @period),
                     class: "sqd-mono", style: "color: inherit;" %>

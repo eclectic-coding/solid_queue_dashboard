@@ -87,7 +87,7 @@
               </td>
               <td>
                 <span class="sqd-badge sqd-badge--<%= @status %>"><%= @status %></span>
-                <%= link_to job.class_name, job_path(job), style: "margin-left: 0.5rem;", data: { turbo_frame: "_top" } %>
+                <%= link_to job.class_name, job_path(job), class: "sqd-table-link", style: "margin-left: 0.5rem;", data: { turbo_frame: "_top" } %>
               </td>
               <td>
                 <%= link_to job.queue_name, queue_jobs_path(queue_name: job.queue_name, status: @status),
@@ -140,7 +140,7 @@
                 <% if slow %>
                   <span class="sqd-badge sqd-badge--slow">slow</span>
                 <% end %>
-                <%= link_to job.class_name, job_path(job), style: "margin-left: 0.5rem;", data: { turbo_frame: "_top" } %>
+                <%= link_to job.class_name, job_path(job), class: "sqd-table-link", style: "margin-left: 0.5rem;", data: { turbo_frame: "_top" } %>
               </td>
               <td>
                 <%= link_to job.queue_name, queue_jobs_path(queue_name: job.queue_name, status: @status),

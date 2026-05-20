@@ -44,6 +44,9 @@ td {
 
 tr:last-child td { border-bottom: none; }
 tbody tr:hover { background: var(--bg); }
+.sqd-table-link,
+.sqd-table-link:hover,
+.sqd-table-link:visited { text-decoration: none; color: var(--primary); }
 
 .sqd-empty {
   text-align: center;
