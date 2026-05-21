@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-05-21
+
 ### Added
 
 - Bulk scheduled job actions — a "Run All Now" button on the Scheduled tab back-dates all scheduled executions in a single `update_all` call, causing SolidQueue's dispatcher to pick them up immediately; respects the active period filter so only jobs within the current window are promoted
@@ -199,7 +201,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI workflow with lint (RuboCop) and test (RSpec) matrix across Ruby 3.3, 3.4, and 4.0
 - `bin/release` script for versioned gem releases
 
-[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v1.0.0
 [0.9.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.9.0
 [0.8.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.8.0
 [0.7.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.7.0
