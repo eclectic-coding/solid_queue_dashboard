@@ -50,6 +50,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **CSV export** — "Export CSV" button on the jobs, failed jobs, and history pages downloads all records matching the current filters; columns are tailored per view
 - **Slow job detection** — when `slow_job_threshold` is configured, claimed jobs running longer than the threshold are flagged with an orange row, a "slow" badge, and a "Running For" duration column on the Running tab; a "Slow Jobs" warning card appears on the dashboard with a link to the Running tab
 - **Webhook alerts** — set `alert_webhook_url` and `alert_failure_threshold` to receive a POST request whenever the failed job count meets or exceeds the threshold; fires asynchronously so dashboard performance is unaffected; a configurable cooldown (default 1 h) prevents repeated alerts while the count stays elevated
+- **Metrics / health endpoint** — `GET /jobs/metrics.json` returns a machine-readable JSON document with job counts, throughput, per-queue depth and pause state, and process health summary; suitable for Prometheus scraping, uptime monitors, or external dashboards; `slow_jobs` count included when `slow_job_threshold` is configured
 
 ## Screenshots
 
@@ -140,6 +141,48 @@ The request body is JSON:
 
 The webhook fires asynchronously in a background thread so dashboard page loads are never delayed. HTTP errors are logged to `Rails.logger` and swallowed. The cooldown window prevents repeated alerts while the count stays elevated — the clock resets on each app restart.
 
+## Metrics endpoint
+
+`GET /jobs/metrics.json` returns a machine-readable JSON document suitable for Prometheus scraping, uptime monitors, or external dashboards. No configuration is required — the endpoint is available as soon as the engine is mounted.
+
+```
+GET /jobs/metrics.json
+```
+
+Example response:
+
+```json
+{
+  "generated_at": "2026-05-21T12:00:00Z",
+  "jobs": {
+    "ready": 12,
+    "scheduled": 8,
+    "claimed": 3,
+    "blocked": 5,
+    "failed": 9
+  },
+  "throughput": {
+    "completed_1h": 15,
+    "completed_24h": 87
+  },
+  "queues": [
+    { "name": "critical", "depth": 2, "paused": false },
+    { "name": "default",  "depth": 4, "paused": false },
+    { "name": "mailers",  "depth": 3, "paused": true  }
+  ],
+  "processes": {
+    "total": 4,
+    "healthy": 4,
+    "stale": 0,
+    "by_kind": { "Dispatcher": 1, "Supervisor": 1, "Worker": 2 }
+  }
+}
+```
+
+When `slow_job_threshold` is configured, a `slow_jobs` integer is also included at the top level.
+
+The endpoint respects the same authentication and `connects_to` settings as the rest of the dashboard. A process is counted as **stale** when its `last_heartbeat_at` is older than `SolidQueue.process_alive_threshold` (default: 5 minutes).
+
 ## Read replica support
 
 Set `connects_to` with both `reading:` and `writing:` keys to enable automatic role switching. GET requests are routed to the reading role; POST/DELETE/PATCH requests use the writing role.
@@ -169,7 +212,6 @@ Planned features, roughly ordered by priority:
 - Bulk scheduled job actions — "Run All Now" button on the Scheduled tab, mirroring the "Retry All" pattern on the Failed Jobs page
 
 **Observability**
-- Metrics / health endpoint — `GET /jobs/metrics.json` exposing job counts, queue depths, and process health for Prometheus scraping or external dashboards
 - Performance analytics — average and percentile (p50/p95) duration per job class derived from the history table; surfaces slow job types before they become a problem
 - Priority filter — filter and sort the jobs list by Solid Queue job priority
 
