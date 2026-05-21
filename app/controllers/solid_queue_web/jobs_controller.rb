@@ -31,11 +31,11 @@ module SolidQueueWeb
       @job = SolidQueue::Job
         .includes(:ready_execution, :scheduled_execution, :claimed_execution, :blocked_execution, :failed_execution)
         .find(params[:id])
-      @execution_status = derive_status(@job)
+      @execution_status = Job.derive_status(@job)
     end
 
     def destroy
-      model = execution_model_for!(@status)
+      model = Job.execution_model_for!(@status)
       if params[:id]
         @execution = model.find(params[:id])
         @execution.discard
@@ -69,15 +69,6 @@ module SolidQueueWeb
       end
     end
 
-    def derive_status(job)
-      return "failed"    if job.failed_execution.present?
-      return "claimed"   if job.claimed_execution.present?
-      return "blocked"   if job.blocked_execution.present?
-      return "ready"     if job.ready_execution.present?
-      return "scheduled" if job.scheduled_execution.present?
-      "finished"
-    end
-
     def set_status
       @status   = params[:status]
       @period   = params[:period].presence_in(PERIOD_DURATIONS.keys)
@@ -89,11 +80,6 @@ module SolidQueueWeb
       scope = scope.references(:job).where("solid_queue_jobs.created_at >= ?", PERIOD_DURATIONS[@period].ago) if @period.present?
       scope = scope.references(:job).where("solid_queue_jobs.priority = ?", @priority.to_i)                  if @priority.present?
       scope
-    end
-
-    def execution_model_for!(status)
-      raise ArgumentError, "Cannot discard #{status} jobs from this page." unless Job::DISCARDABLE.include?(status)
-      Job::EXECUTION_MODELS[status]
     end
   end
 end
