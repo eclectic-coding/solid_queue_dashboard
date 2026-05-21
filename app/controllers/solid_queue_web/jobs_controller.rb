@@ -1,7 +1,5 @@
 module SolidQueueWeb
   class JobsController < ApplicationController
-    before_action :set_status, only: [:destroy, :discard_selected]
-
     def index
       @status   = params[:status].presence_in(Job::STATUSES) || "ready"
       @search   = params[:q].presence
@@ -35,6 +33,9 @@ module SolidQueueWeb
     end
 
     def destroy
+      @status   = params[:status]
+      @period   = params[:period].presence_in(PERIOD_DURATIONS.keys)
+      @priority = params[:priority].presence
       model = Job.execution_model_for!(@status)
       if params[:id]
         @execution = model.find(params[:id])
@@ -67,12 +68,6 @@ module SolidQueueWeb
           csv << [job.id, job.class_name, job.queue_name, @status, job.priority, job.created_at.iso8601]
         end
       end
-    end
-
-    def set_status
-      @status   = params[:status]
-      @period   = params[:period].presence_in(PERIOD_DURATIONS.keys)
-      @priority = params[:priority].presence
     end
 
     def filtered_scope(model)
