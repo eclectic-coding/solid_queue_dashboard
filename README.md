@@ -115,7 +115,6 @@ No authentication is enforced by default. When the `authenticate` block returns 
 Planned features, roughly ordered by priority:  
 
 **Operations**
-- Scheduled job management — reschedule a job to run immediately, or push its `scheduled_at` forward
 - Bulk retry with delay — retry all failed jobs with a configurable stagger to avoid thundering herd
 - Admin audit log — record who retried or discarded which jobs and when (requires host-app user identity)
 
