@@ -12,7 +12,8 @@ module SolidQueueWeb
         return if failure_count < SolidQueueWeb.alert_failure_threshold
         return unless should_fire?
 
-        Thread.new { post(SolidQueueWeb.alert_webhook_url, failure_count) }
+        urls = webhook_urls
+        Thread.new { urls.each { |url| post(url, failure_count) } }
       end
 
       def reset!
@@ -22,7 +23,11 @@ module SolidQueueWeb
       private
 
       def configured?
-        SolidQueueWeb.alert_webhook_url.present? && SolidQueueWeb.alert_failure_threshold.present?
+        webhook_urls.any? && SolidQueueWeb.alert_failure_threshold.present?
+      end
+
+      def webhook_urls
+        Array(SolidQueueWeb.alert_webhook_url).flatten.compact.select(&:present?)
       end
 
       def should_fire?
