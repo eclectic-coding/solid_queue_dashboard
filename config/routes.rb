@@ -2,6 +2,7 @@ SolidQueueWeb::Engine.routes.draw do
   root to: "dashboard#index"
   resource :blocked_jobs, only: [:destroy]
 
+  get "metrics", to: "metrics#index", as: :metrics, defaults: { format: :json }
   get "search", to: "search#index", as: :search
   get "history", to: "history#index", as: :history
 
