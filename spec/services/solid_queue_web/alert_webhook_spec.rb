@@ -97,5 +97,34 @@ RSpec.describe SolidQueueWeb::AlertWebhook do
       expect(Rails.logger).to receive(:error).with(/Alert webhook failed/)
       expect { described_class.call(failure_count: 5) }.not_to raise_error
     end
+
+    context "when alert_webhook_url is an array" do
+      let(:second_url) { "http://example.com/second-webhook" }
+
+      before { SolidQueueWeb.alert_webhook_url = [webhook_url, second_url] }
+
+      it "posts to all configured URLs" do
+        expect(Net::HTTP).to receive(:new).twice.and_call_original
+        described_class.call(failure_count: 5)
+      end
+
+      it "continues posting to remaining URLs when one fails" do
+        call_count = 0
+        allow_any_instance_of(Net::HTTP).to receive(:request) do
+          call_count += 1
+          raise RuntimeError, "connection refused" if call_count == 1
+          Net::HTTPSuccess.new("1.1", "200", "OK")
+        end
+        allow(Rails.logger).to receive(:error)
+        expect { described_class.call(failure_count: 5) }.not_to raise_error
+        expect(call_count).to eq(2)
+      end
+
+      it "is not configured when the array is empty" do
+        SolidQueueWeb.alert_webhook_url = []
+        expect_any_instance_of(Net::HTTP).not_to receive(:request)
+        described_class.call(failure_count: 10)
+      end
+    end
   end
 end
