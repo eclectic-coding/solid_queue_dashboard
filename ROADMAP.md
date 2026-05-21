@@ -12,7 +12,7 @@ Pull requests for any of these are welcome. See [Contributing](README.md#contrib
 
 | Feature | Notes |
 |---|---|
-| **Retry failed job with modified arguments** | Form on the job detail page — edit the arguments JSON before retrying. Fixes bad payloads without redeploying. |
+| ~~**Retry failed job with modified arguments**~~ | ✓ Shipped — editable textarea on the job detail page; submitting updates the job record and retries in one step. |
 | **Multiple webhook targets** | Change `alert_webhook_url` to accept an array. Fan out to Slack + PagerDuty simultaneously. |
 | **Queue depth alert** | Fire a webhook when a queue's ready count exceeds a per-queue threshold (e.g. `alert_queue_thresholds: { critical: 50 }`). |
 
