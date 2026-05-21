@@ -8,9 +8,12 @@ Gem::Specification.new do |spec|
   spec.email       = ["eclectic-coding@users.noreply.github.com"]
   spec.homepage    = "https://github.com/eclectic-coding/solid_queue_web"
   spec.summary     = "A Rails engine dashboard for monitoring and managing Solid Queue jobs."
-  spec.description = "Mount SolidQueueWeb in any Rails app using Solid Queue to get a " \
-                     "dashboard for your queues, jobs by status, failed executions, and job actions " \
-                     "(retry, discard) — all without leaving your app."
+  spec.description = "Mount SolidQueueWeb in any Rails app using Solid Queue to get a full-featured " \
+                     "job dashboard: inspect jobs by status (ready, scheduled, running, blocked, failed), " \
+                     "retry or discard failed jobs, reschedule or run scheduled jobs immediately, " \
+                     "manage recurring tasks, filter by queue/priority/period, export to CSV, " \
+                     "detect slow jobs, view queue depth sparklines, track job performance (p50/p95), " \
+                     "and scrape a /metrics JSON endpoint for external monitoring — all without leaving your app."
   spec.license     = "MIT"
 
   spec.metadata["homepage_uri"]    = spec.homepage
