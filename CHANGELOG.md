@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-05-21
+
 ### Added
 
 - Queue depth alert — `alert_queue_thresholds` accepts a hash of `queue_name => ready_job_count`; a webhook fires when any configured queue's ready count meets or exceeds its threshold; cooldown is tracked independently per queue so a busy queue doesn't suppress alerts for others; uses the same `alert_webhook_url` endpoint(s) with `event: "queue_depth_threshold_exceeded"` and `queue_name`, `depth`, and `threshold` fields in the payload
@@ -207,7 +209,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI workflow with lint (RuboCop) and test (RSpec) matrix across Ruby 3.3, 3.4, and 4.0
 - `bin/release` script for versioned gem releases
 
-[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v1.1.0
 [1.0.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v1.0.0
 [0.9.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.9.0
 [0.8.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.8.0
