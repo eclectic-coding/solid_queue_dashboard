@@ -103,6 +103,7 @@ SolidQueueWeb.configure do |config|
   config.alert_webhook_url          = "https://hooks.example.com/solid-queue" # POST target (default: nil = disabled)
   config.alert_failure_threshold    = 10         # fire when failed count >= this (default: nil = disabled)
   config.alert_webhook_cooldown     = 1800       # seconds between repeated alerts (default: 3600)
+  config.connects_to                = { database: { writing: :queue, reading: :queue } } # multi-db (default: nil)
 end
 
 SolidQueueWeb.authenticate do
@@ -114,6 +115,22 @@ end
 
 No authentication is enforced by default. When the `authenticate` block returns falsy, HTTP Basic auth is used as a fallback.
 
+## Multi-database setup
+
+If Solid Queue runs on a separate database, set `connects_to` to match your app's database configuration. The engine wraps every request in `ActiveRecord::Base.connected_to(...)` with the options you provide.
+
+```ruby
+SolidQueueWeb.configure do |config|
+  # Solid Queue on a named database:
+  config.connects_to = { database: { writing: :queue, reading: :queue } }
+
+  # Or just pin to the writing role to bypass automatic read/write splitting:
+  config.connects_to = { role: :writing }
+end
+```
+
+When `connects_to` is `nil` (the default), no connection switching occurs and single-database apps are unaffected.
+
 ## Roadmap
 
 Planned features, roughly ordered by priority:  
@@ -122,7 +139,6 @@ Planned features, roughly ordered by priority:
 - Admin audit log — record who retried or discarded which jobs and when (requires host-app user identity)
 
 **Infrastructure**
-- Multi-database support — when Solid Queue runs on a separate database from the host app
 - Read replica support — route dashboard queries to a replica to avoid impacting the primary
 
 Pull requests for any of these are welcome. See [Contributing](#contributing) below.
