@@ -50,6 +50,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **CSV export** — "Export CSV" button on the jobs, failed jobs, and history pages downloads all records matching the current filters; columns are tailored per view
 - **Slow job detection** — when `slow_job_threshold` is configured, claimed jobs running longer than the threshold are flagged with an orange row, a "slow" badge, and a "Running For" duration column on the Running tab; a "Slow Jobs" warning card appears on the dashboard with a link to the Running tab
 - **Webhook alerts** — set `alert_webhook_url` and `alert_failure_threshold` to receive a POST request whenever the failed job count meets or exceeds the threshold; fires asynchronously so dashboard performance is unaffected; a configurable cooldown (default 1 h) prevents repeated alerts while the count stays elevated
+- **Performance analytics** — per-job-class statistics at `/jobs/performance` showing run count, average, p50, p95, min, and max duration; sorted by p95 descending so the slowest classes surface first; period filter scopes to 1h / 24h / 7d or all time; each class name links to the filtered History view
 - **Metrics / health endpoint** — `GET /jobs/metrics.json` returns a machine-readable JSON document with job counts, throughput, per-queue depth and pause state, and process health summary; suitable for Prometheus scraping, uptime monitors, or external dashboards; `slow_jobs` count included when `slow_job_threshold` is configured
 
 ## Screenshots
@@ -212,7 +213,6 @@ Planned features, roughly ordered by priority:
 - Bulk scheduled job actions — "Run All Now" button on the Scheduled tab, mirroring the "Retry All" pattern on the Failed Jobs page
 
 **Observability**
-- Performance analytics — average and percentile (p50/p95) duration per job class derived from the history table; surfaces slow job types before they become a problem
 - Priority filter — filter and sort the jobs list by Solid Queue job priority
 
 **Notifications**

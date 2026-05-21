@@ -3,8 +3,9 @@ SolidQueueWeb::Engine.routes.draw do
   resource :blocked_jobs, only: [:destroy]
 
   get "metrics", to: "metrics#index", as: :metrics, defaults: { format: :json }
-  get "search", to: "search#index", as: :search
-  get "history", to: "history#index", as: :history
+  get "search",      to: "search#index",      as: :search
+  get "history",     to: "history#index",     as: :history
+  get "performance", to: "performance#index", as: :performance
 
   resources :recurring_tasks, only: [:index], param: :key do
     resource :run, only: [:create], controller: "recurring_tasks/runs"

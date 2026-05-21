@@ -1,0 +1,50 @@
+<div class="sqd-page-header">
+  <h1 class="sqd-page-title">Performance</h1>
+</div>
+
+<form class="sqd-search" action="<%= performance_path %>" method="get">
+  <div class="sqd-period-filter" role="group" aria-label="Time period">
+    <%= link_to "All",  performance_path,                      class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil } %>
+    <%= link_to "1h",   performance_path(period: "1h"),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil } %>
+    <%= link_to "24h",  performance_path(period: "24h"), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil } %>
+    <%= link_to "7d",   performance_path(period: "7d"),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil } %>
+  </div>
+</form>
+
+<% if @rows.any? %>
+  <div class="sqd-card" style="margin-top: 1rem;">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Job Class</th>
+          <th scope="col" style="text-align: right;">Runs</th>
+          <th scope="col" style="text-align: right;">Avg</th>
+          <th scope="col" style="text-align: right;">p50</th>
+          <th scope="col" style="text-align: right;">p95</th>
+          <th scope="col" style="text-align: right;">Min</th>
+          <th scope="col" style="text-align: right;">Max</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @rows.each do |row| %>
+          <tr>
+            <td>
+              <%= link_to row.class_name, history_path(q: row.class_name, period: @period),
+                    class: "sqd-table-link" %>
+            </td>
+            <td class="sqd-mono" style="text-align: right;"><%= row.count %></td>
+            <td class="sqd-mono" style="text-align: right;"><%= format_duration(row.avg) %></td>
+            <td class="sqd-mono" style="text-align: right;"><%= format_duration(row.p50) %></td>
+            <td class="sqd-mono" style="text-align: right;"><%= format_duration(row.p95) %></td>
+            <td class="sqd-mono" style="text-align: right;"><%= format_duration(row.min) %></td>
+            <td class="sqd-mono" style="text-align: right;"><%= format_duration(row.max) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="sqd-card" style="margin-top: 1rem;">
+    <div class="sqd-empty">No finished jobs found<%= " in the last #{@period}" if @period %>.</div>
+  </div>
+<% end %>
