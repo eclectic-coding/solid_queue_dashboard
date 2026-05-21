@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Retry failed job with modified arguments — the Arguments card on the job detail page becomes an editable textarea for failed jobs; editing the JSON and clicking "Retry with these arguments" updates the job record and retries in one step; invalid JSON redirects back with an error message without touching the failed execution
+
 ## [1.0.0] - 2026-05-21
 
 ### Added
