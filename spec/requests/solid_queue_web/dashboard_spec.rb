@@ -78,6 +78,27 @@ RSpec.describe "Dashboard", type: :request do
     end
   end
 
+  describe "alert webhook" do
+    after do
+      SolidQueueWeb.alert_webhook_url       = nil
+      SolidQueueWeb.alert_failure_threshold = nil
+      SolidQueueWeb::AlertWebhook.reset!
+    end
+
+    it "calls AlertWebhook with the current failed job count" do
+      expect(SolidQueueWeb::AlertWebhook).to receive(:call).with(failure_count: kind_of(Integer))
+      get "/jobs"
+    end
+
+    it "does not raise when webhook fires during a dashboard request" do
+      SolidQueueWeb.alert_webhook_url       = "http://example.com/hook"
+      SolidQueueWeb.alert_failure_threshold = 0
+      allow(Thread).to receive(:new)
+      get "/jobs"
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   describe "authentication" do
     after { SolidQueueWeb.instance_variable_set(:@authenticate, nil) }
 
