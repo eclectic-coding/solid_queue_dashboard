@@ -115,6 +115,31 @@ end
 
 No authentication is enforced by default. When the `authenticate` block returns falsy, HTTP Basic auth is used as a fallback.
 
+## Webhook alerts
+
+Set `alert_webhook_url` and `alert_failure_threshold` to receive a POST request whenever the failed job count meets or exceeds the threshold. This is useful for paging an on-call team or triggering a Slack notification via an incoming webhook.
+
+```ruby
+SolidQueueWeb.configure do |config|
+  config.alert_webhook_url       = "https://hooks.slack.com/services/..."
+  config.alert_failure_threshold = 10    # fire when >= 10 jobs have failed
+  config.alert_webhook_cooldown  = 1800  # don't re-fire for 30 minutes (default: 3600)
+end
+```
+
+The request body is JSON:
+
+```json
+{
+  "event": "failure_threshold_exceeded",
+  "failure_count": 14,
+  "threshold": 10,
+  "fired_at": "2026-05-21T12:34:56Z"
+}
+```
+
+The webhook fires asynchronously in a background thread so dashboard page loads are never delayed. HTTP errors are logged to `Rails.logger` and swallowed. The cooldown window prevents repeated alerts while the count stays elevated — the clock resets on each app restart.
+
 ## Multi-database setup
 
 If Solid Queue runs on a separate database, set `connects_to` to match your app's database configuration. The engine wraps every request in `ActiveRecord::Base.connected_to(...)` with the options you provide.
