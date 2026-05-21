@@ -40,7 +40,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **Failed jobs** — list of failed executions with error details; search by class name; filter by queue; time-based period filter; retry or discard individually or in bulk; bulk retry with configurable stagger (+5s / +10s / +30s / +1m) to avoid thundering herd on recovery
 - **Job detail** — full arguments, timestamps, blocked-until date, and error backtrace; action buttons based on job status
 - **Queue management** — pause and resume individual queues; queue-scoped job list with status filter, search, and discard
-- **Recurring tasks** — all configured recurring tasks with cron schedule, next run time, last run time, and static/dynamic classification
+- **Recurring tasks** — all configured recurring tasks with cron schedule, next run time, last run time, and static/dynamic classification; "Run Now" button enqueues a task immediately without waiting for its next scheduled run
 - **Processes** — workers, dispatchers, and supervisors with heartbeat health status; auto-refreshes every 10 seconds
 - **Global search** — search across all job statuses at once by class name substring; results grouped by status with match count and direct links to filtered views; native datalist autocomplete pre-populated from all known job classes; auto-submits on selection
 - **Targeted bulk actions** — checkboxes on the jobs and failed jobs lists for selecting individual rows; selection bar shows count and action buttons ("Discard Selected" for jobs, "Retry Selected" / "Discard Selected" for failed jobs); select-all checkbox in the table header
@@ -165,7 +165,6 @@ Planned features, roughly ordered by priority:
 
 **Operations**
 - Admin audit log — record who retried or discarded which jobs and when (requires host-app user identity)
-- Recurring task "Run Now" — manually trigger a recurring task immediately without waiting for its next scheduled run
 - Failed job retry with modified arguments — edit the arguments JSON from the job detail page before retrying; useful for correcting bad payloads without redeploying
 - Bulk scheduled job actions — "Run All Now" button on the Scheduled tab, mirroring the "Retry All" pattern on the Failed Jobs page
 
