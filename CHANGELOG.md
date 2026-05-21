@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Queue depth alert — `alert_queue_thresholds` accepts a hash of `queue_name => ready_job_count`; a webhook fires when any configured queue's ready count meets or exceeds its threshold; cooldown is tracked independently per queue so a busy queue doesn't suppress alerts for others; uses the same `alert_webhook_url` endpoint(s) with `event: "queue_depth_threshold_exceeded"` and `queue_name`, `depth`, and `threshold` fields in the payload
 - Multiple webhook targets — `alert_webhook_url` now accepts an array of URL strings; all configured endpoints receive the same payload when the failure threshold is exceeded; a failure posting to one URL is logged and skipped without blocking the remaining targets
 - Retry failed job with modified arguments — the Arguments card on the job detail page becomes an editable textarea for failed jobs; editing the JSON and clicking "Retry with these arguments" updates the job record and retries in one step; invalid JSON redirects back with an error message without touching the failed execution
 
