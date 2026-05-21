@@ -78,6 +78,22 @@ RSpec.describe "Dashboard", type: :request do
     end
   end
 
+  describe "multi-database connects_to" do
+    after { SolidQueueWeb.connects_to = nil }
+
+    it "passes through normally when connects_to is not configured" do
+      get "/jobs"
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "calls connected_to with the configured options when connects_to is set" do
+      SolidQueueWeb.connects_to = { role: :writing }
+      expect(ActiveRecord::Base).to receive(:connected_to).with(role: :writing).and_call_original
+      get "/jobs"
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   describe "alert webhook" do
     after do
       SolidQueueWeb.alert_webhook_url       = nil

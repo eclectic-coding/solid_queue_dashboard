@@ -103,6 +103,7 @@ SolidQueueWeb.configure do |config|
   config.alert_webhook_url          = "https://hooks.example.com/solid-queue" # POST target (default: nil = disabled)
   config.alert_failure_threshold    = 10         # fire when failed count >= this (default: nil = disabled)
   config.alert_webhook_cooldown     = 1800       # seconds between repeated alerts (default: 3600)
+  config.connects_to                = { database: { writing: :queue, reading: :queue } } # multi-db (default: nil)
 end
 
 SolidQueueWeb.authenticate do
@@ -114,6 +115,47 @@ end
 
 No authentication is enforced by default. When the `authenticate` block returns falsy, HTTP Basic auth is used as a fallback.
 
+## Webhook alerts
+
+Set `alert_webhook_url` and `alert_failure_threshold` to receive a POST request whenever the failed job count meets or exceeds the threshold. This is useful for paging an on-call team or triggering a Slack notification via an incoming webhook.
+
+```ruby
+SolidQueueWeb.configure do |config|
+  config.alert_webhook_url       = "https://hooks.slack.com/services/..."
+  config.alert_failure_threshold = 10    # fire when >= 10 jobs have failed
+  config.alert_webhook_cooldown  = 1800  # don't re-fire for 30 minutes (default: 3600)
+end
+```
+
+The request body is JSON:
+
+```json
+{
+  "event": "failure_threshold_exceeded",
+  "failure_count": 14,
+  "threshold": 10,
+  "fired_at": "2026-05-21T12:34:56Z"
+}
+```
+
+The webhook fires asynchronously in a background thread so dashboard page loads are never delayed. HTTP errors are logged to `Rails.logger` and swallowed. The cooldown window prevents repeated alerts while the count stays elevated — the clock resets on each app restart.
+
+## Multi-database setup
+
+If Solid Queue runs on a separate database, set `connects_to` to match your app's database configuration. The engine wraps every request in `ActiveRecord::Base.connected_to(...)` with the options you provide.
+
+```ruby
+SolidQueueWeb.configure do |config|
+  # Solid Queue on a named database:
+  config.connects_to = { database: { writing: :queue, reading: :queue } }
+
+  # Or just pin to the writing role to bypass automatic read/write splitting:
+  config.connects_to = { role: :writing }
+end
+```
+
+When `connects_to` is `nil` (the default), no connection switching occurs and single-database apps are unaffected.
+
 ## Roadmap
 
 Planned features, roughly ordered by priority:  
@@ -122,7 +164,6 @@ Planned features, roughly ordered by priority:
 - Admin audit log — record who retried or discarded which jobs and when (requires host-app user identity)
 
 **Infrastructure**
-- Multi-database support — when Solid Queue runs on a separate database from the host app
 - Read replica support — route dashboard queries to a replica to avoid impacting the primary
 
 Pull requests for any of these are welcome. See [Contributing](#contributing) below.

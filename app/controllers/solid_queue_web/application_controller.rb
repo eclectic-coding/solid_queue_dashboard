@@ -8,8 +8,18 @@ module SolidQueueWeb
     STAGGER_INTERVALS  = { "5s" => 5.seconds, "10s" => 10.seconds, "30s" => 30.seconds, "1m" => 1.minute }.freeze
 
     before_action :authenticate!
+    around_action :with_database_connection
 
     private
+
+    def with_database_connection
+      config = SolidQueueWeb.connects_to
+      if config
+        ActiveRecord::Base.connected_to(**config) { yield }
+      else
+        yield
+      end
+    end
 
     def authenticate!
       return unless (auth = SolidQueueWeb.authenticate)

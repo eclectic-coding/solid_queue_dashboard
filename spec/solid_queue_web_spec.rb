@@ -3,10 +3,11 @@ require "rails_helper"
 RSpec.describe SolidQueueWeb do
   describe ".configure" do
     after do
-      SolidQueueWeb.page_size                = nil
+      SolidQueueWeb.page_size                   = nil
       SolidQueueWeb.dashboard_refresh_interval  = nil
       SolidQueueWeb.default_refresh_interval    = nil
       SolidQueueWeb.search_results_limit        = nil
+      SolidQueueWeb.connects_to                 = nil
     end
 
     it "yields self and applies settings" do
@@ -28,6 +29,15 @@ RSpec.describe SolidQueueWeb do
       expect(SolidQueueWeb.dashboard_refresh_interval).to eq(5_000)
       expect(SolidQueueWeb.default_refresh_interval).to eq(10_000)
       expect(SolidQueueWeb.search_results_limit).to eq(25)
+    end
+
+    it "returns nil for connects_to by default" do
+      expect(SolidQueueWeb.connects_to).to be_nil
+    end
+
+    it "accepts a connects_to hash" do
+      SolidQueueWeb.connects_to = { database: { writing: :queue, reading: :queue } }
+      expect(SolidQueueWeb.connects_to).to eq(database: { writing: :queue, reading: :queue })
     end
   end
 end
