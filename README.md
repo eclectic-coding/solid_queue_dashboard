@@ -141,6 +141,48 @@ The request body is JSON:
 
 The webhook fires asynchronously in a background thread so dashboard page loads are never delayed. HTTP errors are logged to `Rails.logger` and swallowed. The cooldown window prevents repeated alerts while the count stays elevated — the clock resets on each app restart.
 
+## Metrics endpoint
+
+`GET /jobs/metrics.json` returns a machine-readable JSON document suitable for Prometheus scraping, uptime monitors, or external dashboards. No configuration is required — the endpoint is available as soon as the engine is mounted.
+
+```
+GET /jobs/metrics.json
+```
+
+Example response:
+
+```json
+{
+  "generated_at": "2026-05-21T12:00:00Z",
+  "jobs": {
+    "ready": 12,
+    "scheduled": 8,
+    "claimed": 3,
+    "blocked": 5,
+    "failed": 9
+  },
+  "throughput": {
+    "completed_1h": 15,
+    "completed_24h": 87
+  },
+  "queues": [
+    { "name": "critical", "depth": 2, "paused": false },
+    { "name": "default",  "depth": 4, "paused": false },
+    { "name": "mailers",  "depth": 3, "paused": true  }
+  ],
+  "processes": {
+    "total": 4,
+    "healthy": 4,
+    "stale": 0,
+    "by_kind": { "Dispatcher": 1, "Supervisor": 1, "Worker": 2 }
+  }
+}
+```
+
+When `slow_job_threshold` is configured, a `slow_jobs` integer is also included at the top level.
+
+The endpoint respects the same authentication and `connects_to` settings as the rest of the dashboard. A process is counted as **stale** when its `last_heartbeat_at` is older than `SolidQueue.process_alive_threshold` (default: 5 minutes).
+
 ## Read replica support
 
 Set `connects_to` with both `reading:` and `writing:` keys to enable automatic role switching. GET requests are routed to the reading role; POST/DELETE/PATCH requests use the writing role.
