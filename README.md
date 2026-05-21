@@ -127,6 +127,17 @@ SolidQueueWeb.configure do |config|
 end
 ```
 
+To fan out to multiple endpoints (e.g. Slack and PagerDuty simultaneously), pass an array:
+
+```ruby
+config.alert_webhook_url = [
+  "https://hooks.slack.com/services/...",
+  "https://events.pagerduty.com/..."
+]
+```
+
+All configured URLs receive the same payload. A failure posting to one URL is logged and skipped without blocking the remaining targets.
+
 The request body is JSON:
 
 ```json

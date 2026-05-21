@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Multiple webhook targets — `alert_webhook_url` now accepts an array of URL strings; all configured endpoints receive the same payload when the failure threshold is exceeded; a failure posting to one URL is logged and skipped without blocking the remaining targets
 - Retry failed job with modified arguments — the Arguments card on the job detail page becomes an editable textarea for failed jobs; editing the JSON and clicking "Retry with these arguments" updates the job record and retries in one step; invalid JSON redirects back with an error message without touching the failed execution
 
 ## [1.0.0] - 2026-05-21
