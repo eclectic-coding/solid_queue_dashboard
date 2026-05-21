@@ -1,0 +1,9 @@
+<% if @run_now %>
+  <%= turbo_stream.remove "execution_#{@execution.id}" %>
+<% else %>
+  <%= turbo_stream.replace "scheduled_at_#{@execution.id}" do %>
+    <td id="scheduled_at_<%= @execution.id %>" class="sqd-mono">
+      <%= @execution.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") %>
+    </td>
+  <% end %>
+<% end %>

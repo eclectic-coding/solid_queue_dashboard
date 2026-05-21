@@ -94,11 +94,24 @@
                       class: "sqd-mono", style: "color: inherit;" %>
               </td>
               <td><%= job.priority %></td>
-              <td class="sqd-mono">
+              <td id="scheduled_at_<%= execution.id %>" class="sqd-mono">
                 <%= job.scheduled_at ? job.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") : "—" %>
               </td>
               <td class="sqd-mono"><%= job.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
               <td class="sqd-row-actions">
+                <% if @status == "scheduled" %>
+                  <%= button_to "Run Now", scheduled_job_path(execution),
+                        method: :patch,
+                        params: { offset: "now", period: @period },
+                        class: "sqd-btn sqd-btn--primary sqd-btn--sm",
+                        data: { confirm: "Run this job immediately?" } %>
+                  <% %w[1h 24h 7d].each do |offset| %>
+                    <%= button_to "+#{offset}", scheduled_job_path(execution),
+                          method: :patch,
+                          params: { offset: offset, period: @period },
+                          class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
+                  <% end %>
+                <% end %>
                 <%= button_to "Discard", job_path(execution),
                       method: :delete,
                       params: { status: @status, period: @period },
