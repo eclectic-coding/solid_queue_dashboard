@@ -118,3 +118,27 @@
   border-color: var(--muted);
   color: #fff;
 }
+
+.sqd-textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-size: 13px;
+  background: var(--surface);
+  color: var(--text);
+  line-height: 1.6;
+  resize: vertical;
+  box-sizing: border-box;
+  display: block;
+}
+
+.sqd-textarea:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: -1px;
+  border-color: var(--primary);
+}
+
+.sqd-args-form__submit {
+  margin-top: 0.75rem;
+}

@@ -63,7 +63,19 @@
 
   <div class="sqd-card sqd-detail-section">
     <h2 class="sqd-section-title">Arguments</h2>
-    <pre class="sqd-pre"><%= JSON.pretty_generate(@job.arguments) rescue @job.arguments.inspect %></pre>
+    <% if @execution_status == "failed" && @job.failed_execution %>
+      <% args_json = begin; JSON.pretty_generate(@job.arguments); rescue; @job.arguments.inspect; end %>
+      <%= form_with url: failed_job_arguments_path(@job.failed_execution), method: :patch do |f| %>
+        <%= f.text_area :arguments,
+              value: args_json,
+              class: "sqd-textarea sqd-mono",
+              rows: [args_json.lines.count + 1, 6].max,
+              "aria-label": "Job arguments JSON" %>
+        <%= f.submit "Retry with these arguments", class: "sqd-btn sqd-btn--primary sqd-args-form__submit" %>
+      <% end %>
+    <% else %>
+      <pre class="sqd-pre"><%= JSON.pretty_generate(@job.arguments) rescue @job.arguments.inspect %></pre>
+    <% end %>
   </div>
 </div>
 
