@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Scheduled job management — "Run Now" promotes a scheduled job to run immediately by back-dating its `scheduled_at`; "+1h", "+24h", and "+7d" buttons push `scheduled_at` forward by the chosen offset; both actions update the execution and the underlying job record; Turbo Stream responses remove the row on "Run Now" and update the `scheduled_at` cell in place on postpone
+
 ## [0.9.0] - 2026-05-20
 
 ### Added
