@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Bulk retry with delay — "+5s", "+10s", "+30s", and "+1m" stagger buttons on the Failed Jobs page retry all matched jobs with a configurable interval between each; the first job runs immediately, subsequent jobs are scheduled at incremental offsets; uses per-execution `retry` so `scheduled_at` is respected by SolidQueue's dispatcher; buttons only appear when more than one job is present
 - Scheduled job management — "Run Now" promotes a scheduled job to run immediately by back-dating its `scheduled_at`; "+1h", "+24h", and "+7d" buttons push `scheduled_at` forward by the chosen offset; both actions update the execution and the underlying job record; Turbo Stream responses remove the row on "Run Now" and update the `scheduled_at` cell in place on postpone
 
 ## [0.9.0] - 2026-05-20

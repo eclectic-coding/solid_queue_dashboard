@@ -37,7 +37,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **Queues** — all queues sorted by name with size; oldest ready job latency (color-coded, with UTC timestamp tooltip); Done (24h) and Failed (24h) throughput counts; a mini 12-bar failure rate sparkline per queue showing failure % per hour over the last 12 hours; pause/resume controls
 - **Jobs** — filterable by status (ready, scheduled, claimed, blocked, failed) and by queue; search by job class name with dynamic auto-submit; time-based period filter (1 h / 24 h / 7 d); discard individual or all jobs; Turbo Frame navigation so only the table updates on filter or search; auto-refreshes every 10 seconds
 - **Scheduled job management** — reschedule a scheduled job to run immediately ("Run Now") or push its `scheduled_at` forward by 1 h, 24 h, or 7 d; Turbo Stream responses update the row in place
-- **Failed jobs** — list of failed executions with error details; search by class name; filter by queue; time-based period filter; retry or discard individually or in bulk
+- **Failed jobs** — list of failed executions with error details; search by class name; filter by queue; time-based period filter; retry or discard individually or in bulk; bulk retry with configurable stagger (+5s / +10s / +30s / +1m) to avoid thundering herd on recovery
 - **Job detail** — full arguments, timestamps, blocked-until date, and error backtrace; action buttons based on job status
 - **Queue management** — pause and resume individual queues; queue-scoped job list with status filter, search, and discard
 - **Recurring tasks** — all configured recurring tasks with cron schedule, next run time, last run time, and static/dynamic classification
@@ -115,7 +115,6 @@ No authentication is enforced by default. When the `authenticate` block returns 
 Planned features, roughly ordered by priority:  
 
 **Operations**
-- Bulk retry with delay — retry all failed jobs with a configurable stagger to avoid thundering herd
 - Admin audit log — record who retried or discarded which jobs and when (requires host-app user identity)
 
 **Infrastructure**
