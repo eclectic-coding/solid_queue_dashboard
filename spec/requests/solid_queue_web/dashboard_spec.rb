@@ -92,6 +92,15 @@ RSpec.describe "Dashboard", type: :request do
       get "/jobs"
       expect(response).to have_http_status(:ok)
     end
+
+    context "when reading and writing roles are both configured" do
+      before { SolidQueueWeb.connects_to = { reading: :writing, writing: :writing } }
+
+      it "request succeeds with replica role switching active" do
+        get "/jobs"
+        expect(response).to have_http_status(:ok)
+      end
+    end
   end
 
   describe "alert webhook" do

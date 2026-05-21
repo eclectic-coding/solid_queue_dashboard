@@ -14,11 +14,18 @@ module SolidQueueWeb
 
     def with_database_connection
       config = SolidQueueWeb.connects_to
-      if config
-        ActiveRecord::Base.connected_to(**config) { yield }
+      return yield unless config
+
+      if replica_configured?(config)
+        role = request.get? ? config[:reading] : config[:writing]
+        ActiveRecord::Base.connected_to(role: role) { yield }
       else
-        yield
+        ActiveRecord::Base.connected_to(**config) { yield }
       end
+    end
+
+    def replica_configured?(config)
+      config.key?(:reading) && config.key?(:writing)
     end
 
     def authenticate!
