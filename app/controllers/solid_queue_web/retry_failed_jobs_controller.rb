@@ -1,7 +1,5 @@
 module SolidQueueWeb
   class RetryFailedJobsController < ApplicationController
-    STAGGER_INTERVALS = { "5s" => 5.seconds, "10s" => 10.seconds, "30s" => 30.seconds, "1m" => 1.minute }.freeze
-
     before_action :set_filter_params
 
     def create

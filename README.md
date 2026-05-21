@@ -49,6 +49,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **Dashboard quick actions** — "Retry All Failed" and "Discard All Blocked" cards appear on the dashboard only when the respective count is non-zero; one-click bulk operations with confirm dialogs, keeping the dashboard clean when everything is healthy
 - **CSV export** — "Export CSV" button on the jobs, failed jobs, and history pages downloads all records matching the current filters; columns are tailored per view
 - **Slow job detection** — when `slow_job_threshold` is configured, claimed jobs running longer than the threshold are flagged with an orange row, a "slow" badge, and a "Running For" duration column on the Running tab; a "Slow Jobs" warning card appears on the dashboard with a link to the Running tab
+- **Webhook alerts** — set `alert_webhook_url` and `alert_failure_threshold` to receive a POST request whenever the failed job count meets or exceeds the threshold; fires asynchronously so dashboard performance is unaffected; a configurable cooldown (default 1 h) prevents repeated alerts while the count stays elevated
 
 ## Screenshots
 
@@ -99,6 +100,9 @@ SolidQueueWeb.configure do |config|
   config.default_refresh_interval   = 30_000 # jobs/processes/history auto-refresh in ms (default: 10_000)
   config.search_results_limit       = 10     # max results per status in global search (default: 25)
   config.slow_job_threshold         = 5.minutes # flag claimed jobs running longer than this (default: nil = disabled)
+  config.alert_webhook_url          = "https://hooks.example.com/solid-queue" # POST target (default: nil = disabled)
+  config.alert_failure_threshold    = 10         # fire when failed count >= this (default: nil = disabled)
+  config.alert_webhook_cooldown     = 1800       # seconds between repeated alerts (default: 3600)
 end
 
 SolidQueueWeb.authenticate do
@@ -118,7 +122,6 @@ Planned features, roughly ordered by priority:
 - Admin audit log — record who retried or discarded which jobs and when (requires host-app user identity)
 
 **Infrastructure**
-- Webhook / alert config — POST to a URL when the failure count exceeds a threshold
 - Multi-database support — when Solid Queue runs on a separate database from the host app
 - Read replica support — route dashboard queries to a replica to avoid impacting the primary
 
