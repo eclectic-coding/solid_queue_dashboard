@@ -5,22 +5,29 @@
 
 <div class="sqd-page-header">
   <div class="sqd-filters">
-    <%= link_to "Ready",     jobs_path(status: "ready",     q: @search, period: @period), class: @status == "ready"     ? "active" : "" %>
-    <%= link_to "Scheduled", jobs_path(status: "scheduled", q: @search, period: @period), class: @status == "scheduled" ? "active" : "" %>
-    <%= link_to "Running",   jobs_path(status: "claimed",   q: @search, period: @period), class: @status == "claimed"   ? "active" : "" %>
-    <%= link_to "Blocked",   jobs_path(status: "blocked",   q: @search, period: @period), class: @status == "blocked"   ? "active" : "" %>
-    <%= link_to "Failed",    jobs_path(status: "failed",    q: @search, period: @period), class: @status == "failed"    ? "active" : "" %>
+    <%= link_to "Ready",     jobs_path(status: "ready",     q: @search, period: @period, priority: @priority), class: @status == "ready"     ? "active" : "" %>
+    <%= link_to "Scheduled", jobs_path(status: "scheduled", q: @search, period: @period, priority: @priority), class: @status == "scheduled" ? "active" : "" %>
+    <%= link_to "Running",   jobs_path(status: "claimed",   q: @search, period: @period, priority: @priority), class: @status == "claimed"   ? "active" : "" %>
+    <%= link_to "Blocked",   jobs_path(status: "blocked",   q: @search, period: @period, priority: @priority), class: @status == "blocked"   ? "active" : "" %>
+    <%= link_to "Failed",    jobs_path(status: "failed",    q: @search, period: @period, priority: @priority), class: @status == "failed"    ? "active" : "" %>
   </div>
   <% if @jobs.any? %>
     <div class="sqd-actions">
       <%= link_to "Export CSV", jobs_path(format: :csv, status: @status, q: @search, period: @period),
             class: "sqd-btn sqd-btn--muted", data: { turbo: false } %>
+      <% if @status == "scheduled" %>
+        <%= button_to "Run All Now", run_all_now_scheduled_jobs_path,
+              method: :post,
+              params: { period: @period },
+              class: "sqd-btn sqd-btn--primary",
+              data: { confirm: "Run all #{@pagy.count} scheduled jobs immediately?" } %>
+      <% end %>
       <% if discardable %>
         <%= button_to "Discard All", discard_all_jobs_path,
               method: :post,
               params: { status: @status, period: @period },
               class: "sqd-btn sqd-btn--danger",
-              data: { confirm: "Discard all #{@jobs.size} #{@status} jobs? This cannot be undone." } %>
+              data: { confirm: "Discard all #{@pagy.count} #{@status} jobs? This cannot be undone." } %>
       <% end %>
     </div>
   <% end %>
@@ -32,14 +39,23 @@
   <input class="sqd-search__input" type="search" name="q" value="<%= @search %>"
          placeholder="Filter by job class…" autocomplete="off" aria-label="Filter by job class"
          data-action="input->search#filter">
-  <% if @search.present? %>
+  <% if @priority_options.size > 1 %>
+    <select name="priority" class="sqd-select" aria-label="Filter by priority"
+            onchange="this.form.submit()">
+      <option value="" <%= @priority.nil? ? "selected" : "" %>>All priorities</option>
+      <% @priority_options.each do |p| %>
+        <option value="<%= p %>" <%= @priority.to_s == p.to_s ? "selected" : "" %>>Priority <%= p %></option>
+      <% end %>
+    </select>
+  <% end %>
+  <% if @search.present? || @priority.present? %>
     <%= link_to "Clear", jobs_path(status: @status, period: @period), class: "sqd-btn sqd-btn--muted" %>
   <% end %>
   <div class="sqd-period-filter" role="group" aria-label="Time period">
-    <%= link_to "All", jobs_path(status: @status, q: @search),                       class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil }, aria_label: "All time" %>
-    <%= link_to "1h",  jobs_path(status: @status, q: @search, period: "1h"),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil }, aria_label: "Last 1 hour" %>
-    <%= link_to "24h", jobs_path(status: @status, q: @search, period: "24h"), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil }, aria_label: "Last 24 hours" %>
-    <%= link_to "7d",  jobs_path(status: @status, q: @search, period: "7d"),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil }, aria_label: "Last 7 days" %>
+    <%= link_to "All", jobs_path(status: @status, q: @search, priority: @priority),                       class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil }, aria_label: "All time" %>
+    <%= link_to "1h",  jobs_path(status: @status, q: @search, priority: @priority, period: "1h"),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil }, aria_label: "Last 1 hour" %>
+    <%= link_to "24h", jobs_path(status: @status, q: @search, priority: @priority, period: "24h"), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil }, aria_label: "Last 24 hours" %>
+    <%= link_to "7d",  jobs_path(status: @status, q: @search, priority: @priority, period: "7d"),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil }, aria_label: "Last 7 days" %>
   </div>
 </form>
 

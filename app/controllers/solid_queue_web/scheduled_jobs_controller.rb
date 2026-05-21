@@ -1,19 +1,24 @@
 module SolidQueueWeb
   class ScheduledJobsController < ApplicationController
-    OFFSETS = { "1h" => 1.hour, "24h" => 24.hours, "7d" => 7.days }.freeze
+    def create
+      @period = params[:period].presence_in(PERIOD_DURATIONS.keys)
+      job_ids = scheduled_scope.pluck("solid_queue_jobs.id")
+
+      SolidQueue::ScheduledExecution.where(job_id: job_ids).update_all(scheduled_at: 1.second.ago)
+      SolidQueue::Job.where(id: job_ids).update_all(scheduled_at: 1.second.ago)
+
+      redirect_to jobs_path(status: "scheduled", period: @period),
+        notice: "#{job_ids.size} #{"job".pluralize(job_ids.size)} scheduled to run immediately."
+    rescue => e
+      redirect_to jobs_path(status: "scheduled", period: @period),
+        alert: "Could not run jobs: #{e.message}"
+    end
 
     def update
       @execution = SolidQueue::ScheduledExecution.find(params[:id])
       @period    = params[:period].presence_in(PERIOD_DURATIONS.keys)
       @run_now   = params[:offset] == "now"
-
-      new_time = if @run_now
-        1.second.ago
-      elsif OFFSETS.key?(params[:offset])
-        @execution.scheduled_at + OFFSETS[params[:offset]]
-      else
-        raise ArgumentError, "Invalid offset."
-      end
+      new_time   = resolve_new_time(@execution, params[:offset])
 
       @execution.update!(scheduled_at: new_time)
       @execution.job.update!(scheduled_at: new_time)
@@ -29,6 +34,21 @@ module SolidQueueWeb
       redirect_to jobs_path(status: "scheduled"), alert: e.message
     rescue => e
       redirect_to jobs_path(status: "scheduled"), alert: "Could not reschedule job: #{e.message}"
+    end
+
+    private
+
+    def scheduled_scope
+      scope = SolidQueue::ScheduledExecution.joins(:job)
+      scope = scope.where("solid_queue_jobs.created_at >= ?", PERIOD_DURATIONS[@period].ago) if @period.present?
+      scope
+    end
+
+    def resolve_new_time(execution, offset)
+      return 1.second.ago if offset == "now"
+      raise ArgumentError, "Invalid offset." unless PERIOD_DURATIONS.key?(offset)
+
+      execution.scheduled_at + PERIOD_DURATIONS[offset]
     end
   end
 end

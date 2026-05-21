@@ -22,7 +22,11 @@ SolidQueueWeb::Engine.routes.draw do
 
   # Singular selection resources must be defined before the member routes of their
   # parent resources, otherwise DELETE /list/selection matches /list/:id first.
-  resources :scheduled_jobs, only: [:update]
+  resources :scheduled_jobs, only: [:update] do
+    collection do
+      post :run_all_now, action: :create
+    end
+  end
 
   resource :job_selection, path: "list/selection", only: [:destroy], controller: "jobs/selections"
   resources :jobs, path: "list", only: [:index, :show, :destroy] do

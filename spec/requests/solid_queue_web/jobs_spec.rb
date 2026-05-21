@@ -322,4 +322,49 @@ RSpec.describe "Jobs", type: :request do
       expect(response.body).not_to include('class="sqd-row--slow"')
     end
   end
+
+  describe "GET /jobs/list?priority= (priority filter)" do
+    let!(:high_priority_job) do
+      SolidQueue::Job.create!(
+        queue_name: "default", class_name: "HighPriorityJob",
+        arguments: {}, active_job_id: SecureRandom.uuid, priority: 0
+      )
+    end
+
+    let!(:low_priority_job) do
+      SolidQueue::Job.create!(
+        queue_name: "default", class_name: "LowPriorityJob",
+        arguments: {}, active_job_id: SecureRandom.uuid, priority: 10
+      )
+    end
+
+    it "shows all jobs when no priority filter is set" do
+      get "/jobs/list", params: { status: "ready" }
+      expect(response.body).to include("HighPriorityJob")
+      expect(response.body).to include("LowPriorityJob")
+    end
+
+    it "filters to only jobs with the specified priority" do
+      get "/jobs/list", params: { status: "ready", priority: "10" }
+      expect(response.body).to     include("LowPriorityJob")
+      expect(response.body).not_to include("HighPriorityJob")
+    end
+
+    it "renders the priority select dropdown when multiple priorities exist" do
+      get "/jobs/list", params: { status: "ready" }
+      expect(response.body).to include("sqd-select")
+      expect(response.body).to include("All priorities")
+    end
+
+    it "preserves priority across status tab links" do
+      get "/jobs/list", params: { status: "ready", priority: "0" }
+      expect(response.body).to include("priority=0")
+    end
+
+    it "discard all respects the priority filter" do
+      post "/jobs/list/discard_all", params: { status: "ready", priority: "10" }
+      expect(SolidQueue::ReadyExecution.exists?(job: high_priority_job)).to be true
+      expect(SolidQueue::ReadyExecution.exists?(job: low_priority_job)).to  be false
+    end
+  end
 end

@@ -35,8 +35,8 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 
 - **Dashboard** — stat cards showing counts for ready, scheduled, running, blocked, and failed jobs, plus queues, recurring tasks, and processes; "Done (1h)" and "Done (24h)" throughput cards; a "Throughput — Last 12 Hours" bar chart (blue) and a "Queue Depth — Last 12 Hours" bar chart (purple) showing hourly snapshots of active job count; pure CSS, no charting library; auto-refreshes every 5 seconds
 - **Queues** — all queues sorted by name with size; oldest ready job latency (color-coded, with UTC timestamp tooltip); Done (24h) and Failed (24h) throughput counts; a mini 12-bar failure rate sparkline per queue showing failure % per hour over the last 12 hours; pause/resume controls
-- **Jobs** — filterable by status (ready, scheduled, claimed, blocked, failed) and by queue; search by job class name with dynamic auto-submit; time-based period filter (1 h / 24 h / 7 d); discard individual or all jobs; Turbo Frame navigation so only the table updates on filter or search; auto-refreshes every 10 seconds
-- **Scheduled job management** — reschedule a scheduled job to run immediately ("Run Now") or push its `scheduled_at` forward by 1 h, 24 h, or 7 d; Turbo Stream responses update the row in place
+- **Jobs** — filterable by status (ready, scheduled, claimed, blocked, failed), queue, and priority; search by job class name with dynamic auto-submit; time-based period filter (1 h / 24 h / 7 d); discard individual or all jobs; Turbo Frame navigation so only the table updates on filter or search; auto-refreshes every 10 seconds
+- **Scheduled job management** — reschedule a scheduled job to run immediately ("Run Now") or push its `scheduled_at` forward by 1 h, 24 h, or 7 d; Turbo Stream responses update the row in place; "Run All Now" bulk action promotes every scheduled job in the current filtered view in a single operation
 - **Failed jobs** — list of failed executions with error details; search by class name; filter by queue; time-based period filter; retry or discard individually or in bulk; bulk retry with configurable stagger (+5s / +10s / +30s / +1m) to avoid thundering herd on recovery
 - **Job detail** — full arguments, timestamps, blocked-until date, and error backtrace; action buttons based on job status
 - **Queue management** — pause and resume individual queues; queue-scoped job list with status filter, search, and discard
@@ -205,15 +205,11 @@ When `connects_to` is `nil` (the default), no connection switching occurs and si
 
 ## Roadmap
 
-Planned features, roughly ordered by priority:
+Post-1.0 planned features:
 
 **Operations**
 - Admin audit log — record who retried or discarded which jobs and when (requires host-app user identity)
 - Failed job retry with modified arguments — edit the arguments JSON from the job detail page before retrying; useful for correcting bad payloads without redeploying
-- Bulk scheduled job actions — "Run All Now" button on the Scheduled tab, mirroring the "Retry All" pattern on the Failed Jobs page
-
-**Observability**
-- Priority filter — filter and sort the jobs list by Solid Queue job priority
 
 **Notifications**
 - Multiple webhook targets — support an array of `alert_webhook_url` values so alerts can fan out to Slack, PagerDuty, and custom endpoints simultaneously

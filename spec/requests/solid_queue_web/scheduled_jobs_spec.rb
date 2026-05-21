@@ -13,6 +13,75 @@ RSpec.describe "ScheduledJobs", type: :request do
 
   let(:execution) { job.scheduled_execution }
 
+  describe "POST /scheduled_jobs/run_all_now" do
+    it "back-dates all scheduled executions and redirects with a notice" do
+      post "/jobs/scheduled_jobs/run_all_now"
+      expect(response).to redirect_to("/jobs/list?status=scheduled")
+      follow_redirect!
+      expect(response.body).to include("scheduled to run immediately")
+    end
+
+    it "sets scheduled_at to the past for each execution" do
+      post "/jobs/scheduled_jobs/run_all_now"
+      execution.reload
+      expect(execution.scheduled_at).to be <= Time.current
+    end
+
+    it "also updates the underlying job's scheduled_at" do
+      post "/jobs/scheduled_jobs/run_all_now"
+      job.reload
+      expect(job.scheduled_at).to be <= Time.current
+    end
+
+    it "includes the count in the notice" do
+      post "/jobs/scheduled_jobs/run_all_now"
+      follow_redirect!
+      expect(response.body).to include("1 job scheduled to run immediately")
+    end
+
+    it "pluralises correctly for multiple jobs" do
+      SolidQueue::Job.create!(
+        queue_name: "default", class_name: "OtherJob",
+        arguments: {}, active_job_id: SecureRandom.uuid,
+        scheduled_at: 3.hours.from_now
+      )
+      post "/jobs/scheduled_jobs/run_all_now"
+      follow_redirect!
+      expect(response.body).to include("2 jobs scheduled to run immediately")
+    end
+
+    it "preserves period in the redirect when provided" do
+      post "/jobs/scheduled_jobs/run_all_now", params: { period: "24h" }
+      expect(response).to redirect_to("/jobs/list?period=24h&status=scheduled")
+    end
+
+    it "redirects with an alert when an unexpected error occurs" do
+      allow(SolidQueue::ScheduledExecution).to receive(:joins).and_raise(RuntimeError, "db error")
+      post "/jobs/scheduled_jobs/run_all_now"
+      expect(response).to redirect_to("/jobs/list?status=scheduled")
+      expect(flash[:alert]).to include("Could not run jobs")
+    end
+
+    it "only runs jobs within the period when period is provided" do
+      old_job = SolidQueue::Job.create!(
+        queue_name: "default", class_name: "OldJob",
+        arguments: {}, active_job_id: SecureRandom.uuid,
+        scheduled_at: 2.hours.from_now
+      )
+      old_job.scheduled_execution.update_columns(created_at: 48.hours.ago)
+      old_job.update_columns(created_at: 48.hours.ago)
+
+      post "/jobs/scheduled_jobs/run_all_now", params: { period: "1h" }
+
+      execution.reload
+      old_job.scheduled_execution.reload
+      # execution was created recently (within 1h window) — runs immediately
+      expect(execution.scheduled_at).to be <= Time.current
+      # old_job was created 48h ago (outside 1h window) — untouched
+      expect(old_job.scheduled_execution.scheduled_at).to be > Time.current
+    end
+  end
+
   describe "PATCH /scheduled_jobs/:id" do
     context "with offset=now" do
       it "sets scheduled_at to the past and redirects" do
