@@ -5,7 +5,9 @@ SolidQueueWeb::Engine.routes.draw do
   get "search", to: "search#index", as: :search
   get "history", to: "history#index", as: :history
 
-  resources :recurring_tasks, only: [:index]
+  resources :recurring_tasks, only: [:index], param: :key do
+    resource :run, only: [:create], controller: "recurring_tasks/runs"
+  end
   resources :processes, only: [:index]
   resources :queues, only: [:index], param: :name do
     resource :pause, only: [:create, :destroy], controller: "queues/pauses"

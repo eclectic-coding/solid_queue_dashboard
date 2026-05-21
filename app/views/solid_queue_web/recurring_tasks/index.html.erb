@@ -14,6 +14,7 @@
           <th scope="col">Next Run</th>
           <th scope="col">Last Run</th>
           <th scope="col">Type</th>
+          <th scope="col"><span class="sqd-sr-only">Actions</span></th>
         </tr>
       </thead>
       <tbody>
@@ -59,6 +60,12 @@
               <% else %>
                 <span class="sqd-badge sqd-badge--dynamic">Dynamic</span>
               <% end %>
+            </td>
+            <td class="sqd-row-actions">
+              <%= button_to "Run Now", recurring_task_run_path(task.key),
+                    method: :post,
+                    class: "sqd-btn sqd-btn--primary sqd-btn--sm",
+                    data: { confirm: "Run \"#{task.key}\" immediately?" } %>
             </td>
           </tr>
         <% end %>
