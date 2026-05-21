@@ -205,15 +205,11 @@ When `connects_to` is `nil` (the default), no connection switching occurs and si
 
 ## Roadmap
 
-Planned features, roughly ordered by priority:
+Post-1.0 planned features:
 
 **Operations**
 - Admin audit log — record who retried or discarded which jobs and when (requires host-app user identity)
 - Failed job retry with modified arguments — edit the arguments JSON from the job detail page before retrying; useful for correcting bad payloads without redeploying
-- Bulk scheduled job actions — "Run All Now" button on the Scheduled tab, mirroring the "Retry All" pattern on the Failed Jobs page
-
-**Observability**
-- Priority filter — filter and sort the jobs list by Solid Queue job priority
 
 **Notifications**
 - Multiple webhook targets — support an array of `alert_webhook_url` values so alerts can fan out to Slack, PagerDuty, and custom endpoints simultaneously
