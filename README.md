@@ -8,6 +8,8 @@
 
 A monitoring and management dashboard for [Solid Queue](https://github.com/rails/solid_queue), mountable as a Rails engine in any app.
 
+![SolidQueueWeb dashboard](docs/solid-queue-web.png)
+
 ## The problem
 
 Solid Queue ships without a web interface. When jobs fail, queues back up, or workers go silent in production, the only options are `rails console` or raw SQL queries. SolidQueueWeb gives your team a real-time dashboard to inspect, retry, and discard jobs without leaving the browser — and without standing up any additional infrastructure.
@@ -52,10 +54,6 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **Webhook alerts** — set `alert_webhook_url` and `alert_failure_threshold` to receive a POST request whenever the failed job count meets or exceeds the threshold; fires asynchronously so dashboard performance is unaffected; a configurable cooldown (default 1 h) prevents repeated alerts while the count stays elevated
 - **Performance analytics** — per-job-class statistics at `/jobs/performance` showing run count, average, p50, p95, min, and max duration; sorted by p95 descending so the slowest classes surface first; period filter scopes to 1h / 24h / 7d or all time; each class name links to the filtered History view
 - **Metrics / health endpoint** — `GET /jobs/metrics.json` returns a machine-readable JSON document with job counts, throughput, per-queue depth and pause state, and process health summary; suitable for Prometheus scraping, uptime monitors, or external dashboards; `slow_jobs` count included when `slow_job_threshold` is configured
-
-## Screenshots
-
-![SolidQueueWeb dashboard](docs/solid-queue-web.png)
 
 ## Compatibility
 
@@ -205,15 +203,7 @@ When `connects_to` is `nil` (the default), no connection switching occurs and si
 
 ## Roadmap
 
-Post-1.0 planned features:
-
-**Operations**
-- Admin audit log — record who retried or discarded which jobs and when (requires host-app user identity)
-- Failed job retry with modified arguments — edit the arguments JSON from the job detail page before retrying; useful for correcting bad payloads without redeploying
-
-**Notifications**
-- Multiple webhook targets — support an array of `alert_webhook_url` values so alerts can fan out to Slack, PagerDuty, and custom endpoints simultaneously
-- Queue depth alert — fire a webhook when a queue's ready job count exceeds a configurable threshold (complements the existing failure-count alert)
+See [ROADMAP.md](ROADMAP.md) for the full post-1.0 feature plan, organized by release milestone.
 
 Pull requests for any of these are welcome. See [Contributing](#contributing) below.
 
