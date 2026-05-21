@@ -1,18 +1,41 @@
 module SolidQueueWeb
   class RetryFailedJobsController < ApplicationController
+    STAGGER_INTERVALS = { "5s" => 5.seconds, "10s" => 10.seconds, "30s" => 30.seconds, "1m" => 1.minute }.freeze
+
     before_action :set_filter_params
 
     def create
       executions = params[:id] ? [SolidQueue::FailedExecution.find(params[:id])] : filtered_scope.to_a
       jobs = executions.map(&:job)
-      SolidQueue::FailedExecution.retry_all(jobs)
+
+      if params[:stagger].present? && executions.size > 1
+        interval = STAGGER_INTERVALS[params[:stagger]]
+        raise ArgumentError, "Invalid stagger interval." unless interval
+        executions.each_with_index do |execution, i|
+          execution.job.update!(scheduled_at: i.zero? ? nil : Time.current + (i * interval))
+          execution.retry
+        end
+      else
+        SolidQueue::FailedExecution.retry_all(jobs)
+      end
       redirect_to failed_jobs_path(queue: @queue, q: @search, period: @period),
-        notice: "#{jobs.size} #{"job".pluralize(jobs.size)} queued for retry."
+        notice: retry_notice(jobs.size)
+    rescue ArgumentError => e
+      redirect_to failed_jobs_path, alert: e.message
     rescue => e
       redirect_to failed_jobs_path, alert: "Could not retry job: #{e.message}"
     end
 
     private
+
+    def retry_notice(count)
+      label = "#{count} #{"job".pluralize(count)}"
+      if params[:stagger].present? && count > 1
+        "#{label} queued for retry, staggered #{params[:stagger]} apart."
+      else
+        "#{label} queued for retry."
+      end
+    end
 
     def set_filter_params
       @queue  = params[:queue].presence

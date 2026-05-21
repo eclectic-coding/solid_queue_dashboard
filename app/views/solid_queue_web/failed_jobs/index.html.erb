@@ -9,6 +9,16 @@
             params: { queue: @queue, q: @search, period: @period },
             class: "sqd-btn sqd-btn--primary",
             data: { confirm: "Retry all #{@failed_jobs.size} failed jobs?" } %>
+      <% if @failed_jobs.size > 1 %>
+        <% %w[5s 10s 30s 1m].each do |interval| %>
+          <%= button_to "+#{interval}", retry_all_failed_jobs_path,
+                method: :post,
+                params: { stagger: interval, queue: @queue, q: @search, period: @period },
+                class: "sqd-btn sqd-btn--muted sqd-btn--sm",
+                title: "Retry all, staggered #{interval} apart",
+                data: { confirm: "Retry #{@failed_jobs.size} failed jobs staggered #{interval} apart?" } %>
+        <% end %>
+      <% end %>
       <%= button_to "Discard All", discard_all_failed_jobs_path,
             method: :post,
             params: { queue: @queue, q: @search, period: @period },

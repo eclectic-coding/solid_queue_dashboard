@@ -221,6 +221,52 @@ RSpec.describe "FailedJobs", type: :request do
     end
   end
 
+  describe "POST /jobs/failed_jobs/retry_all with stagger (RetryFailedJobsController#create)" do
+    let!(:second_execution) do
+      j = SolidQueue::Job.create!(
+        queue_name: "default",
+        class_name: "AnotherJob",
+        arguments: {},
+        active_job_id: SecureRandom.uuid
+      )
+      j.ready_execution&.destroy
+      SolidQueue::FailedExecution.create!(
+        job: j,
+        error: { exception_class: "RuntimeError", message: "oops", backtrace: [] }
+      )
+    end
+
+    it "staggers scheduled_at by the given interval" do
+      post "/jobs/failed_jobs/retry_all", params: { stagger: "10s" }
+      scheduled = SolidQueue::ScheduledExecution.count
+      expect(scheduled).to eq(1)
+    end
+
+    it "retries the first job immediately (no scheduled_at)" do
+      post "/jobs/failed_jobs/retry_all", params: { stagger: "10s" }
+      ready = SolidQueue::ReadyExecution.count
+      expect(ready).to eq(1)
+    end
+
+    it "includes stagger info in the notice" do
+      post "/jobs/failed_jobs/retry_all", params: { stagger: "10s" }
+      follow_redirect!
+      expect(response.body).to include("staggered 10s apart")
+    end
+
+    it "rejects invalid stagger values" do
+      post "/jobs/failed_jobs/retry_all", params: { stagger: "bogus" }
+      expect(response).to redirect_to("/jobs/failed_jobs")
+      follow_redirect!
+      expect(response.body).to include("Invalid stagger interval")
+    end
+
+    it "does not stagger when only one job matches the filter" do
+      post "/jobs/failed_jobs/retry_all", params: { stagger: "10s", q: "TestJob" }
+      expect(SolidQueue::ScheduledExecution.count).to eq(0)
+    end
+  end
+
   describe "GET /jobs/failed_jobs.csv (CSV export)" do
     it "returns a CSV file" do
       get "/jobs/failed_jobs", params: { format: :csv }
