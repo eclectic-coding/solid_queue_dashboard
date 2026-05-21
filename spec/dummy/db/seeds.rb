@@ -20,6 +20,7 @@ conn = ActiveRecord::Base.connection
   solid_queue_blocked_executions
   solid_queue_ready_executions
   solid_queue_recurring_executions
+  solid_queue_recurring_tasks
   solid_queue_jobs
   solid_queue_processes
   solid_queue_semaphores
@@ -208,6 +209,19 @@ hour_weights.each_with_index do |weight, hours_ago|
   end
 end
 
+puts "Seeding recurring tasks..."
+recurring_tasks_data = [
+  { key: "nightly-cleanup",      schedule: "0 2 * * *",    command: "CleanupJob.perform_later",               queue_name: "default",      description: "Nightly database cleanup",                          static: true  },
+  { key: "hourly-data-sync",     schedule: "0 * * * *",    command: "DataSyncJob.perform_later",              queue_name: "default",      description: "Sync data from external APIs every hour",           static: true  },
+  { key: "weekly-report",        schedule: "0 8 * * 1",    command: "ReportGeneratorJob.perform_later",       queue_name: "low_priority", description: "Generate weekly summary report on Monday morning",  static: true  },
+  { key: "send-digest-email",    schedule: "0 9 * * *",    command: "UserMailerJob.perform_later",            queue_name: "mailers",      description: "Daily digest email to all users",                   static: true  },
+  { key: "export-invoices",      schedule: "30 1 1 * *",   command: "InvoiceGeneratorJob.perform_later",      queue_name: "critical",     description: "Monthly invoice export on the 1st",                 static: true  },
+  { key: "purge-old-images",     schedule: "0 3 * * 0",    command: "ImageProcessingJob.perform_later",       queue_name: "low_priority", description: "Weekly purge of unattached image uploads",          static: true  },
+  { key: "dynamic-notification", schedule: "*/15 * * * *", command: "NotificationJob.perform_later",          queue_name: "mailers",      description: "Push notifications every 15 minutes",               static: false }
+]
+
+recurring_tasks_data.each { |attrs| SolidQueue::RecurringTask.create!(attrs) }
+
 puts "Done! Created:"
 puts "  #{SolidQueue::ReadyExecution.count} ready jobs"
 puts "  #{SolidQueue::ScheduledExecution.count} scheduled jobs"
@@ -216,3 +230,4 @@ puts "  #{SolidQueue::BlockedExecution.count} blocked jobs"
 puts "  #{SolidQueue::FailedExecution.count} failed jobs"
 puts "  #{SolidQueue::Process.count} processes"
 puts "  #{SolidQueue::Job.where.not(finished_at: nil).count} finished jobs"
+puts "  #{SolidQueue::RecurringTask.count} recurring tasks"
