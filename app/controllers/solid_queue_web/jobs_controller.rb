@@ -3,13 +3,19 @@ module SolidQueueWeb
     before_action :set_status, only: [:destroy, :discard_selected]
 
     def index
-      @status = params[:status].presence_in(Job::STATUSES) || "ready"
-      @search = params[:q].presence
-      @period = params[:period].presence_in(PERIOD_DURATIONS.keys)
+      @status   = params[:status].presence_in(Job::STATUSES) || "ready"
+      @search   = params[:q].presence
+      @period   = params[:period].presence_in(PERIOD_DURATIONS.keys)
+      @priority = params[:priority].presence
+
       scope = Job::EXECUTION_MODELS[@status].includes(:job)
-      scope = scope.references(:job).where("solid_queue_jobs.class_name LIKE ?", "%#{@search}%") if @search.present?
+      scope = scope.references(:job).where("solid_queue_jobs.class_name LIKE ?", "%#{@search}%")         if @search.present?
       scope = scope.references(:job).where("solid_queue_jobs.created_at >= ?", PERIOD_DURATIONS[@period].ago) if @period.present?
+      scope = scope.references(:job).where("solid_queue_jobs.priority = ?", @priority.to_i)              if @priority.present?
       scope = scope.order(created_at: :desc)
+
+      @priority_options = Job::EXECUTION_MODELS[@status].joins(:job)
+        .distinct.pluck("solid_queue_jobs.priority").sort
 
       respond_to do |format|
         format.html { @pagy, @jobs = pagy(scope) }
@@ -73,13 +79,15 @@ module SolidQueueWeb
     end
 
     def set_status
-      @status = params[:status]
-      @period = params[:period].presence_in(PERIOD_DURATIONS.keys)
+      @status   = params[:status]
+      @period   = params[:period].presence_in(PERIOD_DURATIONS.keys)
+      @priority = params[:priority].presence
     end
 
     def filtered_scope(model)
       scope = model.includes(:job)
       scope = scope.references(:job).where("solid_queue_jobs.created_at >= ?", PERIOD_DURATIONS[@period].ago) if @period.present?
+      scope = scope.references(:job).where("solid_queue_jobs.priority = ?", @priority.to_i)                  if @priority.present?
       scope
     end
 

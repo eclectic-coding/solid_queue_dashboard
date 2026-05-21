@@ -1,6 +1,24 @@
 module SolidQueueWeb
   class ScheduledJobsController < ApplicationController
-    OFFSETS = { "1h" => 1.hour, "24h" => 24.hours, "7d" => 7.days }.freeze
+    def create
+      @period   = params[:period].presence_in(PERIOD_DURATIONS.keys)
+      past_time = 1.second.ago
+
+      scope = SolidQueue::ScheduledExecution.joins(:job)
+      scope = scope.where("solid_queue_jobs.created_at >= ?", PERIOD_DURATIONS[@period].ago) if @period.present?
+
+      job_ids = scope.pluck("solid_queue_jobs.id")
+      count   = job_ids.size
+
+      SolidQueue::ScheduledExecution.where(job_id: job_ids).update_all(scheduled_at: past_time)
+      SolidQueue::Job.where(id: job_ids).update_all(scheduled_at: past_time)
+
+      redirect_to jobs_path(status: "scheduled", period: @period),
+        notice: "#{count} #{"job".pluralize(count)} scheduled to run immediately."
+    rescue => e
+      redirect_to jobs_path(status: "scheduled", period: @period),
+        alert: "Could not run jobs: #{e.message}"
+    end
 
     def update
       @execution = SolidQueue::ScheduledExecution.find(params[:id])
@@ -9,8 +27,8 @@ module SolidQueueWeb
 
       new_time = if @run_now
         1.second.ago
-      elsif OFFSETS.key?(params[:offset])
-        @execution.scheduled_at + OFFSETS[params[:offset]]
+      elsif PERIOD_DURATIONS.key?(params[:offset])
+        @execution.scheduled_at + PERIOD_DURATIONS[params[:offset]]
       else
         raise ArgumentError, "Invalid offset."
       end

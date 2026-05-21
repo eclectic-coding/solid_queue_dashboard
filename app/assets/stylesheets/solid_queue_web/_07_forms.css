@@ -76,6 +76,23 @@
   color: #fff;
 }
 
+.sqd-select {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-size: 13px;
+  background: var(--surface);
+  color: var(--text);
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.sqd-select:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: -1px;
+  border-color: var(--primary);
+}
+
 .sqd-period-filter {
   display: flex;
   align-items: center;
