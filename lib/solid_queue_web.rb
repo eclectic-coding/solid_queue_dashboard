@@ -6,7 +6,7 @@ module SolidQueueWeb
   class << self
     attr_writer :page_size, :dashboard_refresh_interval, :default_refresh_interval, :search_results_limit,
                 :slow_job_threshold, :alert_webhook_url, :alert_failure_threshold, :alert_webhook_cooldown,
-                :connects_to
+                :alert_queue_thresholds, :connects_to
 
     def page_size
       @page_size || 25
@@ -38,6 +38,10 @@ module SolidQueueWeb
 
     def alert_webhook_cooldown
       @alert_webhook_cooldown || 3600
+    end
+
+    def alert_queue_thresholds
+      @alert_queue_thresholds || {}
     end
 
     def connects_to

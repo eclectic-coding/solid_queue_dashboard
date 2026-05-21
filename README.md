@@ -100,9 +100,10 @@ SolidQueueWeb.configure do |config|
   config.default_refresh_interval   = 30_000 # jobs/processes/history auto-refresh in ms (default: 10_000)
   config.search_results_limit       = 10     # max results per status in global search (default: 25)
   config.slow_job_threshold         = 5.minutes # flag claimed jobs running longer than this (default: nil = disabled)
-  config.alert_webhook_url          = "https://hooks.example.com/solid-queue" # POST target (default: nil = disabled)
+  config.alert_webhook_url          = "https://hooks.example.com/solid-queue" # POST target — string or array (default: nil = disabled)
   config.alert_failure_threshold    = 10         # fire when failed count >= this (default: nil = disabled)
-  config.alert_webhook_cooldown     = 1800       # seconds between repeated alerts (default: 3600)
+  config.alert_queue_thresholds     = { "critical" => 50, "default" => 200 } # fire when queue depth >= threshold (default: {})
+  config.alert_webhook_cooldown     = 1800       # seconds between repeated alerts per alert type (default: 3600)
   config.connects_to                = { reading: :reading, writing: :writing } # read replica (default: nil)
 end
 
@@ -150,6 +151,31 @@ The request body is JSON:
 ```
 
 The webhook fires asynchronously in a background thread so dashboard page loads are never delayed. HTTP errors are logged to `Rails.logger` and swallowed. The cooldown window prevents repeated alerts while the count stays elevated — the clock resets on each app restart.
+
+## Queue depth alerts
+
+Set `alert_queue_thresholds` to fire a webhook when any queue's ready job count meets or exceeds a per-queue limit:
+
+```ruby
+SolidQueueWeb.configure do |config|
+  config.alert_webhook_url      = "https://hooks.example.com/solid-queue"
+  config.alert_queue_thresholds = { "critical" => 50, "default" => 200 }
+end
+```
+
+The same `alert_webhook_url` endpoint(s) receive the payload, with a distinct event type so you can route it differently:
+
+```json
+{
+  "event": "queue_depth_threshold_exceeded",
+  "queue_name": "critical",
+  "depth": 63,
+  "threshold": 50,
+  "fired_at": "2026-05-21T12:34:56Z"
+}
+```
+
+Cooldown is tracked independently per queue, so a persistently deep "critical" queue does not suppress alerts for "default". The shared `alert_webhook_cooldown` setting applies to each queue separately.
 
 ## Metrics endpoint
 
