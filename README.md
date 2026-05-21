@@ -103,7 +103,7 @@ SolidQueueWeb.configure do |config|
   config.alert_webhook_url          = "https://hooks.example.com/solid-queue" # POST target (default: nil = disabled)
   config.alert_failure_threshold    = 10         # fire when failed count >= this (default: nil = disabled)
   config.alert_webhook_cooldown     = 1800       # seconds between repeated alerts (default: 3600)
-  config.connects_to                = { database: { writing: :queue, reading: :queue } } # multi-db (default: nil)
+  config.connects_to                = { reading: :reading, writing: :writing } # read replica (default: nil)
 end
 
 SolidQueueWeb.authenticate do
@@ -140,18 +140,21 @@ The request body is JSON:
 
 The webhook fires asynchronously in a background thread so dashboard page loads are never delayed. HTTP errors are logged to `Rails.logger` and swallowed. The cooldown window prevents repeated alerts while the count stays elevated — the clock resets on each app restart.
 
-## Multi-database setup
+## Read replica support
 
-If Solid Queue runs on a separate database, set `connects_to` to match your app's database configuration. The engine wraps every request in `ActiveRecord::Base.connected_to(...)` with the options you provide.
+Set `connects_to` with both `reading:` and `writing:` keys to enable automatic role switching. GET requests are routed to the reading role; POST/DELETE/PATCH requests use the writing role.
 
 ```ruby
 SolidQueueWeb.configure do |config|
-  # Solid Queue on a named database:
-  config.connects_to = { database: { writing: :queue, reading: :queue } }
-
-  # Or just pin to the writing role to bypass automatic read/write splitting:
-  config.connects_to = { role: :writing }
+  # Route dashboard reads to the replica, writes to primary:
+  config.connects_to = { reading: :reading, writing: :writing }
 end
+```
+
+The role names must match what Solid Queue's models are configured with (set via `SolidQueue.connects_to` in your app). To pin all requests to a single role instead (e.g. to bypass automatic read/write splitting middleware), pass a plain `role:` or `shard:` hash:
+
+```ruby
+config.connects_to = { role: :writing }
 ```
 
 When `connects_to` is `nil` (the default), no connection switching occurs and single-database apps are unaffected.
@@ -162,9 +165,6 @@ Planned features, roughly ordered by priority:
 
 **Operations**
 - Admin audit log — record who retried or discarded which jobs and when (requires host-app user identity)
-
-**Infrastructure**
-- Read replica support — route dashboard queries to a replica to avoid impacting the primary
 
 Pull requests for any of these are welcome. See [Contributing](#contributing) below.
 
