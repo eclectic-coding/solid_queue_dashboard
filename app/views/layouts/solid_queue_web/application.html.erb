@@ -21,6 +21,7 @@
           <li><%= link_to "Queues", queues_path, class: current_page?(queues_path) ? "active" : "", aria: { current: current_page?(queues_path) ? "page" : nil } %></li>
           <li><%= link_to "Jobs", jobs_path, class: current_page?(jobs_path) ? "active" : "", aria: { current: current_page?(jobs_path) ? "page" : nil } %></li>
           <li><%= link_to "History", history_path, class: current_page?(history_path) ? "active" : "", aria: { current: current_page?(history_path) ? "page" : nil } %></li>
+          <li><%= link_to "Performance", performance_path, class: current_page?(performance_path) ? "active" : "", aria: { current: current_page?(performance_path) ? "page" : nil } %></li>
           <li><%= link_to "Failed", failed_jobs_path, class: current_page?(failed_jobs_path) ? "active" : "", aria: { current: current_page?(failed_jobs_path) ? "page" : nil } %></li>
           <li><%= link_to "Recurring", recurring_tasks_path, class: current_page?(recurring_tasks_path) ? "active" : "", aria: { current: current_page?(recurring_tasks_path) ? "page" : nil } %></li>
           <li><%= link_to "Processes", processes_path, class: current_page?(processes_path) ? "active" : "", aria: { current: current_page?(processes_path) ? "page" : nil } %></li>
