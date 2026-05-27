@@ -35,6 +35,8 @@ SolidQueueWeb::Engine.routes.draw do
     end
   end
 
+  get "failed_jobs/errors", to: "failed_jobs/errors#index", as: :failed_job_errors
+
   resource :failed_job_selection, path: "failed_jobs/selection", only: [:create, :destroy],
            controller: "failed_jobs/selections"
   resources :failed_jobs, only: [:index, :destroy] do

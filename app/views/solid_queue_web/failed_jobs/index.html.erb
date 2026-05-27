@@ -2,6 +2,7 @@
   <h1 class="sqd-page-title">Failed Jobs</h1>
   <% if @failed_jobs.any? %>
     <div class="sqd-actions">
+      <%= link_to "Error Summary", failed_job_errors_path, class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
       <%= link_to "Export CSV", failed_jobs_path(format: :csv, queue: @queue, q: @search, period: @period),
             class: "sqd-btn sqd-btn--muted", data: { turbo: false } %>
       <%= button_to "Retry All", retry_all_failed_jobs_path,

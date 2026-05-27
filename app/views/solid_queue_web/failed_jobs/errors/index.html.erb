@@ -1,0 +1,44 @@
+<div class="sqd-page-header">
+  <h1 class="sqd-page-title">Error Summary</h1>
+  <div class="sqd-actions">
+    <%= link_to "← Failed Jobs", failed_jobs_path, class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
+  </div>
+</div>
+
+<% if @groups.any? %>
+  <div class="sqd-card">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Error Class</th>
+          <th scope="col">Message</th>
+          <th scope="col" style="text-align: right;">Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @groups.each do |group| %>
+          <tr>
+            <td class="sqd-mono"><%= group.exception_class.presence || "—" %></td>
+            <td>
+              <% if group.sample_backtrace.present? %>
+                <details class="sqd-error-details">
+                  <summary class="sqd-truncate" title="<%= group.message_prefix %>">
+                    <%= group.message_prefix.presence || "—" %>
+                  </summary>
+                  <pre class="sqd-pre sqd-pre--muted"><%= Array(group.sample_backtrace).first(10).join("\n") %></pre>
+                </details>
+              <% else %>
+                <span class="sqd-truncate" title="<%= group.message_prefix %>"><%= group.message_prefix.presence || "—" %></span>
+              <% end %>
+            </td>
+            <td style="text-align: right;"><%= group.count %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="sqd-card">
+    <div class="sqd-empty">No failed jobs. All clear!</div>
+  </div>
+<% end %>
