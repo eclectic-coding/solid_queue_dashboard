@@ -120,7 +120,7 @@
                   <span style="color:var(--muted)">—</span>
                 <% end %>
               </td>
-              <td class="sqd-mono"><%= execution.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+              <td class="sqd-mono"><%= format_timestamp(execution.created_at) %></td>
               <td class="sqd-row-actions">
                 <%= button_to "Retry", retry_failed_job_path(execution), method: :post,
                       class: "sqd-btn sqd-btn--primary sqd-btn--sm" %>

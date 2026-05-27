@@ -19,6 +19,14 @@ module SolidQueueWeb
       content_tag(:style, css.html_safe)
     end
 
+    def format_timestamp(time, format: "%Y-%m-%d %H:%M:%S")
+      return "—" unless time
+
+      tz = SolidQueueWeb.time_zone
+      displayed = tz ? time.in_time_zone(tz) : time.utc
+      displayed.strftime(format)
+    end
+
     def format_duration(seconds)
       s = seconds.to_i
       return "< 1s" if s < 1

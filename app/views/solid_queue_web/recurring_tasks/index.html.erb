@@ -43,7 +43,7 @@
             <td class="sqd-mono">
               <%
                 next_run = begin
-                  task.next_time.strftime("%Y-%m-%d %H:%M %Z")
+                  format_timestamp(task.next_time, format: "%Y-%m-%d %H:%M")
                 rescue
                   nil
                 end
@@ -52,7 +52,7 @@
             </td>
             <td class="sqd-mono">
               <% last_run = task.last_enqueued_time %>
-              <%= last_run ? last_run.strftime("%Y-%m-%d %H:%M %Z") : "—" %>
+              <%= format_timestamp(last_run, format: "%Y-%m-%d %H:%M") %>
             </td>
             <td>
               <% if task.static? %>
