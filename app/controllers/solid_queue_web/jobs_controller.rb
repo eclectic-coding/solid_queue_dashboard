@@ -1,23 +1,16 @@
 module SolidQueueWeb
   class JobsController < ApplicationController
+    before_action :set_filters, only: [:index, :destroy]
+
     def index
-      @status    = params[:status].presence_in(Job::STATUSES) || "ready"
-      @search    = params[:q].presence
-      @period    = params[:period].presence_in(PERIOD_DURATIONS.keys)
-      @priority  = params[:priority].presence
-      @sort      = params[:sort].presence_in(sortable_columns) || "created_at"
-      @direction = params[:direction] == "asc" ? "asc" : "desc"
-
-      scope = Job::EXECUTION_MODELS[@status].includes(:job).references(:job).order(sort_expression)
-      scope = scope.where("solid_queue_jobs.class_name LIKE ?", "%#{@search}%")         if @search.present?
-      scope = scope.where("solid_queue_jobs.created_at >= ?", PERIOD_DURATIONS[@period].ago) if @period.present?
-      scope = scope.where("solid_queue_jobs.priority = ?", @priority.to_i)              if @priority.present?
-
-      @priority_options = Job::EXECUTION_MODELS[@status].joins(:job)
-        .distinct.pluck("solid_queue_jobs.priority").sort
+      scope = job_scope
 
       respond_to do |format|
-        format.html { @pagy, @jobs = pagy(scope) }
+        format.html do
+          @priority_options = Job::EXECUTION_MODELS[@status].joins(:job)
+            .distinct.pluck("solid_queue_jobs.priority").sort
+          @pagy, @jobs = pagy(scope)
+        end
         format.csv do
           send_data jobs_csv(scope),
                     filename: "jobs-#{@status}-#{Date.today}.csv",
@@ -34,11 +27,6 @@ module SolidQueueWeb
     end
 
     def destroy
-      @status    = params[:status]
-      @period    = params[:period].presence_in(PERIOD_DURATIONS.keys)
-      @priority  = params[:priority].presence
-      @sort      = params[:sort].presence_in(sortable_columns) || "created_at"
-      @direction = params[:direction] == "asc" ? "asc" : "desc"
       model = Job.execution_model_for!(@status)
       if params[:id]
         @execution = model.find(params[:id])
@@ -62,6 +50,23 @@ module SolidQueueWeb
     end
 
     private
+
+    def set_filters
+      @status    = params[:status].presence_in(Job::STATUSES) || "ready"
+      @search    = params[:q].presence
+      @period    = params[:period].presence_in(PERIOD_DURATIONS.keys)
+      @priority  = params[:priority].presence
+      @sort      = params[:sort].presence_in(sortable_columns) || "created_at"
+      @direction = params[:direction] == "asc" ? "asc" : "desc"
+    end
+
+    def job_scope
+      scope = Job::EXECUTION_MODELS[@status].includes(:job).references(:job).order(sort_expression)
+      scope = scope.where("solid_queue_jobs.class_name LIKE ?", "%#{@search}%")              if @search.present?
+      scope = scope.where("solid_queue_jobs.created_at >= ?", PERIOD_DURATIONS[@period].ago) if @period.present?
+      scope = scope.where("solid_queue_jobs.priority = ?", @priority.to_i)                   if @priority.present?
+      scope
+    end
 
     def sortable_columns
       %w[class_name queue_name priority created_at]
