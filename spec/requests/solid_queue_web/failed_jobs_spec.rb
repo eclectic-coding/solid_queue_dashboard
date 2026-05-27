@@ -324,4 +324,26 @@ RSpec.describe "FailedJobs", type: :request do
       expect(response).to redirect_to("/jobs/failed_jobs?queue=default")
     end
   end
+
+  describe "GET /jobs/failed_jobs?sort=" do
+    it "accepts sort by class_name" do
+      get "/jobs/failed_jobs", params: { sort: "class_name", direction: "asc" }
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "accepts sort by queue_name" do
+      get "/jobs/failed_jobs", params: { sort: "queue_name", direction: "desc" }
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "accepts sort by created_at" do
+      get "/jobs/failed_jobs", params: { sort: "created_at", direction: "asc" }
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "ignores invalid sort params" do
+      get "/jobs/failed_jobs", params: { sort: "DROP TABLE", direction: "evil" }
+      expect(response).to have_http_status(:ok)
+    end
+  end
 end

@@ -1,22 +1,16 @@
 module SolidQueueWeb
   class JobsController < ApplicationController
+    before_action :set_filters, only: [:index, :destroy]
+
     def index
-      @status   = params[:status].presence_in(Job::STATUSES) || "ready"
-      @search   = params[:q].presence
-      @period   = params[:period].presence_in(PERIOD_DURATIONS.keys)
-      @priority = params[:priority].presence
-
-      scope = Job::EXECUTION_MODELS[@status].includes(:job)
-      scope = scope.references(:job).where("solid_queue_jobs.class_name LIKE ?", "%#{@search}%")         if @search.present?
-      scope = scope.references(:job).where("solid_queue_jobs.created_at >= ?", PERIOD_DURATIONS[@period].ago) if @period.present?
-      scope = scope.references(:job).where("solid_queue_jobs.priority = ?", @priority.to_i)              if @priority.present?
-      scope = scope.order(created_at: :desc)
-
-      @priority_options = Job::EXECUTION_MODELS[@status].joins(:job)
-        .distinct.pluck("solid_queue_jobs.priority").sort
+      scope = job_scope
 
       respond_to do |format|
-        format.html { @pagy, @jobs = pagy(scope) }
+        format.html do
+          @priority_options = Job::EXECUTION_MODELS[@status].joins(:job)
+            .distinct.pluck("solid_queue_jobs.priority").sort
+          @pagy, @jobs = pagy(scope)
+        end
         format.csv do
           send_data jobs_csv(scope),
                     filename: "jobs-#{@status}-#{Date.today}.csv",
@@ -33,9 +27,6 @@ module SolidQueueWeb
     end
 
     def destroy
-      @status   = params[:status]
-      @period   = params[:period].presence_in(PERIOD_DURATIONS.keys)
-      @priority = params[:priority].presence
       model = Job.execution_model_for!(@status)
       if params[:id]
         @execution = model.find(params[:id])
@@ -43,22 +34,51 @@ module SolidQueueWeb
         @remaining_count = filtered_scope(model).count
         respond_to do |format|
           format.turbo_stream
-          format.html { redirect_to jobs_path(status: @status, period: @period), notice: "Job discarded." }
+          format.html { redirect_to jobs_return_path, notice: "Job discarded." }
         end
       else
         jobs = filtered_scope(model).map(&:job)
         model.discard_all_from_jobs(jobs)
-        redirect_to jobs_path(status: @status, period: @period),
-          notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
+        redirect_to jobs_return_path, notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
       end
     rescue ArgumentError => e
-      redirect_to jobs_path(status: @status, period: @period), alert: e.message
+      redirect_to jobs_return_path, alert: e.message
     rescue => e
-      redirect_to jobs_path(status: @status, period: @period),
-        alert: "Could not discard #{params[:id] ? "job" : "jobs"}: #{e.message}"
+      redirect_to jobs_return_path, alert: "Could not discard #{params[:id] ? "job" : "jobs"}: #{e.message}"
     end
 
     private
+
+    def set_filters
+      @status    = params[:status].presence_in(Job::STATUSES) || "ready"
+      @search    = params[:q].presence
+      @period    = params[:period].presence_in(PERIOD_DURATIONS.keys)
+      @priority  = params[:priority].presence
+      @sort      = params[:sort].presence_in(sortable_columns) || "created_at"
+      @direction = params[:direction] == "asc" ? "asc" : "desc"
+    end
+
+    def job_scope
+      scope = Job::EXECUTION_MODELS[@status].includes(:job).references(:job).order(sort_expression)
+      scope = scope.where("solid_queue_jobs.class_name LIKE ?", "%#{@search}%")              if @search.present?
+      scope = scope.where("solid_queue_jobs.created_at >= ?", PERIOD_DURATIONS[@period].ago) if @period.present?
+      scope = scope.where("solid_queue_jobs.priority = ?", @priority.to_i)                   if @priority.present?
+      scope
+    end
+
+    def sortable_columns
+      %w[class_name queue_name priority created_at]
+    end
+
+    def sort_expression
+      sql_col = case @sort
+      when "class_name" then "solid_queue_jobs.class_name"
+      when "queue_name" then "solid_queue_jobs.queue_name"
+      when "priority"   then "solid_queue_jobs.priority"
+      else "#{Job::EXECUTION_MODELS[@status].quoted_table_name}.created_at"
+      end
+      Arel.sql("#{sql_col} #{@direction == 'asc' ? 'ASC' : 'DESC'}")
+    end
 
     def jobs_csv(scope)
       CSV.generate(headers: true) do |csv|
@@ -68,6 +88,10 @@ module SolidQueueWeb
           csv << [job.id, job.class_name, job.queue_name, @status, job.priority, job.created_at.iso8601]
         end
       end
+    end
+
+    def jobs_return_path
+      jobs_path(status: @status, period: @period, sort: @sort, direction: @direction)
     end
 
     def filtered_scope(model)

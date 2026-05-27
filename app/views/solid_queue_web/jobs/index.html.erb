@@ -5,15 +5,15 @@
 
 <div class="sqd-page-header">
   <div class="sqd-filters">
-    <%= link_to "Ready",     jobs_path(status: "ready",     q: @search, period: @period, priority: @priority), class: @status == "ready"     ? "active" : "" %>
-    <%= link_to "Scheduled", jobs_path(status: "scheduled", q: @search, period: @period, priority: @priority), class: @status == "scheduled" ? "active" : "" %>
-    <%= link_to "Running",   jobs_path(status: "claimed",   q: @search, period: @period, priority: @priority), class: @status == "claimed"   ? "active" : "" %>
-    <%= link_to "Blocked",   jobs_path(status: "blocked",   q: @search, period: @period, priority: @priority), class: @status == "blocked"   ? "active" : "" %>
-    <%= link_to "Failed",    jobs_path(status: "failed",    q: @search, period: @period, priority: @priority), class: @status == "failed"    ? "active" : "" %>
+    <%= link_to "Ready",     jobs_path(status: "ready",     q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "ready"     ? "active" : "" %>
+    <%= link_to "Scheduled", jobs_path(status: "scheduled", q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "scheduled" ? "active" : "" %>
+    <%= link_to "Running",   jobs_path(status: "claimed",   q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "claimed"   ? "active" : "" %>
+    <%= link_to "Blocked",   jobs_path(status: "blocked",   q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "blocked"   ? "active" : "" %>
+    <%= link_to "Failed",    jobs_path(status: "failed",    q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "failed"    ? "active" : "" %>
   </div>
   <% if @jobs.any? %>
     <div class="sqd-actions">
-      <%= link_to "Export CSV", jobs_path(format: :csv, status: @status, q: @search, period: @period),
+      <%= link_to "Export CSV", jobs_path(format: :csv, status: @status, q: @search, period: @period, sort: @sort, direction: @direction),
             class: "sqd-btn sqd-btn--muted", data: { turbo: false } %>
       <% if @status == "scheduled" %>
         <%= button_to "Run All Now", run_all_now_scheduled_jobs_path,
@@ -36,6 +36,8 @@
 <form class="sqd-search" action="<%= jobs_path %>" method="get" data-controller="search">
   <input type="hidden" name="status" value="<%= @status %>">
   <input type="hidden" name="period" value="<%= @period %>">
+  <input type="hidden" name="sort" value="<%= @sort %>">
+  <input type="hidden" name="direction" value="<%= @direction %>">
   <input class="sqd-search__input" type="search" name="q" value="<%= @search %>"
          placeholder="Filter by job class…" autocomplete="off" aria-label="Filter by job class"
          data-action="input->search#filter">
@@ -49,13 +51,13 @@
     </select>
   <% end %>
   <% if @search.present? || @priority.present? %>
-    <%= link_to "Clear", jobs_path(status: @status, period: @period), class: "sqd-btn sqd-btn--muted" %>
+    <%= link_to "Clear", jobs_path(status: @status, period: @period, sort: @sort, direction: @direction), class: "sqd-btn sqd-btn--muted" %>
   <% end %>
   <div class="sqd-period-filter" role="group" aria-label="Time period">
-    <%= link_to "All", jobs_path(status: @status, q: @search, priority: @priority),                       class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil }, aria_label: "All time" %>
-    <%= link_to "1h",  jobs_path(status: @status, q: @search, priority: @priority, period: "1h"),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil }, aria_label: "Last 1 hour" %>
-    <%= link_to "24h", jobs_path(status: @status, q: @search, priority: @priority, period: "24h"), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil }, aria_label: "Last 24 hours" %>
-    <%= link_to "7d",  jobs_path(status: @status, q: @search, priority: @priority, period: "7d"),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil }, aria_label: "Last 7 days" %>
+    <%= link_to "All", jobs_path(status: @status, q: @search, priority: @priority, sort: @sort, direction: @direction),                       class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil }, aria_label: "All time" %>
+    <%= link_to "1h",  jobs_path(status: @status, q: @search, priority: @priority, period: "1h",  sort: @sort, direction: @direction),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil }, aria_label: "Last 1 hour" %>
+    <%= link_to "24h", jobs_path(status: @status, q: @search, priority: @priority, period: "24h", sort: @sort, direction: @direction), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil }, aria_label: "Last 24 hours" %>
+    <%= link_to "7d",  jobs_path(status: @status, q: @search, priority: @priority, period: "7d",  sort: @sort, direction: @direction),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil }, aria_label: "Last 7 days" %>
   </div>
 </form>
 
@@ -63,8 +65,10 @@
   <div data-controller="selection">
     <%= form_tag job_selection_path, method: :delete, id: "job-selection-form",
           data: { turbo_confirm: "Discard selected jobs? This cannot be undone." } do %>
-      <%= hidden_field_tag :status, @status %>
-      <%= hidden_field_tag :period, @period %>
+      <%= hidden_field_tag :status,    @status %>
+      <%= hidden_field_tag :period,    @period %>
+      <%= hidden_field_tag :sort,      @sort %>
+      <%= hidden_field_tag :direction, @direction %>
     <% end %>
 
     <div class="sqd-selection-bar" data-selection-target="bar" style="display: none;">
@@ -83,11 +87,12 @@
                      data-action="change->selection#selectAll"
                      aria-label="Select all jobs">
             </th>
-            <th scope="col">Job Class</th>
-            <th scope="col">Queue</th>
-            <th scope="col">Priority</th>
+            <% sort_url = ->(p) { jobs_path(status: @status, q: @search, period: @period, priority: @priority, **p) } %>
+            <%= sort_header_th("Job Class",   "class_name", sort_url, current_sort: @sort, current_dir: @direction) %>
+            <%= sort_header_th("Queue",       "queue_name", sort_url, current_sort: @sort, current_dir: @direction) %>
+            <%= sort_header_th("Priority",    "priority",   sort_url, current_sort: @sort, current_dir: @direction) %>
             <th scope="col">Scheduled At</th>
-            <th scope="col">Enqueued At</th>
+            <%= sort_header_th("Enqueued At", "created_at", sort_url, current_sort: @sort, current_dir: @direction) %>
             <th scope="col"><span class="sqd-sr-only">Actions</span></th>
           </tr>
         </thead>
@@ -130,7 +135,7 @@
                 <% end %>
                 <%= button_to "Discard", job_path(execution),
                       method: :delete,
-                      params: { status: @status, period: @period },
+                      params: { status: @status, period: @period, sort: @sort, direction: @direction },
                       class: "sqd-btn sqd-btn--danger sqd-btn--sm",
                       data: { confirm: "Discard this job?" } %>
               </td>
@@ -149,11 +154,12 @@
       <table>
         <thead>
           <tr>
-            <th scope="col">Job Class</th>
-            <th scope="col">Queue</th>
-            <th scope="col">Priority</th>
+            <% sort_url = ->(p) { jobs_path(status: @status, q: @search, period: @period, priority: @priority, **p) } %>
+            <%= sort_header_th("Job Class",   "class_name", sort_url, current_sort: @sort, current_dir: @direction) %>
+            <%= sort_header_th("Queue",       "queue_name", sort_url, current_sort: @sort, current_dir: @direction) %>
+            <%= sort_header_th("Priority",    "priority",   sort_url, current_sort: @sort, current_dir: @direction) %>
             <th scope="col">Scheduled At</th>
-            <th scope="col">Enqueued At</th>
+            <%= sort_header_th("Enqueued At", "created_at", sort_url, current_sort: @sort, current_dir: @direction) %>
             <% if @status == "claimed" %>
               <th scope="col">Running For</th>
             <% end %>

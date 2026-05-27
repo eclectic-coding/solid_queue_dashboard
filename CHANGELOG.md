@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Sortable table columns — Jobs, Failed Jobs, and History tables now support server-side sorting via `?sort=` and `?direction=` params; click any column header to sort ascending or descending; sort state is preserved across filter changes, status tab switches, and period buttons; a `sort_header_th` helper generates accessible `<th>` elements with `aria-sort` and direction indicators (↑/↓)
+
 ## [1.2.0] - 2026-05-27
 
 ### Added
