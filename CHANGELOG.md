@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- p99 and standard deviation columns in performance analytics — `JobPerformanceStats` now computes a 99th percentile and population standard deviation for each job class; both columns appear in the Performance table between p95 and Min; high std dev surfaces inconsistent jobs worth investigating
+
 - Failed job trend chart — a "Failures — Last 12 Hours" bar chart card on the dashboard shows how many jobs failed per hour over the last 12 hours; bars are red (distinct from the blue throughput and purple queue depth charts); header shows the total failure count for the window; empty state shown when no failures exist in the period
 
 - Error frequency report — a new Error Summary page (`/jobs/failed_jobs/errors`) groups all failed jobs by error class and message prefix, shows a count per group, and displays a sample backtrace (first 10 lines) in an expandable `<details>` element; groups are sorted by count descending so the most common errors appear first; accessible via an "Error Summary" button on the Failed Jobs page
