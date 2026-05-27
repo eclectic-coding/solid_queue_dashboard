@@ -110,4 +110,26 @@ RSpec.describe "Job History", type: :request do
       expect(response.body).to include("finished_at")
     end
   end
+
+  describe "GET /jobs/history?sort=" do
+    it "accepts sort by class_name" do
+      get "/jobs/history", params: { sort: "class_name", direction: "asc" }
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "accepts sort by queue_name" do
+      get "/jobs/history", params: { sort: "queue_name", direction: "desc" }
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "accepts sort by finished_at" do
+      get "/jobs/history", params: { sort: "finished_at", direction: "asc" }
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "ignores invalid sort params" do
+      get "/jobs/history", params: { sort: "DROP TABLE", direction: "evil" }
+      expect(response).to have_http_status(:ok)
+    end
+  end
 end

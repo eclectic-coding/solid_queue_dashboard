@@ -4,7 +4,7 @@ module SolidQueueWeb
 
     def index
       respond_to do |format|
-        format.html { @pagy, @failed_jobs = pagy(filtered_scope.order(created_at: :desc)) }
+        format.html { @pagy, @failed_jobs = pagy(filtered_scope.order(sort_expression)) }
         format.csv do
           send_data failed_jobs_csv,
                     filename: "failed-jobs-#{Date.today}.csv",
@@ -25,7 +25,7 @@ module SolidQueueWeb
     def failed_jobs_csv
       CSV.generate(headers: true) do |csv|
         csv << %w[id class_name queue_name error_class error_message failed_at]
-        filtered_scope.order(created_at: :desc).each do |execution|
+        filtered_scope.order(sort_expression).each do |execution|
           job   = execution.job
           error = execution.error || {}
           csv << [job.id, job.class_name, job.queue_name,
@@ -42,10 +42,25 @@ module SolidQueueWeb
         notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
     end
 
+    def sortable_columns
+      %w[class_name queue_name created_at]
+    end
+
+    def sort_expression
+      sql_col = case @sort
+      when "class_name" then "solid_queue_jobs.class_name"
+      when "queue_name" then "solid_queue_jobs.queue_name"
+      else "solid_queue_failed_executions.created_at"
+      end
+      Arel.sql("#{sql_col} #{@direction == 'asc' ? 'ASC' : 'DESC'}")
+    end
+
     def set_filter_params
-      @queue  = params[:queue].presence
-      @search = params[:q].presence
-      @period = params[:period].presence_in(PERIOD_DURATIONS.keys)
+      @queue     = params[:queue].presence
+      @search    = params[:q].presence
+      @period    = params[:period].presence_in(PERIOD_DURATIONS.keys)
+      @sort      = params[:sort].presence_in(sortable_columns) || "created_at"
+      @direction = params[:direction] == "asc" ? "asc" : "desc"
     end
 
     def filtered_scope

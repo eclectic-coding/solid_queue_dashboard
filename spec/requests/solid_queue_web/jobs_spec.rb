@@ -169,7 +169,7 @@ RSpec.describe "Jobs", type: :request do
   describe "DELETE /jobs/list/:id (discard single)" do
     it "discards the job and redirects (HTML)" do
       delete "/jobs/list/#{ready_execution.id}", params: { status: "ready" }
-      expect(response).to redirect_to("/jobs/list?status=ready")
+      expect(response).to redirect_to("/jobs/list?direction=desc&sort=created_at&status=ready")
       follow_redirect!
       expect(response.body).to include("discarded")
     end
@@ -206,7 +206,7 @@ RSpec.describe "Jobs", type: :request do
 
     it "rejects discard for claimed status" do
       delete "/jobs/list/#{ready_execution.id}", params: { status: "claimed" }
-      expect(response).to redirect_to("/jobs/list?status=claimed")
+      expect(response).to redirect_to("/jobs/list?direction=desc&sort=created_at&status=claimed")
       follow_redirect!
       expect(response.body).to include("Cannot discard")
     end
@@ -214,7 +214,7 @@ RSpec.describe "Jobs", type: :request do
     it "handles unexpected errors gracefully" do
       allow_any_instance_of(SolidQueue::ReadyExecution).to receive(:discard).and_raise(RuntimeError, "disk full")
       delete "/jobs/list/#{ready_execution.id}", params: { status: "ready" }
-      expect(response).to redirect_to("/jobs/list?status=ready")
+      expect(response).to redirect_to("/jobs/list?direction=desc&sort=created_at&status=ready")
       follow_redirect!
       expect(response.body).to include("Could not discard job")
     end
@@ -243,7 +243,7 @@ RSpec.describe "Jobs", type: :request do
   describe "POST /jobs/list/discard_all" do
     it "discards all ready jobs and redirects" do
       post "/jobs/list/discard_all", params: { status: "ready" }
-      expect(response).to redirect_to("/jobs/list?status=ready")
+      expect(response).to redirect_to("/jobs/list?direction=desc&sort=created_at&status=ready")
       follow_redirect!
       expect(response.body).to include("discarded")
     end
@@ -256,7 +256,7 @@ RSpec.describe "Jobs", type: :request do
 
     it "rejects discard_all for claimed status" do
       post "/jobs/list/discard_all", params: { status: "claimed" }
-      expect(response).to redirect_to("/jobs/list?status=claimed")
+      expect(response).to redirect_to("/jobs/list?direction=desc&sort=created_at&status=claimed")
       follow_redirect!
       expect(response.body).to include("Cannot discard")
     end
@@ -264,9 +264,39 @@ RSpec.describe "Jobs", type: :request do
     it "handles unexpected errors gracefully" do
       allow(SolidQueue::ReadyExecution).to receive(:discard_all_from_jobs).and_raise(RuntimeError, "disk full")
       post "/jobs/list/discard_all", params: { status: "ready" }
-      expect(response).to redirect_to("/jobs/list?status=ready")
+      expect(response).to redirect_to("/jobs/list?direction=desc&sort=created_at&status=ready")
       follow_redirect!
       expect(response.body).to include("Could not discard jobs")
+    end
+  end
+
+  describe "GET /jobs/list?sort=" do
+    it "accepts sort by class_name" do
+      get "/jobs/list", params: { sort: "class_name", direction: "asc" }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("TestJob")
+    end
+
+    it "accepts sort by queue_name" do
+      get "/jobs/list", params: { sort: "queue_name", direction: "desc" }
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "accepts sort by priority" do
+      get "/jobs/list", params: { sort: "priority", direction: "asc" }
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "defaults to created_at desc for invalid sort column" do
+      get "/jobs/list", params: { sort: "DROP TABLE", direction: "evil" }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("TestJob")
+    end
+
+    it "preserves sort across status tab links" do
+      get "/jobs/list", params: { sort: "class_name", direction: "asc" }
+      expect(response.body).to include("sort=class_name")
+      expect(response.body).to include("direction=asc")
     end
   end
 

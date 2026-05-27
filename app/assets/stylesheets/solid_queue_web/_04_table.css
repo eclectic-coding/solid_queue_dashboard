@@ -57,3 +57,7 @@ tbody tr:hover { background: var(--bg); }
 .sqd-row--slow { background: rgba(253, 126, 20, 0.07); }
 .sqd-row--slow:hover { background: rgba(253, 126, 20, 0.13); }
 .sqd-slow-duration { color: var(--warning); font-weight: 600; }
+
+th a { color: inherit; text-decoration: none; }
+th a:hover { color: var(--primary); }
+.sqd-sort-indicator { margin-left: 0.2rem; }

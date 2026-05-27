@@ -34,6 +34,8 @@
     <input type="hidden" name="queue" value="<%= @queue %>">
   <% end %>
   <input type="hidden" name="period" value="<%= @period %>">
+  <input type="hidden" name="sort" value="<%= @sort %>">
+  <input type="hidden" name="direction" value="<%= @direction %>">
   <input class="sqd-search__input" type="search" name="q" value="<%= @search %>"
          placeholder="Filter by job class…" autocomplete="off" aria-label="Filter by job class"
          data-action="input->search#filter">
@@ -86,10 +88,11 @@
                      data-action="change->selection#selectAll"
                      aria-label="Select all failed jobs">
             </th>
-            <th scope="col">Job Class</th>
-            <th scope="col">Queue</th>
+            <% sort_url = ->(p) { failed_jobs_path(queue: @queue, q: @search, period: @period, **p) } %>
+            <%= sort_header_th("Job Class", "class_name", sort_url, current_sort: @sort, current_dir: @direction) %>
+            <%= sort_header_th("Queue",     "queue_name", sort_url, current_sort: @sort, current_dir: @direction) %>
             <th scope="col">Error</th>
-            <th scope="col">Failed At</th>
+            <%= sort_header_th("Failed At", "created_at", sort_url, current_sort: @sort, current_dir: @direction) %>
             <th scope="col"><span class="sqd-sr-only">Actions</span></th>
           </tr>
         </thead>
