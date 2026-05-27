@@ -34,19 +34,17 @@ module SolidQueueWeb
         @remaining_count = filtered_scope(model).count
         respond_to do |format|
           format.turbo_stream
-          format.html { redirect_to jobs_path(status: @status, period: @period, sort: @sort, direction: @direction), notice: "Job discarded." }
+          format.html { redirect_to jobs_return_path, notice: "Job discarded." }
         end
       else
         jobs = filtered_scope(model).map(&:job)
         model.discard_all_from_jobs(jobs)
-        redirect_to jobs_path(status: @status, period: @period, sort: @sort, direction: @direction),
-          notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
+        redirect_to jobs_return_path, notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
       end
     rescue ArgumentError => e
-      redirect_to jobs_path(status: @status, period: @period, sort: @sort, direction: @direction), alert: e.message
+      redirect_to jobs_return_path, alert: e.message
     rescue => e
-      redirect_to jobs_path(status: @status, period: @period, sort: @sort, direction: @direction),
-        alert: "Could not discard #{params[:id] ? "job" : "jobs"}: #{e.message}"
+      redirect_to jobs_return_path, alert: "Could not discard #{params[:id] ? "job" : "jobs"}: #{e.message}"
     end
 
     private
@@ -90,6 +88,10 @@ module SolidQueueWeb
           csv << [job.id, job.class_name, job.queue_name, @status, job.priority, job.created_at.iso8601]
         end
       end
+    end
+
+    def jobs_return_path
+      jobs_path(status: @status, period: @period, sort: @sort, direction: @direction)
     end
 
     def filtered_scope(model)
