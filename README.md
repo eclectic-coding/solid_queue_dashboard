@@ -109,6 +109,7 @@ SolidQueueWeb.configure do |config|
   config.alert_queue_thresholds     = { "critical" => 50, "default" => 200 } # fire when queue depth >= threshold (default: {})
   config.alert_webhook_cooldown     = 1800       # seconds between repeated alerts per alert type (default: 3600)
   config.connects_to                = { reading: :reading, writing: :writing } # read replica (default: nil)
+  config.time_zone                  = "America/New_York" # display timezone for all timestamps (default: nil = UTC)
 end
 
 SolidQueueWeb.authenticate do

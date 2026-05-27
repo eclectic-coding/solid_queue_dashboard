@@ -52,7 +52,7 @@
                 <tr>
                   <td><%= link_to job.class_name, job_path(job), class: "sqd-table-link" %></td>
                   <td class="sqd-mono"><%= job.queue_name %></td>
-                  <td class="sqd-mono"><%= job.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+                  <td class="sqd-mono"><%= format_timestamp(job.created_at) %></td>
                 </tr>
               <% end %>
             </tbody>

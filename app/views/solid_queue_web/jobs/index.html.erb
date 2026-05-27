@@ -116,9 +116,9 @@
               </td>
               <td><%= job.priority %></td>
               <td id="scheduled_at_<%= execution.id %>" class="sqd-mono">
-                <%= job.scheduled_at ? job.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") : "—" %>
+                <%= format_timestamp(job.scheduled_at) %>
               </td>
-              <td class="sqd-mono"><%= job.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+              <td class="sqd-mono"><%= format_timestamp(job.created_at) %></td>
               <td class="sqd-row-actions">
                 <% if @status == "scheduled" %>
                   <%= button_to "Run Now", scheduled_job_path(execution),
@@ -183,9 +183,9 @@
               </td>
               <td><%= job.priority %></td>
               <td class="sqd-mono">
-                <%= job.scheduled_at ? job.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") : "—" %>
+                <%= format_timestamp(job.scheduled_at) %>
               </td>
-              <td class="sqd-mono"><%= job.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+              <td class="sqd-mono"><%= format_timestamp(job.created_at) %></td>
               <% if @status == "claimed" %>
                 <td class="sqd-mono<%= slow ? " sqd-slow-duration" : "" %>">
                   <%= time_ago_in_words(execution.created_at) %>

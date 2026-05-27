@@ -26,7 +26,7 @@
               <% if (oldest = @oldest_ready[queue.name]) %>
                 <% age = Time.current - oldest %>
                 <% latency_color = age > 86_400 ? "var(--danger)" : age > 3_600 ? "var(--warning)" : "inherit" %>
-                <abbr title="<%= oldest.strftime("%Y-%m-%d %H:%M:%S UTC") %>">
+                <abbr title="<%= format_timestamp(oldest) %>">
                   <span style="color: <%= latency_color %>"><%= format_duration(age) %></span>
                 </abbr>
               <% else %>

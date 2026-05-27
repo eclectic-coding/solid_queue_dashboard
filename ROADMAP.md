@@ -13,7 +13,6 @@ Pull requests for any of these are welcome. See [Contributing](README.md#contrib
 
 | Feature | Notes |
 |---|---|
-| **Configurable display timezone** | `config.time_zone = "America/New_York"` — all timestamps rendered in the configured zone rather than UTC. |
 | **Sticky filter preferences** | Persist last-used status/period to `localStorage` so filters survive page reloads. |
 
 ---

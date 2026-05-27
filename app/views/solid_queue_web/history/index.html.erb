@@ -58,7 +58,7 @@
                     class: "sqd-mono", style: "color: inherit;" %>
             </td>
             <td class="sqd-mono"><%= format_duration(job.finished_at - job.created_at) %></td>
-            <td class="sqd-mono"><%= job.finished_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+            <td class="sqd-mono"><%= format_timestamp(job.finished_at) %></td>
           </tr>
         <% end %>
       </tbody>
