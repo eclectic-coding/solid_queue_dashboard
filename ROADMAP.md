@@ -12,7 +12,7 @@ Pull requests for any of these are welcome. See [Contributing](README.md#contrib
 
 | Feature | Notes |
 |---|---|
-| **Error frequency report** | Group all failed jobs by error class + message prefix, show count and a sample backtrace. When you have hundreds of failed jobs, you want to see "ArgumentError (x212), TimeoutError (x88)" at a glance. |
+| ~~**Error frequency report**~~ | ✓ Shipped — `/jobs/failed_jobs/errors` groups all failed jobs by error class and message prefix, shows count and a sample backtrace in an expandable row; sorted by count descending; accessible via "Error Summary" button on the Failed Jobs page. |
 | **Failed job trend chart** | A "Failures — Last 12 Hours" sparkline on the dashboard (same pattern as the existing throughput and queue depth charts). Makes failure spikes visible before you click into the failed jobs list. |
 | **P99 + std dev in performance analytics** | Extend `JobPerformanceStats` with a 99th percentile and standard deviation column. High std dev signals inconsistent jobs worth investigating. |
 
