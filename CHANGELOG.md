@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Error frequency report — a new Error Summary page (`/jobs/failed_jobs/errors`) groups all failed jobs by error class and message prefix, shows a count per group, and displays a sample backtrace (first 10 lines) in an expandable `<details>` element; groups are sorted by count descending so the most common errors appear first; accessible via an "Error Summary" button on the Failed Jobs page
+
 ## [1.1.0] - 2026-05-21
 
 ### Added
