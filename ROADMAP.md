@@ -13,7 +13,7 @@ Pull requests for any of these are welcome. See [Contributing](README.md#contrib
 | Feature | Notes |
 |---|---|
 | ~~**Error frequency report**~~ | ✓ Shipped — `/jobs/failed_jobs/errors` groups all failed jobs by error class and message prefix, shows count and a sample backtrace in an expandable row; sorted by count descending; accessible via "Error Summary" button on the Failed Jobs page. |
-| **Failed job trend chart** | A "Failures — Last 12 Hours" sparkline on the dashboard (same pattern as the existing throughput and queue depth charts). Makes failure spikes visible before you click into the failed jobs list. |
+| ~~**Failed job trend chart**~~ | ✓ Shipped — a "Failures — Last 12 Hours" bar chart card on the dashboard shows failures per hour; red bars, empty state when no failures; same pattern as the throughput and queue depth charts. |
 | **P99 + std dev in performance analytics** | Extend `JobPerformanceStats` with a 99th percentile and standard deviation column. High std dev signals inconsistent jobs worth investigating. |
 
 ---
