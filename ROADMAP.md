@@ -7,13 +7,6 @@ Pull requests for any of these are welcome. See [Contributing](README.md#contrib
 ---
 
 
-## v1.3 — UX Polish
-
-*Quality-of-life improvements for teams using the dashboard daily.*
-
-*All planned features shipped.*
-
----
 
 ## v1.4 — Alerting Depth
 
