@@ -42,11 +42,11 @@
   <% if @search.present? %>
     <%= link_to "Clear", failed_jobs_path(queue: @queue, period: @period), class: "sqd-btn sqd-btn--muted" %>
   <% end %>
-  <div class="sqd-period-filter" role="group" aria-label="Time period">
-    <%= link_to "All", failed_jobs_path(queue: @queue, q: @search),                       class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil }, aria_label: "All time" %>
-    <%= link_to "1h",  failed_jobs_path(queue: @queue, q: @search, period: "1h"),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil }, aria_label: "Last 1 hour" %>
-    <%= link_to "24h", failed_jobs_path(queue: @queue, q: @search, period: "24h"), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil }, aria_label: "Last 24 hours" %>
-    <%= link_to "7d",  failed_jobs_path(queue: @queue, q: @search, period: "7d"),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil }, aria_label: "Last 7 days" %>
+  <div class="sqd-period-filter" role="group" aria-label="Time period" data-controller="filters" data-filters-page-value="failed">
+    <%= link_to "All", failed_jobs_path(queue: @queue, q: @search),                       class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil }, aria_label: "All time",      data: { action: "click->filters#savePeriod", filters_period_param: "" } %>
+    <%= link_to "1h",  failed_jobs_path(queue: @queue, q: @search, period: "1h"),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil }, aria_label: "Last 1 hour",   data: { action: "click->filters#savePeriod", filters_period_param: "1h" } %>
+    <%= link_to "24h", failed_jobs_path(queue: @queue, q: @search, period: "24h"), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil }, aria_label: "Last 24 hours", data: { action: "click->filters#savePeriod", filters_period_param: "24h" } %>
+    <%= link_to "7d",  failed_jobs_path(queue: @queue, q: @search, period: "7d"),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil }, aria_label: "Last 7 days",   data: { action: "click->filters#savePeriod", filters_period_param: "7d" } %>
   </div>
 </form>
 
