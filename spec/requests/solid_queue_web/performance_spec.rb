@@ -67,6 +67,23 @@ RSpec.describe "Performance", type: :request do
       expect(response.body).to include("No finished jobs found in the last 1h")
     end
 
+    it "renders p99 and Std Dev column headers" do
+      finished_job(class_name: "WorkJob", duration_seconds: 10)
+
+      get "/jobs/performance"
+      expect(response.body).to include("p99")
+      expect(response.body).to include("Std Dev")
+    end
+
+    it "renders p99 and std_dev values for a job class" do
+      5.times { |i| finished_job(class_name: "WorkJob", duration_seconds: (i + 1) * 10) }
+
+      get "/jobs/performance"
+      expect(response.body).to include("WorkJob")
+      expect(response.body).to include("p99")
+      expect(response.body).to include("Std Dev")
+    end
+
     it "sorts rows by p95 descending (slowest class first)" do
       finished_job(class_name: "FastJob", duration_seconds: 2)
       finished_job(class_name: "SlowJob", duration_seconds: 120)

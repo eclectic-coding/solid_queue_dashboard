@@ -1,6 +1,6 @@
 module SolidQueueWeb
   class JobPerformanceStats
-    Row = Struct.new(:class_name, :count, :avg, :p50, :p95, :min, :max, keyword_init: true)
+    Row = Struct.new(:class_name, :count, :avg, :p50, :p95, :p99, :std_dev, :min, :max, keyword_init: true)
 
     def initialize(scope)
       @scope = scope
@@ -18,6 +18,8 @@ module SolidQueueWeb
           avg:        mean(durations),
           p50:        percentile(durations, 50),
           p95:        percentile(durations, 95),
+          p99:        percentile(durations, 99),
+          std_dev:    std_dev(durations),
           min:        durations.first,
           max:        durations.last
         )
@@ -33,6 +35,12 @@ module SolidQueueWeb
     def percentile(sorted, pct)
       idx = [(pct / 100.0 * sorted.size).ceil - 1, 0].max
       sorted[idx]
+    end
+
+    def std_dev(sorted)
+      return 0.0 if sorted.size < 2
+      m = mean(sorted)
+      Math.sqrt(sorted.sum { |x| (x - m)**2 } / sorted.size)
     end
   end
 end
