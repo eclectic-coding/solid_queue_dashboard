@@ -44,6 +44,32 @@ RSpec.describe "Dashboard", type: :request do
       get "/jobs"
       expect(response.body).to include("No completed jobs in the last 24 hours")
     end
+
+    it "renders the failures sparkline card" do
+      get "/jobs"
+      expect(response.body).to include("Failures")
+      expect(response.body).to include("Last 12 Hours")
+    end
+
+    it "shows empty state for failures card when no failures exist" do
+      get "/jobs"
+      expect(response.body).to include("No failures in the last 12 hours")
+    end
+
+    it "renders failure bars when failed jobs exist within the last 12 hours" do
+      job = SolidQueue::Job.create!(
+        queue_name: "default", class_name: "BrokenJob",
+        arguments: {}, active_job_id: SecureRandom.uuid
+      )
+      job.ready_execution&.destroy
+      execution = SolidQueue::FailedExecution.create!(
+        job: job, error: { exception_class: "RuntimeError", message: "boom", backtrace: [] }
+      )
+      execution.update_columns(created_at: 30.minutes.ago)
+
+      get "/jobs"
+      expect(response.body).to include("sqd-sparkline__bar--failure")
+    end
   end
 
   describe "slow jobs card" do
