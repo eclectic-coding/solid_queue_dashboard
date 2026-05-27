@@ -6,18 +6,6 @@ Pull requests for any of these are welcome. See [Contributing](README.md#contrib
 
 ---
 
-## v1.1 — Operations Completeness
-
-*Close the gaps users hit within the first week of real use.*
-
-| Feature | Notes |
-|---|---|
-| ~~**Retry failed job with modified arguments**~~ | ✓ Shipped — editable textarea on the job detail page; submitting updates the job record and retries in one step. |
-| ~~**Multiple webhook targets**~~ | ✓ Shipped — `alert_webhook_url` accepts a string or an array; all URLs receive the same payload; one failure doesn't block the rest. |
-| ~~**Queue depth alert**~~ | ✓ Shipped — `alert_queue_thresholds` hash maps queue names to ready-count limits; cooldown tracked independently per queue; same `alert_webhook_url` endpoint(s) used with a distinct event type. |
-
----
-
 ## v1.2 — Error Intelligence
 
 *Surface patterns in failures, not just individual failed jobs.*

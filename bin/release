@@ -59,8 +59,16 @@ sed -i '' \
 [$VERSION]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/$TAG" \
   CHANGELOG.md
 
+echo "==> Pruning shipped ROADMAP section..."
+MINOR_VERSION=$(echo "$VERSION" | cut -d. -f1-2)
+awk -v ver="$MINOR_VERSION" '
+  /^## v/ && $0 ~ ("^## v" ver "([^0-9]|$)") { skip=1; next }
+  skip && /^---/ { skip=0; next }
+  !skip
+' ROADMAP.md > ROADMAP.tmp && mv ROADMAP.tmp ROADMAP.md
+
 echo "==> Committing release..."
-git add "$VERSION_FILE" Gemfile.lock CHANGELOG.md
+git add "$VERSION_FILE" Gemfile.lock CHANGELOG.md ROADMAP.md
 git commit -m "Release $TAG"
 
 echo "==> Tagging $TAG..."
