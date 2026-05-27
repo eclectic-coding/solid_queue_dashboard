@@ -8,6 +8,8 @@
 
 A monitoring and management dashboard for [Solid Queue](https://github.com/rails/solid_queue), mountable as a Rails engine in any app.
 
+> **Note:** Development of this gem will continue, but if you need a unified dashboard that covers **Solid Queue**, **Solid Cable**, and **Solid Cache** in a single interface, check out [solid_stack_web](https://github.com/eclectic-coding/solid_stack_web).
+
 ![SolidQueueWeb dashboard](docs/solid-queue-web.png)
 
 ## The problem
