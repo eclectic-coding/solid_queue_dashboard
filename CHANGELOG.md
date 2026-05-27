@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-05-27
+
 ### Added
 
 - p99 and standard deviation columns in performance analytics — `JobPerformanceStats` now computes a 99th percentile and population standard deviation for each job class; both columns appear in the Performance table between p95 and Min; high std dev surfaces inconsistent jobs worth investigating
@@ -217,7 +219,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI workflow with lint (RuboCop) and test (RSpec) matrix across Ruby 3.3, 3.4, and 4.0
 - `bin/release` script for versioned gem releases
 
-[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v1.2.0
 [1.1.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v1.1.0
 [1.0.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v1.0.0
 [0.9.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v0.9.0

@@ -6,17 +6,6 @@ Pull requests for any of these are welcome. See [Contributing](README.md#contrib
 
 ---
 
-## v1.2 — Error Intelligence
-
-*Surface patterns in failures, not just individual failed jobs.*
-
-| Feature | Notes |
-|---|---|
-| ~~**Error frequency report**~~ | ✓ Shipped — `/jobs/failed_jobs/errors` groups all failed jobs by error class and message prefix, shows count and a sample backtrace in an expandable row; sorted by count descending; accessible via "Error Summary" button on the Failed Jobs page. |
-| ~~**Failed job trend chart**~~ | ✓ Shipped — a "Failures — Last 12 Hours" bar chart card on the dashboard shows failures per hour; red bars, empty state when no failures; same pattern as the throughput and queue depth charts. |
-| ~~**P99 + std dev in performance analytics**~~ | ✓ Shipped — `JobPerformanceStats` computes p99 and population std dev for each job class; both columns appear in the Performance table between p95 and Min. |
-
----
 
 ## v1.3 — UX Polish
 
