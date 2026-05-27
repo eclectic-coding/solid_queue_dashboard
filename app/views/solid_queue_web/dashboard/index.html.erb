@@ -104,6 +104,35 @@
   <% end %>
 </div>
 
+<% max_failures = [@stats.failure_sparkline.max, 1].max %>
+<div class="sqd-card" style="margin-bottom: 1rem;">
+  <div class="sqd-card__header">
+    <span class="sqd-card__title">Failures &mdash; Last 12 Hours</span>
+    <div class="sqd-throughput__summary">
+      <span>Total: <strong><%= @stats.failure_sparkline.sum %></strong></span>
+    </div>
+  </div>
+  <% if @stats.failure_sparkline.all?(&:zero?) %>
+    <div class="sqd-sparkline__empty">No failures in the last 12 hours</div>
+  <% else %>
+    <div class="sqd-sparkline" aria-label="Failed jobs per hour over the last 12 hours">
+      <% @stats.failure_sparkline.each_with_index do |count, i| %>
+        <% pct = (count.to_f / max_failures * 100).round %>
+        <% hour_start = (12 - i).hours.ago %>
+        <% show_tick = [0, 3, 6, 9, 11].include?(i) %>
+        <div class="sqd-sparkline__col">
+          <div class="sqd-sparkline__bar-wrap">
+            <div class="sqd-sparkline__bar sqd-sparkline__bar--failure"
+                 style="height: <%= [pct, 3].max %>%"
+                 title="<%= hour_start.strftime('%-I%p').downcase %>: <%= count %> <%= "failure".pluralize(count) %>"></div>
+          </div>
+          <div class="sqd-sparkline__tick"><%= show_tick ? (i == 11 ? "now" : hour_start.strftime("%-I%p").downcase) : "" %></div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
 <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
   <div class="sqd-card">
     <div class="sqd-card__header">

@@ -95,3 +95,7 @@
 .sqd-sparkline__bar--depth {
   background: var(--purple);
 }
+
+.sqd-sparkline__bar--failure {
+  background: var(--danger);
+}

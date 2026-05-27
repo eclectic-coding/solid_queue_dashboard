@@ -1,6 +1,6 @@
 module SolidQueueWeb
   class DashboardStats
-    attr_reader :counts, :throughput, :sparkline, :depth_sparkline, :slow_jobs_count
+    attr_reader :counts, :throughput, :sparkline, :depth_sparkline, :failure_sparkline, :slow_jobs_count
 
     def initialize
       @now = Time.current
@@ -30,6 +30,13 @@ module SolidQueueWeb
         from = (12 - i).hours.ago
         to   = i == 11 ? @now : (11 - i).hours.ago
         finished_times.count { |t| t >= from && t < to }
+      end
+
+      failed_times = SolidQueue::FailedExecution.where(created_at: 12.hours.ago..@now).pluck(:created_at)
+      @failure_sparkline = 12.times.map do |i|
+        from = (12 - i).hours.ago
+        to   = i == 11 ? @now : (11 - i).hours.ago
+        failed_times.count { |t| t >= from && t < to }
       end
 
       threshold = SolidQueueWeb.slow_job_threshold
