@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Sticky filter preferences — last-used status tab (Jobs) and time-period pill (Jobs, Failed Jobs, History) are persisted to `localStorage`; revisiting a page via the nav link restores the previous filter automatically; clicking "All" clears the saved period; implemented as a lightweight Stimulus controller (`FiltersController`) with no server-side changes
+
 - Configurable display timezone — `SolidQueueWeb.configure { |c| c.time_zone = "America/New_York" }` renders all dashboard timestamps in the configured zone rather than UTC; uses `in_time_zone` from ActiveSupport; defaults to UTC when not set; a `format_timestamp` helper centralises all timestamp formatting across jobs, failed jobs, history, search, queues, recurring tasks, and the scheduled-job turbo stream update
 
 - Sortable table columns — Jobs, Failed Jobs, and History tables now support server-side sorting via `?sort=` and `?direction=` params; click any column header to sort ascending or descending; sort state is preserved across filter changes, status tab switches, and period buttons; a `sort_header_th` helper generates accessible `<th>` elements with `aria-sort` and direction indicators (↑/↓)

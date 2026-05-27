@@ -11,9 +11,7 @@ Pull requests for any of these are welcome. See [Contributing](README.md#contrib
 
 *Quality-of-life improvements for teams using the dashboard daily.*
 
-| Feature | Notes |
-|---|---|
-| **Sticky filter preferences** | Persist last-used status/period to `localStorage` so filters survive page reloads. |
+*All planned features shipped.*
 
 ---
 
