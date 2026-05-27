@@ -75,6 +75,13 @@
 
 .sqd-pre--muted { color: var(--muted); }
 
+.sqd-error-details summary {
+  cursor: pointer;
+  list-style: none;
+}
+.sqd-error-details summary::-webkit-details-marker { display: none; }
+.sqd-error-details .sqd-pre { margin-top: 0.5rem; }
+
 .sqd-error-header {
   font-size: 13px;
   padding: 0.5rem 0.75rem;
