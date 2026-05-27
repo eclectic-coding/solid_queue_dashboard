@@ -22,11 +22,11 @@
   <% if @search.present? %>
     <%= link_to "Clear", history_path(queue: @queue, period: @period), class: "sqd-btn sqd-btn--muted" %>
   <% end %>
-  <div class="sqd-period-filter" role="group" aria-label="Time period">
-    <%= link_to "All",  history_path(queue: @queue, q: @search),                      class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil } %>
-    <%= link_to "1h",   history_path(queue: @queue, q: @search, period: "1h"),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil } %>
-    <%= link_to "24h",  history_path(queue: @queue, q: @search, period: "24h"), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil } %>
-    <%= link_to "7d",   history_path(queue: @queue, q: @search, period: "7d"),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil } %>
+  <div class="sqd-period-filter" role="group" aria-label="Time period" data-controller="filters" data-filters-page-value="history">
+    <%= link_to "All",  history_path(queue: @queue, q: @search),                      class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil }, data: { action: "click->filters#savePeriod", filters_period_param: "" } %>
+    <%= link_to "1h",   history_path(queue: @queue, q: @search, period: "1h"),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil }, data: { action: "click->filters#savePeriod", filters_period_param: "1h" } %>
+    <%= link_to "24h",  history_path(queue: @queue, q: @search, period: "24h"), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil }, data: { action: "click->filters#savePeriod", filters_period_param: "24h" } %>
+    <%= link_to "7d",   history_path(queue: @queue, q: @search, period: "7d"),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil }, data: { action: "click->filters#savePeriod", filters_period_param: "7d" } %>
   </div>
 </form>
 

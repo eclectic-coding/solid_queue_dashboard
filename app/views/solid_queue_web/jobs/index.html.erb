@@ -3,13 +3,14 @@
 <%= turbo_frame_tag "jobs-table", data: { turbo_action: "advance", controller: "refresh", refresh_interval_value: SolidQueueWeb.default_refresh_interval } do %>
 <% discardable = SolidQueueWeb::Job::DISCARDABLE.include?(@status) %>
 
+<div data-controller="filters" data-filters-page-value="jobs">
 <div class="sqd-page-header">
   <div class="sqd-filters">
-    <%= link_to "Ready",     jobs_path(status: "ready",     q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "ready"     ? "active" : "" %>
-    <%= link_to "Scheduled", jobs_path(status: "scheduled", q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "scheduled" ? "active" : "" %>
-    <%= link_to "Running",   jobs_path(status: "claimed",   q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "claimed"   ? "active" : "" %>
-    <%= link_to "Blocked",   jobs_path(status: "blocked",   q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "blocked"   ? "active" : "" %>
-    <%= link_to "Failed",    jobs_path(status: "failed",    q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "failed"    ? "active" : "" %>
+    <%= link_to "Ready",     jobs_path(status: "ready",     q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "ready"     ? "active" : "", data: { action: "click->filters#saveStatus", filters_status_param: "ready" } %>
+    <%= link_to "Scheduled", jobs_path(status: "scheduled", q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "scheduled" ? "active" : "", data: { action: "click->filters#saveStatus", filters_status_param: "scheduled" } %>
+    <%= link_to "Running",   jobs_path(status: "claimed",   q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "claimed"   ? "active" : "", data: { action: "click->filters#saveStatus", filters_status_param: "claimed" } %>
+    <%= link_to "Blocked",   jobs_path(status: "blocked",   q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "blocked"   ? "active" : "", data: { action: "click->filters#saveStatus", filters_status_param: "blocked" } %>
+    <%= link_to "Failed",    jobs_path(status: "failed",    q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "failed"    ? "active" : "", data: { action: "click->filters#saveStatus", filters_status_param: "failed" } %>
   </div>
   <% if @jobs.any? %>
     <div class="sqd-actions">
@@ -54,12 +55,13 @@
     <%= link_to "Clear", jobs_path(status: @status, period: @period, sort: @sort, direction: @direction), class: "sqd-btn sqd-btn--muted" %>
   <% end %>
   <div class="sqd-period-filter" role="group" aria-label="Time period">
-    <%= link_to "All", jobs_path(status: @status, q: @search, priority: @priority, sort: @sort, direction: @direction),                       class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil }, aria_label: "All time" %>
-    <%= link_to "1h",  jobs_path(status: @status, q: @search, priority: @priority, period: "1h",  sort: @sort, direction: @direction),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil }, aria_label: "Last 1 hour" %>
-    <%= link_to "24h", jobs_path(status: @status, q: @search, priority: @priority, period: "24h", sort: @sort, direction: @direction), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil }, aria_label: "Last 24 hours" %>
-    <%= link_to "7d",  jobs_path(status: @status, q: @search, priority: @priority, period: "7d",  sort: @sort, direction: @direction),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil }, aria_label: "Last 7 days" %>
+    <%= link_to "All", jobs_path(status: @status, q: @search, priority: @priority, sort: @sort, direction: @direction),                       class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil }, aria_label: "All time",      data: { action: "click->filters#savePeriod", filters_period_param: "" } %>
+    <%= link_to "1h",  jobs_path(status: @status, q: @search, priority: @priority, period: "1h",  sort: @sort, direction: @direction),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil }, aria_label: "Last 1 hour",   data: { action: "click->filters#savePeriod", filters_period_param: "1h" } %>
+    <%= link_to "24h", jobs_path(status: @status, q: @search, priority: @priority, period: "24h", sort: @sort, direction: @direction), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil }, aria_label: "Last 24 hours", data: { action: "click->filters#savePeriod", filters_period_param: "24h" } %>
+    <%= link_to "7d",  jobs_path(status: @status, q: @search, priority: @priority, period: "7d",  sort: @sort, direction: @direction),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil }, aria_label: "Last 7 days",   data: { action: "click->filters#savePeriod", filters_period_param: "7d" } %>
   </div>
 </form>
+</div>
 
 <% if discardable && @jobs.any? %>
   <div data-controller="selection">
