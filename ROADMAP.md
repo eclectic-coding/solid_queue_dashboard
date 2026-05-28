@@ -17,7 +17,7 @@ Pull requests for any of these are welcome. See [Contributing](README.md#contrib
 | ~~**Slow job webhook alert**~~ | ✅ Shipped in v1.4 — `alert_slow_job_count_threshold` fires when slow-job count meets or exceeds the threshold. |
 | ~~**Process stale webhook alert**~~ | ✅ Shipped in v1.4 — `alert_stale_process_threshold` fires when stale worker count meets or exceeds the threshold. |
 | ~~**Job wait time column**~~ | ✅ Shipped in v1.4 — "Wait Time" column on the Running tab; `wait_time_seconds` in the claimed CSV export. |
-| **Eliminate N+1 queries** | Queues index fires 2 extra queries per queue: `queue.size` (COUNT per queue) and `queue.paused?` (EXISTS per queue). Replace with single batch aggregations pre-computed in the controller. |
+| ~~**Eliminate N+1 queries**~~ | ✅ Shipped in v1.4 — queue size and paused state now pre-computed with single batch aggregations; query count reduced from O(2N) to O(1) per page load. |
 
 ---
 

@@ -68,6 +68,48 @@ RSpec.describe "Queues", type: :request do
     end
   end
 
+  describe "GET /jobs/queues — batch-loaded queue size and paused state" do
+    it "shows the ready job count for a queue" do
+      job = SolidQueue::Job.create!(
+        queue_name: "default", class_name: "TestJob",
+        arguments: {}, active_job_id: SecureRandom.uuid
+      )
+      job.ready_execution
+      get "/jobs/queues"
+      expect(response.body).to match(/<td>\s*\d+\s*<\/td>/)
+    end
+
+    it "shows 0 size for a queue with no ready jobs" do
+      SolidQueue::ReadyExecution.delete_all
+      get "/jobs/queues"
+      expect(response.body).to include("<td>0</td>")
+    end
+
+    it "shows the Paused badge for a paused queue" do
+      SolidQueue::Pause.create!(queue_name: "default")
+      get "/jobs/queues"
+      expect(response.body).to include("sqd-badge--paused")
+      expect(response.body).to include("Paused")
+    end
+
+    it "shows the Running badge for an unpaused queue" do
+      get "/jobs/queues"
+      expect(response.body).to include("sqd-badge--running")
+      expect(response.body).to include("Running")
+    end
+
+    it "shows Resume button for a paused queue" do
+      SolidQueue::Pause.create!(queue_name: "default")
+      get "/jobs/queues"
+      expect(response.body).to include("Resume")
+    end
+
+    it "shows Pause button for a running queue" do
+      get "/jobs/queues"
+      expect(response.body).to include("Pause")
+    end
+  end
+
   describe "POST /jobs/queues/:name/pause" do
     it "pauses the queue and redirects" do
       post "/jobs/queues/default/pause"
