@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-05-28
+
 ### Added
 
 - Admin audit log — every discard, retry, pause, and resume action is recorded to a `solid_queue_web_audit_events` table; viewable at `/jobs/audit` with action/actor/queue filters and CSV export; identity captured via the optional `SolidQueueWeb.current_actor` config block; table created via `rails generate solid_queue_web:install:migrations`
@@ -242,7 +244,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI workflow with lint (RuboCop) and test (RSpec) matrix across Ruby 3.3, 3.4, and 4.0
 - `bin/release` script for versioned gem releases
 
-[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v1.5.0
 [1.4.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v1.4.0
 [1.3.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v1.3.0
 [1.2.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v1.2.0
