@@ -232,13 +232,13 @@ audit_actions = [
   { action: "failed_job_retried",   job_class: "ReportGeneratorJob",  queue_name: "low_priority" },
   { action: "failed_jobs_retried",  job_class: nil,                   queue_name: nil,  item_count: 6  },
   { action: "failed_job_discarded", job_class: "DataSyncJob",         queue_name: "critical"     },
-  { action: "failed_jobs_discarded",job_class: nil,                   queue_name: nil,  item_count: 3  },
+  { action: "failed_jobs_discarded", job_class: nil,                   queue_name: nil,  item_count: 3  },
   { action: "queue_paused",         job_class: nil,                   queue_name: "critical"     },
   { action: "queue_resumed",        job_class: nil,                   queue_name: "critical"     },
   { action: "queue_paused",         job_class: nil,                   queue_name: "mailers"      },
   { action: "job_discarded",        job_class: "NotificationJob",     queue_name: "mailers"      },
   { action: "failed_job_retried",   job_class: "ExportJob",           queue_name: "default"      },
-  { action: "queue_resumed",        job_class: nil,                   queue_name: "mailers"      },
+  { action: "queue_resumed",        job_class: nil,                   queue_name: "mailers"      }
 ]
 
 audit_actions.each_with_index do |attrs, i|
