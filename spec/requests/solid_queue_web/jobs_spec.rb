@@ -353,6 +353,56 @@ RSpec.describe "Jobs", type: :request do
     end
   end
 
+  describe "job wait time column (claimed tab)" do
+    let!(:worker_process) do
+      SolidQueue::Process.create!(
+        kind: "Worker", pid: 88_888, hostname: "test-host",
+        name: "worker-wait-test", last_heartbeat_at: Time.current
+      )
+    end
+
+    let!(:claimed_job) do
+      SolidQueue::Job.create!(
+        queue_name: "default", class_name: "WaitTestJob",
+        arguments: {}, active_job_id: SecureRandom.uuid
+      )
+    end
+
+    let!(:claimed_execution) do
+      execution = SolidQueue::ClaimedExecution.create!(job: claimed_job, process: worker_process)
+      claimed_job.update_columns(created_at: 5.minutes.ago)
+      execution.update_columns(created_at: 2.minutes.ago)
+      execution
+    end
+
+    it "shows the Wait Time column header on the claimed tab" do
+      get "/jobs/list", params: { status: "claimed" }
+      expect(response.body).to include("Wait Time")
+    end
+
+    it "does not show the Wait Time column on other tabs" do
+      get "/jobs/list", params: { status: "ready" }
+      expect(response.body).not_to include("Wait Time")
+    end
+
+    it "renders a formatted wait time for each claimed job" do
+      get "/jobs/list", params: { status: "claimed" }
+      expect(response.body).to include("3m")
+    end
+
+    it "includes wait_time_seconds in the claimed CSV export" do
+      get "/jobs/list.csv", params: { status: "claimed" }
+      expect(response.body).to include("wait_time_seconds")
+      row = response.body.lines.last
+      expect(row.split(",").last.strip.to_i).to be_within(5).of(180)
+    end
+
+    it "does not include wait_time_seconds in CSV for other statuses" do
+      get "/jobs/list.csv", params: { status: "ready" }
+      expect(response.body).not_to include("wait_time_seconds")
+    end
+  end
+
   describe "GET /jobs/list?priority= (priority filter)" do
     let!(:high_priority_job) do
       SolidQueue::Job.create!(

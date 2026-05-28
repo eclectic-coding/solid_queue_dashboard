@@ -164,6 +164,7 @@
             <%= sort_header_th("Enqueued At", "created_at", sort_url, current_sort: @sort, current_dir: @direction) %>
             <% if @status == "claimed" %>
               <th scope="col">Running For</th>
+              <th scope="col">Wait Time</th>
             <% end %>
           </tr>
         </thead>
@@ -191,6 +192,9 @@
               <% if @status == "claimed" %>
                 <td class="sqd-mono<%= slow ? " sqd-slow-duration" : "" %>">
                   <%= time_ago_in_words(execution.created_at) %>
+                </td>
+                <td class="sqd-mono">
+                  <%= format_duration(execution.created_at - job.created_at) %>
                 </td>
               <% end %>
             </tr>
