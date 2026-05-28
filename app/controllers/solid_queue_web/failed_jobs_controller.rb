@@ -37,7 +37,7 @@ module SolidQueueWeb
 
     def perform_discard(executions)
       jobs = executions.map(&:job)
-      action = jobs.size == 1 ? "failed_job_discarded" : "failed_jobs_discarded"
+      action = params[:id] ? "failed_job_discarded" : "failed_jobs_discarded"
       SolidQueue::FailedExecution.discard_all_from_jobs(jobs)
       record_audit(action, job_class: jobs.first&.class_name, queue_name: jobs.first&.queue_name, item_count: jobs.size)
       redirect_to failed_jobs_path(queue: @queue, q: @search, period: @period),
