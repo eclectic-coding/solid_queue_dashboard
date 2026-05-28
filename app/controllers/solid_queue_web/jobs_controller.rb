@@ -82,10 +82,14 @@ module SolidQueueWeb
 
     def jobs_csv(scope)
       CSV.generate(headers: true) do |csv|
-        csv << %w[id class_name queue_name status priority enqueued_at]
+        headers = %w[id class_name queue_name status priority enqueued_at]
+        headers << "wait_time_seconds" if @status == "claimed"
+        csv << headers
         scope.each do |execution|
           job = execution.job
-          csv << [job.id, job.class_name, job.queue_name, @status, job.priority, job.created_at.iso8601]
+          row = [job.id, job.class_name, job.queue_name, @status, job.priority, job.created_at.iso8601]
+          row << (execution.created_at - job.created_at).to_i if @status == "claimed"
+          csv << row
         end
       end
     end

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Slow job webhook alert — set `alert_slow_job_count_threshold` (integer) to fire a webhook whenever the number of currently-running slow jobs meets or exceeds the configured count; requires `slow_job_threshold` to define what "slow" means; uses the same `alert_webhook_url` and `alert_webhook_cooldown` settings as other alert types; event name `slow_job_threshold_exceeded`
 - Stale process webhook alert — set `alert_stale_process_threshold` (integer) to fire a webhook whenever the number of stale workers meets or exceeds the configured count; a process is stale when its heartbeat has not been updated within `SolidQueue.process_alive_threshold`; uses the same `alert_webhook_url` and `alert_webhook_cooldown` settings; event name `stale_process_detected`
+- Job wait time column — the Running tab now shows a "Wait Time" column displaying how long each claimed job waited in the queue from enqueue to pickup; also included as `wait_time_seconds` in the CSV export for the claimed status
 
 ## [1.3.0] - 2026-05-27
 
