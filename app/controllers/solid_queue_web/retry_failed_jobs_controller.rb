@@ -16,6 +16,8 @@ module SolidQueueWeb
       else
         SolidQueue::FailedExecution.retry_all(jobs)
       end
+      action = jobs.size == 1 ? "failed_job_retried" : "failed_jobs_retried"
+      record_audit(action, job_class: jobs.first&.class_name, queue_name: jobs.first&.queue_name, item_count: jobs.size)
       redirect_to failed_jobs_path(queue: @queue, q: @search, period: @period),
         notice: retry_notice(jobs.size)
     rescue ArgumentError => e

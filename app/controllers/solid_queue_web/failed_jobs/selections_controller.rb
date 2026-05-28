@@ -6,6 +6,7 @@ module SolidQueueWeb
         executions = SolidQueue::FailedExecution.where(id: ids)
         jobs = executions.includes(:job).map(&:job)
         SolidQueue::FailedExecution.retry_all(jobs)
+        record_audit("failed_jobs_retried", item_count: jobs.size)
         redirect_to failed_jobs_path,
           notice: "#{jobs.size} #{"job".pluralize(jobs.size)} queued for retry."
       rescue => e
@@ -17,6 +18,7 @@ module SolidQueueWeb
         executions = SolidQueue::FailedExecution.where(id: ids)
         jobs = executions.includes(:job).map(&:job)
         SolidQueue::FailedExecution.discard_all_from_jobs(jobs)
+        record_audit("failed_jobs_discarded", item_count: jobs.size)
         redirect_to failed_jobs_path,
           notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
       rescue => e

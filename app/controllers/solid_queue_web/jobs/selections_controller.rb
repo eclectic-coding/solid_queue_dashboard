@@ -9,6 +9,7 @@ module SolidQueueWeb
         ids = Array(params[:ids]).map(&:to_i).reject(&:zero?)
         jobs = model.where(id: ids).includes(:job).map(&:job)
         model.discard_all_from_jobs(jobs)
+        record_audit("jobs_discarded", item_count: jobs.size)
         redirect_to jobs_path(status: status, period: period),
           notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
       rescue ArgumentError => e
