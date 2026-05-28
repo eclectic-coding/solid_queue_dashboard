@@ -1,0 +1,78 @@
+<h1 class="sqd-page-title">Audit Log</h1>
+
+<div class="sqd-page-header">
+  <div class="sqd-filters">
+    <form action="<%= audit_path %>" method="get" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+      <select name="action_filter" class="sqd-select" aria-label="Filter by action" onchange="this.form.submit()">
+        <option value="">All actions</option>
+        <% SolidQueueWeb::AuditEvent::ACTIONS.each do |a| %>
+          <option value="<%= a %>" <%= @action_filter == a ? "selected" : "" %>><%= a.tr("_", " ") %></option>
+        <% end %>
+      </select>
+      <% if @actor_filter.present? %>
+        <span class="sqd-badge sqd-badge--muted">Actor: <%= @actor_filter %></span>
+        <%= link_to "×", audit_path(action_filter: @action_filter, queue: @queue_filter), class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
+      <% end %>
+      <% if @queue_filter.present? %>
+        <span class="sqd-badge sqd-badge--muted">Queue: <%= @queue_filter %></span>
+        <%= link_to "×", audit_path(action_filter: @action_filter, actor: @actor_filter), class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
+      <% end %>
+      <% if @action_filter.present? || @actor_filter.present? || @queue_filter.present? %>
+        <%= link_to "Clear", audit_path, class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
+      <% end %>
+    </form>
+  </div>
+  <% if @audit_events.any? %>
+    <div class="sqd-actions">
+      <%= link_to "Export CSV", audit_path(format: :csv, action_filter: @action_filter, actor: @actor_filter, queue: @queue_filter),
+            class: "sqd-btn sqd-btn--muted", data: { turbo: false } %>
+    </div>
+  <% end %>
+</div>
+
+<div class="sqd-card">
+  <% if @audit_events.empty? %>
+    <div class="sqd-empty">No audit events recorded.</div>
+  <% else %>
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Time</th>
+          <th scope="col">Action</th>
+          <th scope="col">Actor</th>
+          <th scope="col">Job Class</th>
+          <th scope="col">Queue</th>
+          <th scope="col">Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @audit_events.each do |event| %>
+          <tr>
+            <td class="sqd-mono"><%= format_timestamp(event.created_at) %></td>
+            <td><span class="sqd-badge sqd-badge--<%= event.action.include?("discard") ? "failed" : event.action.include?("paused") || event.action.include?("resumed") ? "paused" : "ready" %>"><%= event.action.tr("_", " ") %></span></td>
+            <td class="sqd-mono sqd-muted-text">
+              <% if event.actor.present? %>
+                <%= link_to event.actor, audit_path(action_filter: @action_filter, queue: @queue_filter, actor: event.actor), style: "color: inherit;" %>
+              <% else %>
+                <span style="color: var(--muted)">—</span>
+              <% end %>
+            </td>
+            <td class="sqd-mono"><%= event.job_class || "—" %></td>
+            <td class="sqd-mono">
+              <% if event.queue_name.present? %>
+                <%= link_to event.queue_name, audit_path(action_filter: @action_filter, actor: @actor_filter, queue: event.queue_name), style: "color: inherit;" %>
+              <% else %>
+                <span style="color: var(--muted)">—</span>
+              <% end %>
+            </td>
+            <td><%= event.item_count %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>
+
+<% if @pagy.last > 1 %>
+  <%= @pagy.series_nav.html_safe %>
+<% end %>
