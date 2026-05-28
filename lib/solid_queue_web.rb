@@ -69,5 +69,10 @@ module SolidQueueWeb
       @authenticate = block if block_given?
       @authenticate
     end
+
+    def current_actor(&block)
+      @current_actor = block if block_given?
+      @current_actor
+    end
   end
 end

@@ -37,5 +37,25 @@ module SolidQueueWeb
     def request_basic_auth
       request_http_basic_authentication("Solid Queue Dashboard")
     end
+
+    def record_audit(action, job_class: nil, queue_name: nil, item_count: 1)
+      AuditEvent.create!(
+        action:     action,
+        actor:      resolve_current_actor,
+        job_class:  job_class,
+        queue_name: queue_name,
+        item_count: item_count
+      )
+    rescue => e
+      Rails.logger.error("[SolidQueueWeb] Audit log failed: #{e.message}")
+    end
+
+    def resolve_current_actor
+      block = SolidQueueWeb.current_actor
+      instance_exec(&block) if block
+    rescue => e
+      Rails.logger.error("[SolidQueueWeb] current_actor block failed: #{e.message}")
+      nil
+    end
   end
 end
