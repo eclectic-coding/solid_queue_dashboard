@@ -4,6 +4,7 @@ module SolidQueueWeb
       @stats = DashboardStats.new
       AlertWebhook.call(failure_count: @stats.counts[:failed])
       QueueDepthAlert.call
+      SlowJobAlert.call
     end
   end
 end
