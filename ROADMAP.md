@@ -15,7 +15,7 @@ Pull requests for any of these are welcome. See [Contributing](README.md#contrib
 | Feature | Notes |
 |---|---|
 | ~~**Slow job webhook alert**~~ | ✅ Shipped in v1.4 — `alert_slow_job_count_threshold` fires when slow-job count meets or exceeds the threshold. |
-| **Process stale webhook alert** | Fire when a worker's `last_heartbeat_at` expires. A worker going silent means jobs stop processing silently. |
+| ~~**Process stale webhook alert**~~ | ✅ Shipped in v1.4 — `alert_stale_process_threshold` fires when stale worker count meets or exceeds the threshold. |
 | **Job wait time column** | Show time from `enqueued_at` to `created_at` on claimed executions — a direct measure of queue SLA. |
 
 ---

@@ -53,7 +53,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **Dashboard quick actions** — "Retry All Failed" and "Discard All Blocked" cards appear on the dashboard only when the respective count is non-zero; one-click bulk operations with confirm dialogs, keeping the dashboard clean when everything is healthy
 - **CSV export** — "Export CSV" button on the jobs, failed jobs, and history pages downloads all records matching the current filters; columns are tailored per view
 - **Slow job detection** — when `slow_job_threshold` is configured, claimed jobs running longer than the threshold are flagged with an orange row, a "slow" badge, and a "Running For" duration column on the Running tab; a "Slow Jobs" warning card appears on the dashboard with a link to the Running tab
-- **Webhook alerts** — set `alert_webhook_url` and `alert_failure_threshold` to receive a POST request whenever the failed job count meets or exceeds the threshold; set `alert_queue_thresholds` for per-queue depth alerts; set `alert_slow_job_count_threshold` (requires `slow_job_threshold`) for slow-job count alerts; all fire asynchronously with a configurable cooldown (default 1 h) to prevent repeated alerts
+- **Webhook alerts** — set `alert_webhook_url` and `alert_failure_threshold` to receive a POST request whenever the failed job count meets or exceeds the threshold; set `alert_queue_thresholds` for per-queue depth alerts; set `alert_slow_job_count_threshold` (requires `slow_job_threshold`) for slow-job count alerts; set `alert_stale_process_threshold` for stale-worker alerts; all fire asynchronously with a configurable cooldown (default 1 h) to prevent repeated alerts
 - **Performance analytics** — per-job-class statistics at `/jobs/performance` showing run count, average, p50, p95, p99, standard deviation, min, and max duration; sorted by p95 descending so the slowest classes surface first; high std dev surfaces inconsistent jobs worth investigating; period filter scopes to 1h / 24h / 7d or all time; each class name links to the filtered History view
 - **Failed job trend chart** — a "Failures — Last 12 Hours" bar chart on the dashboard shows failures per hour over the last 12 hours; bars are red, making failure spikes visible before clicking into the failed jobs list
 - **Error frequency report** — `GET /jobs/failed_jobs/errors` groups all failed jobs by error class and message prefix, shows a count per group, and surfaces a sample backtrace in an expandable row; sorted by count descending so the most common errors appear first; accessible via the "Error Summary" button on the Failed Jobs page
@@ -107,7 +107,8 @@ SolidQueueWeb.configure do |config|
   config.alert_webhook_url          = "https://hooks.example.com/solid-queue" # POST target — string or array (default: nil = disabled)
   config.alert_failure_threshold    = 10         # fire when failed count >= this (default: nil = disabled)
   config.alert_queue_thresholds          = { "critical" => 50, "default" => 200 } # fire when queue depth >= threshold (default: {})
-  config.alert_slow_job_count_threshold = 5          # fire when slow job count >= this (default: nil = disabled)
+  config.alert_slow_job_count_threshold  = 5          # fire when slow job count >= this (default: nil = disabled)
+  config.alert_stale_process_threshold  = 1          # fire when stale process count >= this (default: nil = disabled)
   config.alert_webhook_cooldown         = 1800       # seconds between repeated alerts per alert type (default: 3600)
   config.connects_to                = { reading: :reading, writing: :writing } # read replica (default: nil)
   config.time_zone                  = "America/New_York" # display timezone for all timestamps (default: nil = UTC)
@@ -203,6 +204,31 @@ The same `alert_webhook_url` endpoint(s) receive the payload with a distinct eve
   "event": "slow_job_threshold_exceeded",
   "slow_job_count": 5,
   "threshold": 3,
+  "fired_at": "2026-05-28T08:00:00Z"
+}
+```
+
+The alert fires on every dashboard page load while the condition persists, subject to the cooldown window.
+
+## Stale process alerts
+
+Set `alert_stale_process_threshold` to fire a webhook when the number of stale workers meets or exceeds a count. A process is considered stale when its `last_heartbeat_at` has not been updated within `SolidQueue.process_alive_threshold` (default 5 minutes). A stale worker means jobs in its queues have silently stopped processing.
+
+```ruby
+SolidQueueWeb.configure do |config|
+  config.alert_stale_process_threshold = 1    # fire when any process goes stale
+  config.alert_webhook_url             = "https://hooks.example.com/solid-queue"
+  config.alert_webhook_cooldown        = 1800  # don't re-fire for 30 minutes (default: 3600)
+end
+```
+
+The same `alert_webhook_url` endpoint(s) receive the payload with a distinct event type:
+
+```json
+{
+  "event": "stale_process_detected",
+  "stale_process_count": 2,
+  "threshold": 1,
   "fired_at": "2026-05-28T08:00:00Z"
 }
 ```
