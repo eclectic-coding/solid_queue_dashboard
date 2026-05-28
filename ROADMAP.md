@@ -15,7 +15,7 @@ Pull requests for any of these are welcome. See [Contributing](README.md#contrib
 
 | Feature | Notes |
 |---|---|
-| **Admin audit log** | Record who retried, discarded, or paused what and when. Needs a `solid_queue_web_audit_events` table via an engine-provided migration (`rails solid_queue_web:install:migrations`). Identity comes from the `authenticate` block. CSV export included. |
+| ~~**Admin audit log**~~ | ✅ Shipped in v1.5 — `solid_queue_web_audit_events` table via `rails generate solid_queue_web:install:migrations`; `/jobs/audit` page with action/actor/queue filters and CSV export; identity from the `current_actor` config block. |
 
 ---
 

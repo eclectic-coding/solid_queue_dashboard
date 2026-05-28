@@ -30,7 +30,9 @@ module SolidQueueWeb
       model = Job.execution_model_for!(@status)
       if params[:id]
         @execution = model.find(params[:id])
+        discarded_job = @execution.job
         @execution.discard
+        record_audit("job_discarded", job_class: discarded_job&.class_name, queue_name: discarded_job&.queue_name)
         @remaining_count = filtered_scope(model).count
         respond_to do |format|
           format.turbo_stream
@@ -39,6 +41,7 @@ module SolidQueueWeb
       else
         jobs = filtered_scope(model).map(&:job)
         model.discard_all_from_jobs(jobs)
+        record_audit("jobs_discarded", item_count: jobs.size)
         redirect_to jobs_return_path, notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
       end
     rescue ArgumentError => e

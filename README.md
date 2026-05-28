@@ -54,6 +54,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **CSV export** — "Export CSV" button on the jobs, failed jobs, and history pages downloads all records matching the current filters; columns are tailored per view
 - **Slow job detection** — when `slow_job_threshold` is configured, claimed jobs running longer than the threshold are flagged with an orange row, a "slow" badge, and a "Running For" duration column on the Running tab; a "Slow Jobs" warning card appears on the dashboard with a link to the Running tab
 - **Job wait time** — the Running tab shows a "Wait Time" column with how long each job waited in the queue from enqueue to pickup; also exported as `wait_time_seconds` in the claimed-status CSV
+- **Admin audit log** — every discard, retry, queue pause, and resume is recorded to a `solid_queue_web_audit_events` table and viewable at `/jobs/audit` with action/actor/queue filters and CSV export; actor identity captured via the optional `current_actor` config block; requires running the install generator to create the table
 - **Webhook alerts** — set `alert_webhook_url` and `alert_failure_threshold` to receive a POST request whenever the failed job count meets or exceeds the threshold; set `alert_queue_thresholds` for per-queue depth alerts; set `alert_slow_job_count_threshold` (requires `slow_job_threshold`) for slow-job count alerts; set `alert_stale_process_threshold` for stale-worker alerts; all fire asynchronously with a configurable cooldown (default 1 h) to prevent repeated alerts
 - **Performance analytics** — per-job-class statistics at `/jobs/performance` showing run count, average, p50, p95, p99, standard deviation, min, and max duration; sorted by p95 descending so the slowest classes surface first; high std dev surfaces inconsistent jobs worth investigating; period filter scopes to 1h / 24h / 7d or all time; each class name links to the filtered History view
 - **Failed job trend chart** — a "Failures — Last 12 Hours" bar chart on the dashboard shows failures per hour over the last 12 hours; bars are red, making failure spikes visible before clicking into the failed jobs list
@@ -111,6 +112,7 @@ SolidQueueWeb.configure do |config|
   config.alert_slow_job_count_threshold  = 5          # fire when slow job count >= this (default: nil = disabled)
   config.alert_stale_process_threshold  = 1          # fire when stale process count >= this (default: nil = disabled)
   config.alert_webhook_cooldown         = 1800       # seconds between repeated alerts per alert type (default: 3600)
+  config.current_actor                  = -> { current_user&.email } # identity for audit log (default: nil)
   config.connects_to                = { reading: :reading, writing: :writing } # read replica (default: nil)
   config.time_zone                  = "America/New_York" # display timezone for all timestamps (default: nil = UTC)
 end
@@ -235,6 +237,46 @@ The same `alert_webhook_url` endpoint(s) receive the payload with a distinct eve
 ```
 
 The alert fires on every dashboard page load while the condition persists, subject to the cooldown window.
+
+## Admin audit log
+
+Every discard, retry, queue pause, and resume action is recorded to a `solid_queue_web_audit_events` table and viewable at `/jobs/audit`.
+
+### Installation
+
+The audit log requires an opt-in migration. Run the install generator to copy it to your application:
+
+```bash
+rails generate solid_queue_web:install:migrations
+rails db:migrate
+```
+
+### Identity
+
+Set `SolidQueueWeb.current_actor` to a block that returns the current user's identity as a string. The block is evaluated in controller context, so you have access to helpers like `current_user`:
+
+```ruby
+SolidQueueWeb.configure do |config|
+  config.current_actor = -> { current_user&.email }
+end
+```
+
+If not configured, the actor column is left `nil`.
+
+### Audited actions
+
+| Action | Trigger |
+|---|---|
+| `job_discarded` | Single job discarded from the jobs list |
+| `jobs_discarded` | Bulk or selection discard from the jobs list |
+| `failed_job_retried` | Single failed job retried |
+| `failed_jobs_retried` | Bulk or selection retry of failed jobs |
+| `failed_job_discarded` | Single failed job discarded |
+| `failed_jobs_discarded` | Bulk or selection discard of failed jobs |
+| `queue_paused` | Queue paused |
+| `queue_resumed` | Queue resumed |
+
+The audit log page at `/jobs/audit` supports filtering by action, actor, and queue name. All records can be exported as CSV.
 
 ## Metrics endpoint
 

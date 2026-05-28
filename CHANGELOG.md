@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Admin audit log — every discard, retry, pause, and resume action is recorded to a `solid_queue_web_audit_events` table; viewable at `/jobs/audit` with action/actor/queue filters and CSV export; identity captured via the optional `SolidQueueWeb.current_actor` config block; table created via `rails generate solid_queue_web:install:migrations`
+
 ## [1.4.0] - 2026-05-28
 
 ### Added

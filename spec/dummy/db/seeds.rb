@@ -25,7 +25,9 @@ conn = ActiveRecord::Base.connection
   solid_queue_processes
   solid_queue_semaphores
 ].each { |t| conn.execute("DELETE FROM #{t}") }
+conn.execute("DELETE FROM solid_queue_web_audit_events")
 conn.execute("DELETE FROM sqlite_sequence WHERE name LIKE 'solid_queue%'") rescue nil
+conn.execute("DELETE FROM sqlite_sequence WHERE name = 'solid_queue_web_audit_events'") rescue nil
 
 puts "Seeding processes..."
 supervisor = SolidQueue::Process.create!(kind: "Supervisor", pid: 12_345, hostname: "web-1.local", name: "supervisor-web-1",  last_heartbeat_at: 10.seconds.ago,  metadata: { queues: queues }.to_json)
@@ -222,6 +224,34 @@ recurring_tasks_data = [
 
 recurring_tasks_data.each { |attrs| SolidQueue::RecurringTask.create!(attrs) }
 
+puts "Seeding audit events..."
+actors = ["alice@example.com", "bob@example.com", "carol@example.com", nil, nil]
+audit_actions = [
+  { action: "job_discarded",        job_class: "CleanupJob",          queue_name: "default"      },
+  { action: "jobs_discarded",       job_class: nil,                   queue_name: nil,  item_count: 14 },
+  { action: "failed_job_retried",   job_class: "ReportGeneratorJob",  queue_name: "low_priority" },
+  { action: "failed_jobs_retried",  job_class: nil,                   queue_name: nil,  item_count: 6  },
+  { action: "failed_job_discarded", job_class: "DataSyncJob",         queue_name: "critical"     },
+  { action: "failed_jobs_discarded", job_class: nil,                   queue_name: nil,  item_count: 3  },
+  { action: "queue_paused",         job_class: nil,                   queue_name: "critical"     },
+  { action: "queue_resumed",        job_class: nil,                   queue_name: "critical"     },
+  { action: "queue_paused",         job_class: nil,                   queue_name: "mailers"      },
+  { action: "job_discarded",        job_class: "NotificationJob",     queue_name: "mailers"      },
+  { action: "failed_job_retried",   job_class: "ExportJob",           queue_name: "default"      },
+  { action: "queue_resumed",        job_class: nil,                   queue_name: "mailers"      }
+]
+
+audit_actions.each_with_index do |attrs, i|
+  SolidQueueWeb::AuditEvent.create!(
+    action:     attrs[:action],
+    actor:      actors.sample,
+    job_class:  attrs[:job_class],
+    queue_name: attrs[:queue_name],
+    item_count: attrs.fetch(:item_count, 1),
+    created_at: rand(1..72).hours.ago
+  )
+end
+
 puts "Done! Created:"
 puts "  #{SolidQueue::ReadyExecution.count} ready jobs"
 puts "  #{SolidQueue::ScheduledExecution.count} scheduled jobs"
@@ -231,3 +261,4 @@ puts "  #{SolidQueue::FailedExecution.count} failed jobs"
 puts "  #{SolidQueue::Process.count} processes"
 puts "  #{SolidQueue::Job.where.not(finished_at: nil).count} finished jobs"
 puts "  #{SolidQueue::RecurringTask.count} recurring tasks"
+puts "  #{SolidQueueWeb::AuditEvent.count} audit events"
