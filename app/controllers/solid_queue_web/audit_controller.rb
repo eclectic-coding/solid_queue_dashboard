@@ -1,15 +1,9 @@
 module SolidQueueWeb
   class AuditController < ApplicationController
+    before_action :set_filters
+
     def index
-      @action_filter = params[:action_filter].presence_in(AuditEvent::ACTIONS)
-      @actor_filter  = params[:actor].presence
-      @queue_filter  = params[:queue].presence
-
-      scope = AuditEvent.recent
-      scope = scope.where(action:     @action_filter) if @action_filter
-      scope = scope.where(actor:      @actor_filter)  if @actor_filter
-      scope = scope.where(queue_name: @queue_filter)  if @queue_filter
-
+      scope = audit_scope
       respond_to do |format|
         format.html { @pagy, @audit_events = pagy(scope) }
         format.csv do
@@ -21,6 +15,20 @@ module SolidQueueWeb
     end
 
     private
+
+    def set_filters
+      @action_filter = params[:action_filter].presence_in(AuditEvent::ACTIONS)
+      @actor_filter  = params[:actor].presence
+      @queue_filter  = params[:queue].presence
+    end
+
+    def audit_scope
+      scope = AuditEvent.recent
+      scope = scope.where(action:     @action_filter) if @action_filter
+      scope = scope.where(actor:      @actor_filter)  if @actor_filter
+      scope = scope.where(queue_name: @queue_filter)  if @queue_filter
+      scope
+    end
 
     def audit_csv(scope)
       CSV.generate(headers: true) do |csv|
