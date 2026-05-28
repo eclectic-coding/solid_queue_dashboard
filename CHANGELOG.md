@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Slow job webhook alert — set `alert_slow_job_count_threshold` (integer) to fire a webhook whenever the number of currently-running slow jobs meets or exceeds the configured count; requires `slow_job_threshold` to define what "slow" means; uses the same `alert_webhook_url` and `alert_webhook_cooldown` settings as other alert types; event name `slow_job_threshold_exceeded`
+
 ## [1.3.0] - 2026-05-27
 
 ### Added
