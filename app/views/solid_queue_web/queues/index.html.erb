@@ -21,7 +21,7 @@
         <% @queues.each do |queue| %>
           <tr>
             <td class="sqd-mono"><%= queue.name %></td>
-            <td><%= queue.size %></td>
+            <td><%= @queue_sizes[queue.name] || 0 %></td>
             <td>
               <% if (oldest = @oldest_ready[queue.name]) %>
                 <% age = Time.current - oldest %>
@@ -52,14 +52,14 @@
               <% end %>
             </td>
             <td>
-              <% if queue.paused? %>
+              <% if @paused_queue_names.include?(queue.name) %>
                 <span class="sqd-badge sqd-badge--paused">Paused</span>
               <% else %>
                 <span class="sqd-badge sqd-badge--running">Running</span>
               <% end %>
             </td>
             <td class="sqd-row-actions">
-              <% if queue.paused? %>
+              <% if @paused_queue_names.include?(queue.name) %>
                 <%= button_to "Resume", queue_pause_path(queue.name), method: :delete,
                       class: "sqd-btn sqd-btn--primary sqd-btn--sm" %>
               <% else %>
