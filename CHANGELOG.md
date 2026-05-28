@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-05-28
+
 ### Added
 
 - Slow job webhook alert — set `alert_slow_job_count_threshold` (integer) to fire a webhook whenever the number of currently-running slow jobs meets or exceeds the configured count; requires `slow_job_threshold` to define what "slow" means; uses the same `alert_webhook_url` and `alert_webhook_cooldown` settings as other alert types; event name `slow_job_threshold_exceeded`
@@ -236,7 +238,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI workflow with lint (RuboCop) and test (RSpec) matrix across Ruby 3.3, 3.4, and 4.0
 - `bin/release` script for versioned gem releases
 
-[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/eclectic-coding/solid_queue_web/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v1.4.0
 [1.3.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v1.3.0
 [1.2.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v1.2.0
 [1.1.0]: https://github.com/eclectic-coding/solid_queue_web/releases/tag/v1.1.0
