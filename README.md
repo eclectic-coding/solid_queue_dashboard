@@ -12,9 +12,42 @@ A monitoring and management dashboard for [Solid Queue](https://github.com/rails
 
 ![SolidQueueWeb dashboard](docs/solid-queue-web.png)
 
+## Table of Contents
+
+- [The problem](#the-problem)
+- [Why SolidQueueWeb?](#why-solidqueueweb)
+- [Real-world use case](#real-world-use-case)
+- [Features](#features)
+- [Compatibility](#compatibility)
+- [Installation](#installation)
+- [Mounting the engine](#mounting-the-engine)
+- [Configuration](#configuration)
+- [Webhook alerts](#webhook-alerts)
+  - [Failure threshold alerts](#failure-threshold-alerts)
+  - [Queue depth alerts](#queue-depth-alerts)
+  - [Slow job alerts](#slow-job-alerts)
+  - [Stale process alerts](#stale-process-alerts)
+- [Admin audit log](#admin-audit-log)
+  - [Setup](#setup)
+  - [Identity](#identity)
+  - [Audited actions](#audited-actions)
+- [Metrics endpoint](#metrics-endpoint)
+- [Read replica support](#read-replica-support)
+- [i18n](#i18n)
+  - [Adding a custom locale](#adding-a-custom-locale)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
 ## The problem
 
 Solid Queue ships without a web interface. When jobs fail, queues back up, or workers go silent in production, the only options are `rails console` or raw SQL queries. SolidQueueWeb gives your team a real-time dashboard to inspect, retry, and discard jobs without leaving the browser — and without standing up any additional infrastructure.
+
+[↑ Back to top](#table-of-contents)
+
+---
 
 ## Why SolidQueueWeb?
 
@@ -23,6 +56,10 @@ Solid Queue ships without a web interface. When jobs fail, queues back up, or wo
 - Zero-config to start — one line in `routes.rb` and you're running
 - Built for Rails 8 — Turbo Frames for in-place updates, Stimulus for dynamic search and auto-refresh, Pagy for efficient pagination
 - Inspired by Sidekiq Web UI and the GoodJob dashboard, adapted for the Solid Queue ecosystem
+
+[↑ Back to top](#table-of-contents)
+
+---
 
 ## Real-world use case
 
@@ -34,6 +71,10 @@ A Rails app processes order confirmations, email notifications, and report gener
 - Identify blocked or long-running jobs before they impact users
 
 SolidQueueWeb surfaces all of this in a browser UI available at any route you choose.
+
+[↑ Back to top](#table-of-contents)
+
+---
 
 ## Features
 
@@ -62,6 +103,10 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **Metrics / health endpoint** — `GET /jobs/metrics.json` returns a machine-readable JSON document with job counts, throughput, per-queue depth and pause state, and process health summary; suitable for Prometheus scraping, uptime monitors, or external dashboards; `slow_jobs` count included when `slow_job_threshold` is configured
 - **i18n** — all UI strings (page titles, table headers, buttons, empty states, flash messages) are backed by `config/locales/en.yml`; locale switching via `?locale=` param or session; add a custom locale by supplying a YAML file in your host app and registering it with `config.available_locales`
 
+[↑ Back to top](#table-of-contents)
+
+---
+
 ## Compatibility
 
 | Dependency  | Version    |
@@ -71,6 +116,10 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 | Solid Queue | >= 1.0     |
 
 Tested on Ruby 3.3, 3.4, and 4.0.
+
+[↑ Back to top](#table-of-contents)
+
+---
 
 ## Installation
 
@@ -86,6 +135,10 @@ Then run:
 bundle install
 ```
 
+[↑ Back to top](#table-of-contents)
+
+---
+
 ## Mounting the engine
 
 Add to your `config/routes.rb`:
@@ -95,6 +148,10 @@ mount SolidQueueWeb::Engine, at: "/jobs"
 ```
 
 The dashboard will be available at `/jobs`.
+
+[↑ Back to top](#table-of-contents)
+
+---
 
 ## Configuration
 
@@ -128,7 +185,15 @@ end
 
 No authentication is enforced by default. When the `authenticate` block returns falsy, HTTP Basic auth is used as a fallback.
 
+[↑ Back to top](#table-of-contents)
+
+---
+
 ## Webhook alerts
+
+The engine supports four webhook alert types, each firing asynchronously with a configurable cooldown to prevent repeated alerts.
+
+### Failure threshold alerts
 
 Set `alert_webhook_url` and `alert_failure_threshold` to receive a POST request whenever the failed job count meets or exceeds the threshold. This is useful for paging an on-call team or triggering a Slack notification via an incoming webhook.
 
@@ -164,7 +229,7 @@ The request body is JSON:
 
 The webhook fires asynchronously in a background thread so dashboard page loads are never delayed. HTTP errors are logged to `Rails.logger` and swallowed. The cooldown window prevents repeated alerts while the count stays elevated — the clock resets on each app restart.
 
-## Queue depth alerts
+### Queue depth alerts
 
 Set `alert_queue_thresholds` to fire a webhook when any queue's ready job count meets or exceeds a per-queue limit:
 
@@ -189,7 +254,7 @@ The same `alert_webhook_url` endpoint(s) receive the payload, with a distinct ev
 
 Cooldown is tracked independently per queue, so a persistently deep "critical" queue does not suppress alerts for "default". The shared `alert_webhook_cooldown` setting applies to each queue separately.
 
-## Slow job alerts
+### Slow job alerts
 
 Set `alert_slow_job_count_threshold` to fire a webhook when the number of currently-running slow jobs meets or exceeds a count. This requires `slow_job_threshold` to also be configured — it defines what "slow" means.
 
@@ -215,7 +280,7 @@ The same `alert_webhook_url` endpoint(s) receive the payload with a distinct eve
 
 The alert fires on every dashboard page load while the condition persists, subject to the cooldown window.
 
-## Stale process alerts
+### Stale process alerts
 
 Set `alert_stale_process_threshold` to fire a webhook when the number of stale workers meets or exceeds a count. A process is considered stale when its `last_heartbeat_at` has not been updated within `SolidQueue.process_alive_threshold` (default 5 minutes). A stale worker means jobs in its queues have silently stopped processing.
 
@@ -240,11 +305,15 @@ The same `alert_webhook_url` endpoint(s) receive the payload with a distinct eve
 
 The alert fires on every dashboard page load while the condition persists, subject to the cooldown window.
 
+[↑ Back to top](#table-of-contents)
+
+---
+
 ## Admin audit log
 
 Every discard, retry, queue pause, and resume action is recorded to a `solid_queue_web_audit_events` table and viewable at `/jobs/audit`.
 
-### Installation
+### Setup
 
 The audit log requires an opt-in migration. Run the install generator to copy it to your application:
 
@@ -279,6 +348,10 @@ If not configured, the actor column is left `nil`.
 | `queue_resumed` | Queue resumed |
 
 The audit log page at `/jobs/audit` supports filtering by action, actor, and queue name. All records can be exported as CSV.
+
+[↑ Back to top](#table-of-contents)
+
+---
 
 ## Metrics endpoint
 
@@ -322,6 +395,10 @@ When `slow_job_threshold` is configured, a `slow_jobs` integer is also included 
 
 The endpoint respects the same authentication and `connects_to` settings as the rest of the dashboard. A process is counted as **stale** when its `last_heartbeat_at` is older than `SolidQueue.process_alive_threshold` (default: 5 minutes).
 
+[↑ Back to top](#table-of-contents)
+
+---
+
 ## Read replica support
 
 Set `connects_to` with both `reading:` and `writing:` keys to enable automatic role switching. GET requests are routed to the reading role; POST/DELETE/PATCH requests use the writing role.
@@ -340,6 +417,10 @@ config.connects_to = { role: :writing }
 ```
 
 When `connects_to` is `nil` (the default), no connection switching occurs and single-database apps are unaffected.
+
+[↑ Back to top](#table-of-contents)
+
+---
 
 ## i18n
 
@@ -366,16 +447,30 @@ config.available_locales = [:en, :fr]
 
 Rails will pick up the file automatically via its standard `config.i18n.load_path`; no additional configuration is needed.
 
+[↑ Back to top](#table-of-contents)
+
+---
+
 ## Roadmap
 
 See [ROADMAP.md](ROADMAP.md) for the full post-1.0 feature plan, organized by release milestone.
 
 Pull requests for any of these are welcome. See [Contributing](#contributing) below.
 
+[↑ Back to top](#table-of-contents)
+
+---
+
 ## Contributing
 
 Bug reports and pull requests are welcome on [GitHub](https://github.com/eclectic-coding/solid_queue_web).
 
+[↑ Back to top](#table-of-contents)
+
+---
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+[↑ Back to top](#table-of-contents)
