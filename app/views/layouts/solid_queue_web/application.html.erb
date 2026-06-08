@@ -27,6 +27,9 @@
           <li><%= link_to t("solid_queue_web.layout.nav.processes"),  processes_path,       class: current_page?(processes_path) ? "active" : "",       aria: { current: current_page?(processes_path) ? "page" : nil } %></li>
           <li><%= link_to t("solid_queue_web.layout.nav.search"),     search_path,          class: current_page?(search_path) ? "active" : "",          aria: { current: current_page?(search_path) ? "page" : nil } %></li>
           <li><%= link_to t("solid_queue_web.layout.nav.audit"),      audit_path,           class: current_page?(audit_path) ? "active" : "",           aria: { current: current_page?(audit_path) ? "page" : nil } %></li>
+          <% SolidQueueWeb.nav_links.each do |link| %>
+            <li><%= link_to link[:label], link[:url] %></li>
+          <% end %>
         </ul>
       </nav>
     </div>

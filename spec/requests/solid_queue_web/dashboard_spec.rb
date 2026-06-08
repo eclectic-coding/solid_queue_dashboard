@@ -150,6 +150,52 @@ RSpec.describe "Dashboard", type: :request do
     end
   end
 
+  describe "custom dashboard cards" do
+    after { SolidQueueWeb.dashboard_cards = [] }
+
+    it "renders a custom card with title and stats" do
+      SolidQueueWeb.dashboard_cards = [
+        { title: "My App", stats: -> { { "Users" => 42, "Premium" => 7 } } }
+      ]
+      get "/jobs"
+      expect(response.body).to include("My App")
+      expect(response.body).to include("Users")
+      expect(response.body).to include("42")
+      expect(response.body).to include("Premium")
+      expect(response.body).to include("7")
+    end
+
+    it "renders a custom card with an optional header link" do
+      SolidQueueWeb.dashboard_cards = [
+        { title: "Admin", link: { label: "View Admin", url: "/admin" } }
+      ]
+      get "/jobs"
+      expect(response.body).to include("Admin")
+      expect(response.body).to include("View Admin")
+      expect(response.body).to include("/admin")
+    end
+  end
+
+  describe "custom nav links" do
+    after { SolidQueueWeb.nav_links = [] }
+
+    it "renders custom nav links in the layout" do
+      SolidQueueWeb.nav_links = [
+        { label: "Back to App", url: "/" },
+        { label: "Admin", url: "/admin" }
+      ]
+      get "/jobs"
+      expect(response.body).to include("Back to App")
+      expect(response.body).to include("Admin")
+      expect(response.body).to include('href="/admin"')
+    end
+
+    it "renders no extra nav items when nav_links is empty" do
+      get "/jobs"
+      expect(response.body).not_to include("Back to App")
+    end
+  end
+
   describe "authentication" do
     after { SolidQueueWeb.instance_variable_set(:@authenticate, nil) }
 

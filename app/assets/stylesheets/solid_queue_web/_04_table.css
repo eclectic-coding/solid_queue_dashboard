@@ -19,6 +19,34 @@
   font-weight: 600;
 }
 
+.sqd-card__body {
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.sqd-custom-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 13px;
+  padding: 0.375rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.sqd-custom-stat:last-child {
+  border-bottom: none;
+}
+
+.sqd-custom-stat__label {
+  color: var(--muted);
+}
+
+.sqd-custom-stat__value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;

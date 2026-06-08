@@ -196,5 +196,26 @@
       </div>
     </div>
   <% end %>
+
+  <% SolidQueueWeb.dashboard_cards.each do |card| %>
+    <div class="sqd-card">
+      <div class="sqd-card__header">
+        <span class="sqd-card__title"><%= card[:title] %></span>
+        <% if card[:link] %>
+          <%= link_to card[:link][:label], card[:link][:url], class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
+        <% end %>
+      </div>
+      <% if card[:stats] %>
+        <div class="sqd-card__body">
+          <% card[:stats].call.each do |label, value| %>
+            <div class="sqd-custom-stat">
+              <span class="sqd-custom-stat__label"><%= label %></span>
+              <span class="sqd-custom-stat__value"><%= value %></span>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 </div>
 <% end %>
