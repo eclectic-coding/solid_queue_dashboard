@@ -17,7 +17,7 @@ module SolidQueueWeb
       executions = params[:id] ? [SolidQueue::FailedExecution.find(params[:id])] : filtered_scope.to_a
       perform_discard(executions)
     rescue => e
-      redirect_to failed_jobs_path, alert: "Could not discard job: #{e.message}"
+      redirect_to failed_jobs_path, alert: t("solid_queue_web.flash.cannot_discard_job", error: e.message)
     end
 
     private
@@ -41,7 +41,7 @@ module SolidQueueWeb
       SolidQueue::FailedExecution.discard_all_from_jobs(jobs)
       record_audit(action, job_class: jobs.first&.class_name, queue_name: jobs.first&.queue_name, item_count: jobs.size)
       redirect_to failed_jobs_path(queue: @queue, q: @search, period: @period),
-        notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
+        notice: t("solid_queue_web.flash.jobs_discarded", count: jobs.size)
     end
 
     def sortable_columns

@@ -8,9 +8,9 @@ module SolidQueueWeb
         SolidQueue::FailedExecution.retry_all(jobs)
         record_audit("failed_jobs_retried", item_count: jobs.size)
         redirect_to failed_jobs_path,
-          notice: "#{jobs.size} #{"job".pluralize(jobs.size)} queued for retry."
+          notice: t("solid_queue_web.flash.jobs_retried", count: jobs.size)
       rescue => e
-        redirect_to failed_jobs_path, alert: "Could not retry jobs: #{e.message}"
+        redirect_to failed_jobs_path, alert: t("solid_queue_web.flash.cannot_retry_jobs", error: e.message)
       end
 
       def destroy
@@ -20,9 +20,9 @@ module SolidQueueWeb
         SolidQueue::FailedExecution.discard_all_from_jobs(jobs)
         record_audit("failed_jobs_discarded", item_count: jobs.size)
         redirect_to failed_jobs_path,
-          notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
+          notice: t("solid_queue_web.flash.jobs_discarded", count: jobs.size)
       rescue => e
-        redirect_to failed_jobs_path, alert: "Could not discard jobs: #{e.message}"
+        redirect_to failed_jobs_path, alert: t("solid_queue_web.flash.cannot_discard_jobs", error: e.message)
       end
     end
   end

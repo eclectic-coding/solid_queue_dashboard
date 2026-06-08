@@ -36,18 +36,19 @@ module SolidQueueWeb
         @remaining_count = filtered_scope(model).count
         respond_to do |format|
           format.turbo_stream
-          format.html { redirect_to jobs_return_path, notice: "Job discarded." }
+          format.html { redirect_to jobs_return_path, notice: t("solid_queue_web.flash.job_discarded") }
         end
       else
         jobs = filtered_scope(model).map(&:job)
         model.discard_all_from_jobs(jobs)
         record_audit("jobs_discarded", item_count: jobs.size)
-        redirect_to jobs_return_path, notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
+        redirect_to jobs_return_path, notice: t("solid_queue_web.flash.jobs_discarded", count: jobs.size)
       end
     rescue ArgumentError => e
       redirect_to jobs_return_path, alert: e.message
     rescue => e
-      redirect_to jobs_return_path, alert: "Could not discard #{params[:id] ? "job" : "jobs"}: #{e.message}"
+      msg = params[:id] ? t("solid_queue_web.flash.cannot_discard_job", error: e.message) : t("solid_queue_web.flash.cannot_discard_jobs", error: e.message)
+      redirect_to jobs_return_path, alert: msg
     end
 
     private

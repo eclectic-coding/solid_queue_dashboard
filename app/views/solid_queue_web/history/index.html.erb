@@ -1,9 +1,9 @@
 <%= turbo_frame_tag "history-table", data: { controller: "refresh", refresh_interval_value: SolidQueueWeb.default_refresh_interval } do %>
 <div class="sqd-page-header">
-  <h1 class="sqd-page-title">Job History</h1>
+  <h1 class="sqd-page-title"><%= t("solid_queue_web.history.title") %></h1>
   <% if @jobs.any? %>
     <div class="sqd-actions">
-      <%= link_to "Export CSV", history_path(format: :csv, queue: @queue, q: @search, period: @period),
+      <%= link_to t("solid_queue_web.history.export_csv"), history_path(format: :csv, queue: @queue, q: @search, period: @period),
             class: "sqd-btn sqd-btn--muted", data: { turbo: false } %>
     </div>
   <% end %>
@@ -17,13 +17,13 @@
   <input type="hidden" name="sort" value="<%= @sort %>">
   <input type="hidden" name="direction" value="<%= @direction %>">
   <input class="sqd-search__input" type="search" name="q" value="<%= @search %>"
-         placeholder="Filter by job class…" autocomplete="off" aria-label="Filter by job class"
+         placeholder="<%= t("solid_queue_web.history.placeholder_filter") %>" autocomplete="off" aria-label="<%= t("solid_queue_web.history.aria_filter") %>"
          data-action="input->search#filter">
   <% if @search.present? %>
-    <%= link_to "Clear", history_path(queue: @queue, period: @period), class: "sqd-btn sqd-btn--muted" %>
+    <%= link_to t("solid_queue_web.history.clear"), history_path(queue: @queue, period: @period), class: "sqd-btn sqd-btn--muted" %>
   <% end %>
-  <div class="sqd-period-filter" role="group" aria-label="Time period" data-controller="filters" data-filters-page-value="history">
-    <%= link_to "All",  history_path(queue: @queue, q: @search),                      class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil }, data: { action: "click->filters#savePeriod", filters_period_param: "" } %>
+  <div class="sqd-period-filter" role="group" aria-label="<%= t("solid_queue_web.shared.period_filter.label") %>" data-controller="filters" data-filters-page-value="history">
+    <%= link_to t("solid_queue_web.shared.period_filter.all"),  history_path(queue: @queue, q: @search),                      class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil }, data: { action: "click->filters#savePeriod", filters_period_param: "" } %>
     <%= link_to "1h",   history_path(queue: @queue, q: @search, period: "1h"),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil }, data: { action: "click->filters#savePeriod", filters_period_param: "1h" } %>
     <%= link_to "24h",  history_path(queue: @queue, q: @search, period: "24h"), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil }, data: { action: "click->filters#savePeriod", filters_period_param: "24h" } %>
     <%= link_to "7d",   history_path(queue: @queue, q: @search, period: "7d"),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil }, data: { action: "click->filters#savePeriod", filters_period_param: "7d" } %>
@@ -32,8 +32,8 @@
 
 <% if @queue.present? %>
   <p style="margin-top: 0.5rem; font-size: 13px; color: var(--muted);">
-    Filtering by queue: <strong><%= @queue %></strong> &mdash;
-    <%= link_to "Clear filter", history_path(q: @search, period: @period) %>
+    <%= t("solid_queue_web.shared.filtering_by_queue") %> <strong><%= @queue %></strong> &mdash;
+    <%= link_to t("solid_queue_web.shared.clear_filter"), history_path(q: @search, period: @period) %>
   </p>
 <% end %>
 
@@ -43,10 +43,10 @@
       <thead>
         <% sort_url = ->(p) { history_path(queue: @queue, q: @search, period: @period, **p) } %>
         <tr>
-          <%= sort_header_th("Job Class",   "class_name", sort_url, current_sort: @sort, current_dir: @direction) %>
-          <%= sort_header_th("Queue",       "queue_name", sort_url, current_sort: @sort, current_dir: @direction) %>
-          <th scope="col">Duration</th>
-          <%= sort_header_th("Finished At", "finished_at", sort_url, current_sort: @sort, current_dir: @direction) %>
+          <%= sort_header_th(t("solid_queue_web.history.col_job_class"), "class_name",  sort_url, current_sort: @sort, current_dir: @direction) %>
+          <%= sort_header_th(t("solid_queue_web.history.col_queue"),     "queue_name",  sort_url, current_sort: @sort, current_dir: @direction) %>
+          <th scope="col"><%= t("solid_queue_web.history.col_duration") %></th>
+          <%= sort_header_th(t("solid_queue_web.history.col_finished_at"), "finished_at", sort_url, current_sort: @sort, current_dir: @direction) %>
         </tr>
       </thead>
       <tbody>
@@ -66,7 +66,7 @@
   </div>
 <% else %>
   <div class="sqd-card">
-    <div class="sqd-empty">No finished jobs found.</div>
+    <div class="sqd-empty"><%= t("solid_queue_web.history.empty") %></div>
   </div>
 <% end %>
 

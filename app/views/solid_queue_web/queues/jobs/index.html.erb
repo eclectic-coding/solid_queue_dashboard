@@ -1,9 +1,9 @@
 <div class="sqd-page-header">
   <div>
     <div class="sqd-breadcrumb">
-      <%= link_to "Queues", queues_path %> &rsaquo; <%= @queue %>
+      <%= link_to t("solid_queue_web.queue_jobs.breadcrumb_queues"), queues_path %> &rsaquo; <%= @queue %>
     </div>
-    <h1 class="sqd-page-title">Jobs</h1>
+    <h1 class="sqd-page-title"><%= t("solid_queue_web.queue_jobs.title") %></h1>
   </div>
 </div>
 
@@ -12,19 +12,19 @@
 
 <div class="sqd-page-header">
   <div class="sqd-filters">
-    <%= link_to "Ready",     queue_jobs_path(queue_name: @queue, status: "ready",     q: @search), class: @status == "ready"     ? "active" : "" %>
-    <%= link_to "Scheduled", queue_jobs_path(queue_name: @queue, status: "scheduled", q: @search), class: @status == "scheduled" ? "active" : "" %>
-    <%= link_to "Running",   queue_jobs_path(queue_name: @queue, status: "claimed",   q: @search), class: @status == "claimed"   ? "active" : "" %>
-    <%= link_to "Blocked",   queue_jobs_path(queue_name: @queue, status: "blocked",   q: @search), class: @status == "blocked"   ? "active" : "" %>
-    <%= link_to "Failed",    queue_jobs_path(queue_name: @queue, status: "failed",    q: @search), class: @status == "failed"    ? "active" : "" %>
+    <%= link_to t("solid_queue_web.queue_jobs.tab_ready"),     queue_jobs_path(queue_name: @queue, status: "ready",     q: @search), class: @status == "ready"     ? "active" : "" %>
+    <%= link_to t("solid_queue_web.queue_jobs.tab_scheduled"), queue_jobs_path(queue_name: @queue, status: "scheduled", q: @search), class: @status == "scheduled" ? "active" : "" %>
+    <%= link_to t("solid_queue_web.queue_jobs.tab_running"),   queue_jobs_path(queue_name: @queue, status: "claimed",   q: @search), class: @status == "claimed"   ? "active" : "" %>
+    <%= link_to t("solid_queue_web.queue_jobs.tab_blocked"),   queue_jobs_path(queue_name: @queue, status: "blocked",   q: @search), class: @status == "blocked"   ? "active" : "" %>
+    <%= link_to t("solid_queue_web.queue_jobs.tab_failed"),    queue_jobs_path(queue_name: @queue, status: "failed",    q: @search), class: @status == "failed"    ? "active" : "" %>
   </div>
   <% if discardable && @jobs.any? %>
     <div class="sqd-actions">
-      <%= button_to "Discard All", discard_all_queue_jobs_path(queue_name: @queue),
+      <%= button_to t("solid_queue_web.queue_jobs.discard_all"), discard_all_queue_jobs_path(queue_name: @queue),
             method: :post,
             params: { status: @status },
             class: "sqd-btn sqd-btn--danger",
-            data: { confirm: "Discard all #{@jobs.size} #{@status} jobs in #{@queue}? This cannot be undone." } %>
+            data: { confirm: t("solid_queue_web.queue_jobs.confirm_discard_all", count: @jobs.size, status: @status, queue: @queue) } %>
     </div>
   <% end %>
 </div>
@@ -32,26 +32,26 @@
 <form class="sqd-search" action="<%= queue_jobs_path(queue_name: @queue) %>" method="get" data-controller="search">
   <input type="hidden" name="status" value="<%= @status %>">
   <input class="sqd-search__input" type="search" name="q" value="<%= @search %>"
-         placeholder="Filter by job class…" autocomplete="off" aria-label="Filter by job class"
+         placeholder="<%= t("solid_queue_web.queue_jobs.placeholder_job_class") %>" autocomplete="off" aria-label="<%= t("solid_queue_web.queue_jobs.aria_filter_job_class") %>"
          data-action="input->search#filter">
-  <button type="submit" class="sqd-btn sqd-btn--muted">Search</button>
+  <button type="submit" class="sqd-btn sqd-btn--muted"><%= t("solid_queue_web.queue_jobs.search_button") %></button>
   <% if @search.present? %>
-    <%= link_to "Clear", queue_jobs_path(queue_name: @queue, status: @status), class: "sqd-btn sqd-btn--muted" %>
+    <%= link_to t("solid_queue_web.shared.clear"), queue_jobs_path(queue_name: @queue, status: @status), class: "sqd-btn sqd-btn--muted" %>
   <% end %>
 </form>
 
 <div class="sqd-card" id="jobs-list">
   <% if @jobs.empty? %>
-    <div class="sqd-empty">No <%= @status %> jobs in <%= @queue %>.</div>
+    <div class="sqd-empty"><%= t("solid_queue_web.queue_jobs.no_jobs", status: @status, queue: @queue) %></div>
   <% else %>
     <table>
       <thead>
         <tr>
-          <th scope="col">Job Class</th>
-          <th scope="col">Priority</th>
-          <th scope="col">Scheduled At</th>
-          <th scope="col">Enqueued At</th>
-          <% if discardable %><th scope="col"><span class="sqd-sr-only">Actions</span></th><% end %>
+          <th scope="col"><%= t("solid_queue_web.queue_jobs.col_job_class") %></th>
+          <th scope="col"><%= t("solid_queue_web.queue_jobs.col_priority") %></th>
+          <th scope="col"><%= t("solid_queue_web.queue_jobs.col_scheduled_at") %></th>
+          <th scope="col"><%= t("solid_queue_web.queue_jobs.col_enqueued_at") %></th>
+          <% if discardable %><th scope="col"><span class="sqd-sr-only"><%= t("solid_queue_web.queue_jobs.actions") %></span></th><% end %>
         </tr>
       </thead>
       <tbody>
@@ -69,11 +69,11 @@
             <td class="sqd-mono"><%= format_timestamp(job.created_at) %></td>
             <% if discardable %>
               <td class="sqd-row-actions">
-                <%= button_to "Discard", queue_job_path(queue_name: @queue, id: execution),
+                <%= button_to t("solid_queue_web.queue_jobs.discard"), queue_job_path(queue_name: @queue, id: execution),
                       method: :delete,
                       params: { status: @status },
                       class: "sqd-btn sqd-btn--danger sqd-btn--sm",
-                      data: { confirm: "Discard this job?" } %>
+                      data: { confirm: t("solid_queue_web.queue_jobs.confirm_discard") } %>
               </td>
             <% end %>
           </tr>

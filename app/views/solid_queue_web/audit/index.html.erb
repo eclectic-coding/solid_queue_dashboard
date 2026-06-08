@@ -1,30 +1,30 @@
-<h1 class="sqd-page-title">Audit Log</h1>
+<h1 class="sqd-page-title"><%= t("solid_queue_web.audit.title") %></h1>
 
 <div class="sqd-page-header">
   <div class="sqd-filters">
     <form action="<%= audit_path %>" method="get" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-      <select name="action_filter" class="sqd-select" aria-label="Filter by action" onchange="this.form.submit()">
-        <option value="">All actions</option>
+      <select name="action_filter" class="sqd-select" aria-label="<%= t("solid_queue_web.audit.aria_filter_action") %>" onchange="this.form.submit()">
+        <option value=""><%= t("solid_queue_web.audit.all_actions") %></option>
         <% SolidQueueWeb::AuditEvent::ACTIONS.each do |a| %>
           <option value="<%= a %>" <%= @action_filter == a ? "selected" : "" %>><%= a.tr("_", " ") %></option>
         <% end %>
       </select>
       <% if @actor_filter.present? %>
-        <span class="sqd-badge sqd-badge--muted">Actor: <%= @actor_filter %></span>
+        <span class="sqd-badge sqd-badge--muted"><%= t("solid_queue_web.audit.actor_label") %> <%= @actor_filter %></span>
         <%= link_to "×", audit_path(action_filter: @action_filter, queue: @queue_filter), class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
       <% end %>
       <% if @queue_filter.present? %>
-        <span class="sqd-badge sqd-badge--muted">Queue: <%= @queue_filter %></span>
+        <span class="sqd-badge sqd-badge--muted"><%= t("solid_queue_web.audit.queue_label") %> <%= @queue_filter %></span>
         <%= link_to "×", audit_path(action_filter: @action_filter, actor: @actor_filter), class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
       <% end %>
       <% if @action_filter.present? || @actor_filter.present? || @queue_filter.present? %>
-        <%= link_to "Clear", audit_path, class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
+        <%= link_to t("solid_queue_web.audit.clear_all"), audit_path, class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
       <% end %>
     </form>
   </div>
   <% if @audit_events.any? %>
     <div class="sqd-actions">
-      <%= link_to "Export CSV", audit_path(format: :csv, action_filter: @action_filter, actor: @actor_filter, queue: @queue_filter),
+      <%= link_to t("solid_queue_web.audit.export_csv"), audit_path(format: :csv, action_filter: @action_filter, actor: @actor_filter, queue: @queue_filter),
             class: "sqd-btn sqd-btn--muted", data: { turbo: false } %>
     </div>
   <% end %>
@@ -32,17 +32,17 @@
 
 <div class="sqd-card">
   <% if @audit_events.empty? %>
-    <div class="sqd-empty">No audit events recorded.</div>
+    <div class="sqd-empty"><%= t("solid_queue_web.audit.empty") %></div>
   <% else %>
     <table>
       <thead>
         <tr>
-          <th scope="col">Time</th>
-          <th scope="col">Action</th>
-          <th scope="col">Actor</th>
-          <th scope="col">Job Class</th>
-          <th scope="col">Queue</th>
-          <th scope="col">Count</th>
+          <th scope="col"><%= t("solid_queue_web.audit.col_time") %></th>
+          <th scope="col"><%= t("solid_queue_web.audit.col_action") %></th>
+          <th scope="col"><%= t("solid_queue_web.audit.col_actor") %></th>
+          <th scope="col"><%= t("solid_queue_web.audit.col_job_class") %></th>
+          <th scope="col"><%= t("solid_queue_web.audit.col_queue") %></th>
+          <th scope="col"><%= t("solid_queue_web.audit.col_count") %></th>
         </tr>
       </thead>
       <tbody>

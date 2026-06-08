@@ -1,30 +1,30 @@
 <div class="sqd-page-header">
-  <h1 class="sqd-page-title">Failed Jobs</h1>
+  <h1 class="sqd-page-title"><%= t("solid_queue_web.failed_jobs.title") %></h1>
   <% if @failed_jobs.any? %>
     <div class="sqd-actions">
-      <%= link_to "Error Summary", failed_job_errors_path, class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
-      <%= link_to "Export CSV", failed_jobs_path(format: :csv, queue: @queue, q: @search, period: @period),
+      <%= link_to t("solid_queue_web.failed_jobs.error_summary"), failed_job_errors_path, class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
+      <%= link_to t("solid_queue_web.failed_jobs.export_csv"), failed_jobs_path(format: :csv, queue: @queue, q: @search, period: @period),
             class: "sqd-btn sqd-btn--muted", data: { turbo: false } %>
-      <%= button_to "Retry All", retry_all_failed_jobs_path,
+      <%= button_to t("solid_queue_web.failed_jobs.retry_all"), retry_all_failed_jobs_path,
             method: :post,
             params: { queue: @queue, q: @search, period: @period },
             class: "sqd-btn sqd-btn--primary",
-            data: { confirm: "Retry all #{@failed_jobs.size} failed jobs?" } %>
+            data: { confirm: t("solid_queue_web.failed_jobs.confirm_retry_all", count: @failed_jobs.size) } %>
       <% if @failed_jobs.size > 1 %>
         <% %w[5s 10s 30s 1m].each do |interval| %>
           <%= button_to "+#{interval}", retry_all_failed_jobs_path,
                 method: :post,
                 params: { stagger: interval, queue: @queue, q: @search, period: @period },
                 class: "sqd-btn sqd-btn--muted sqd-btn--sm",
-                title: "Retry all, staggered #{interval} apart",
-                data: { confirm: "Retry #{@failed_jobs.size} failed jobs staggered #{interval} apart?" } %>
+                title: t("solid_queue_web.failed_jobs.stagger_title", interval: interval),
+                data: { confirm: t("solid_queue_web.failed_jobs.confirm_stagger", count: @failed_jobs.size, interval: interval) } %>
         <% end %>
       <% end %>
-      <%= button_to "Discard All", discard_all_failed_jobs_path,
+      <%= button_to t("solid_queue_web.failed_jobs.discard_all"), discard_all_failed_jobs_path,
             method: :post,
             params: { queue: @queue, q: @search, period: @period },
             class: "sqd-btn sqd-btn--danger",
-            data: { confirm: "Discard all #{@failed_jobs.size} failed jobs? This cannot be undone." } %>
+            data: { confirm: t("solid_queue_web.failed_jobs.confirm_discard_all", count: @failed_jobs.size) } %>
     </div>
   <% end %>
 </div>
@@ -37,13 +37,13 @@
   <input type="hidden" name="sort" value="<%= @sort %>">
   <input type="hidden" name="direction" value="<%= @direction %>">
   <input class="sqd-search__input" type="search" name="q" value="<%= @search %>"
-         placeholder="Filter by job class…" autocomplete="off" aria-label="Filter by job class"
+         placeholder="<%= t("solid_queue_web.jobs.placeholder_job_class") %>" autocomplete="off" aria-label="<%= t("solid_queue_web.jobs.aria_filter_job_class") %>"
          data-action="input->search#filter">
   <% if @search.present? %>
-    <%= link_to "Clear", failed_jobs_path(queue: @queue, period: @period), class: "sqd-btn sqd-btn--muted" %>
+    <%= link_to t("solid_queue_web.shared.clear"), failed_jobs_path(queue: @queue, period: @period), class: "sqd-btn sqd-btn--muted" %>
   <% end %>
-  <div class="sqd-period-filter" role="group" aria-label="Time period" data-controller="filters" data-filters-page-value="failed">
-    <%= link_to "All", failed_jobs_path(queue: @queue, q: @search),                       class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil }, aria_label: "All time",      data: { action: "click->filters#savePeriod", filters_period_param: "" } %>
+  <div class="sqd-period-filter" role="group" aria-label="<%= t("solid_queue_web.shared.period_filter.label") %>" data-controller="filters" data-filters-page-value="failed">
+    <%= link_to t("solid_queue_web.shared.period_filter.all"), failed_jobs_path(queue: @queue, q: @search),                       class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil }, aria_label: "All time",      data: { action: "click->filters#savePeriod", filters_period_param: "" } %>
     <%= link_to "1h",  failed_jobs_path(queue: @queue, q: @search, period: "1h"),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil }, aria_label: "Last 1 hour",   data: { action: "click->filters#savePeriod", filters_period_param: "1h" } %>
     <%= link_to "24h", failed_jobs_path(queue: @queue, q: @search, period: "24h"), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil }, aria_label: "Last 24 hours", data: { action: "click->filters#savePeriod", filters_period_param: "24h" } %>
     <%= link_to "7d",  failed_jobs_path(queue: @queue, q: @search, period: "7d"),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil }, aria_label: "Last 7 days",   data: { action: "click->filters#savePeriod", filters_period_param: "7d" } %>
@@ -63,20 +63,20 @@
     <% end %>
 
     <%= form_tag failed_job_selection_path, method: :delete, id: "discard-selection-form",
-          data: { turbo_confirm: "Discard selected jobs? This cannot be undone." } do %>
+          data: { turbo_confirm: t("solid_queue_web.failed_jobs.confirm_discard_selected") } do %>
       <%= hidden_field_tag :queue, @queue %>
       <%= hidden_field_tag :q, @search %>
       <%= hidden_field_tag :period, @period %>
     <% end %>
 
     <div class="sqd-selection-bar" data-selection-target="bar" style="display: none;">
-      <span class="sqd-muted-text"><span data-selection-target="count">0</span> selected</span>
+      <span class="sqd-muted-text"><span data-selection-target="count">0</span> <%= t("solid_queue_web.jobs.selected_label") %></span>
       <button type="button" class="sqd-btn sqd-btn--primary sqd-btn--sm"
               data-action="click->selection#submit"
-              data-selection-form-id-param="retry-selection-form">Retry Selected</button>
+              data-selection-form-id-param="retry-selection-form"><%= t("solid_queue_web.failed_jobs.retry_selected") %></button>
       <button type="button" class="sqd-btn sqd-btn--danger sqd-btn--sm"
               data-action="click->selection#submit"
-              data-selection-form-id-param="discard-selection-form">Discard Selected</button>
+              data-selection-form-id-param="discard-selection-form"><%= t("solid_queue_web.failed_jobs.discard_selected") %></button>
     </div>
 
     <div class="sqd-card">
@@ -86,14 +86,14 @@
             <th scope="col">
               <input type="checkbox" data-selection-target="selectAll"
                      data-action="change->selection#selectAll"
-                     aria-label="Select all failed jobs">
+                     aria-label="<%= t("solid_queue_web.failed_jobs.select_all") %>">
             </th>
             <% sort_url = ->(p) { failed_jobs_path(queue: @queue, q: @search, period: @period, **p) } %>
-            <%= sort_header_th("Job Class", "class_name", sort_url, current_sort: @sort, current_dir: @direction) %>
-            <%= sort_header_th("Queue",     "queue_name", sort_url, current_sort: @sort, current_dir: @direction) %>
-            <th scope="col">Error</th>
-            <%= sort_header_th("Failed At", "created_at", sort_url, current_sort: @sort, current_dir: @direction) %>
-            <th scope="col"><span class="sqd-sr-only">Actions</span></th>
+            <%= sort_header_th(t("solid_queue_web.failed_jobs.col_job_class"), "class_name", sort_url, current_sort: @sort, current_dir: @direction) %>
+            <%= sort_header_th(t("solid_queue_web.failed_jobs.col_queue"),     "queue_name", sort_url, current_sort: @sort, current_dir: @direction) %>
+            <th scope="col"><%= t("solid_queue_web.failed_jobs.col_error") %></th>
+            <%= sort_header_th(t("solid_queue_web.failed_jobs.col_failed_at"), "created_at", sort_url, current_sort: @sort, current_dir: @direction) %>
+            <th scope="col"><span class="sqd-sr-only"><%= t("solid_queue_web.shared.actions") %></span></th>
           </tr>
         </thead>
         <tbody>
@@ -104,7 +104,7 @@
                 <input type="checkbox" value="<%= execution.id %>"
                        data-selection-target="checkbox"
                        data-action="change->selection#toggle"
-                       aria-label="Select job <%= job.class_name %>">
+                       aria-label="<%= t("solid_queue_web.failed_jobs.select_job", class_name: job.class_name) %>">
               </td>
               <td><%= link_to job.class_name, job_path(job), class: "sqd-table-link" %></td>
               <td>
@@ -122,11 +122,11 @@
               </td>
               <td class="sqd-mono"><%= format_timestamp(execution.created_at) %></td>
               <td class="sqd-row-actions">
-                <%= button_to "Retry", retry_failed_job_path(execution), method: :post,
+                <%= button_to t("solid_queue_web.failed_jobs.retry"), retry_failed_job_path(execution), method: :post,
                       class: "sqd-btn sqd-btn--primary sqd-btn--sm" %>
-                <%= button_to "Discard", failed_job_path(execution), method: :delete,
+                <%= button_to t("solid_queue_web.failed_jobs.discard"), failed_job_path(execution), method: :delete,
                       class: "sqd-btn sqd-btn--danger sqd-btn--sm",
-                      data: { confirm: "Discard this job?" } %>
+                      data: { confirm: t("solid_queue_web.failed_jobs.confirm_discard") } %>
               </td>
             </tr>
           <% end %>
@@ -136,13 +136,13 @@
   </div>
 <% else %>
   <div class="sqd-card">
-    <div class="sqd-empty">No failed jobs. All clear!</div>
+    <div class="sqd-empty"><%= t("solid_queue_web.failed_jobs.empty") %></div>
   </div>
 <% end %>
 
 <% if @queue.present? %>
   <p style="margin-top: 0.75rem; font-size: 13px; color: var(--muted);">
-    Filtering by queue: <strong><%= @queue %></strong> &mdash;
-    <%= link_to "Clear filter", failed_jobs_path(q: @search, period: @period) %>
+    <%= t("solid_queue_web.shared.filtering_by_queue") %> <strong><%= @queue %></strong> &mdash;
+    <%= link_to t("solid_queue_web.shared.clear_filter"), failed_jobs_path(q: @search, period: @period) %>
   </p>
 <% end %>

@@ -8,9 +8,19 @@ module SolidQueueWeb
     STAGGER_INTERVALS  = { "5s" => 5.seconds, "10s" => 10.seconds, "30s" => 30.seconds, "1m" => 1.minute }.freeze
 
     before_action :authenticate!
+    around_action :with_locale
     around_action :with_database_connection
 
     private
+
+    def with_locale
+      available = SolidQueueWeb.available_locales.map(&:to_s)
+      locale = params[:locale].presence_in(available) ||
+               session[:solid_queue_web_locale].presence_in(available) ||
+               I18n.default_locale.to_s
+      session[:solid_queue_web_locale] = locale
+      I18n.with_locale(locale) { yield }
+    end
 
     def with_database_connection
       config = SolidQueueWeb.connects_to

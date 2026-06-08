@@ -7,7 +7,7 @@ module SolidQueueWeb
     attr_writer :page_size, :dashboard_refresh_interval, :default_refresh_interval, :search_results_limit,
                 :slow_job_threshold, :alert_webhook_url, :alert_failure_threshold, :alert_webhook_cooldown,
                 :alert_queue_thresholds, :alert_slow_job_count_threshold, :alert_stale_process_threshold,
-                :connects_to, :time_zone
+                :connects_to, :time_zone, :available_locales
 
     def page_size
       @page_size || 25
@@ -59,6 +59,10 @@ module SolidQueueWeb
 
     def time_zone
       @time_zone
+    end
+
+    def available_locales
+      @available_locales || %i[en]
     end
 
     def configure

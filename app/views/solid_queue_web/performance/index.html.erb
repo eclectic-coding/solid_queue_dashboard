@@ -1,10 +1,10 @@
 <div class="sqd-page-header">
-  <h1 class="sqd-page-title">Performance</h1>
+  <h1 class="sqd-page-title"><%= t("solid_queue_web.performance.title") %></h1>
 </div>
 
 <form class="sqd-search" action="<%= performance_path %>" method="get">
-  <div class="sqd-period-filter" role="group" aria-label="Time period">
-    <%= link_to "All",  performance_path,                      class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil } %>
+  <div class="sqd-period-filter" role="group" aria-label="<%= t("solid_queue_web.shared.period_filter.label") %>">
+    <%= link_to t("solid_queue_web.shared.period_filter.all"),  performance_path,                      class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil } %>
     <%= link_to "1h",   performance_path(period: "1h"),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil } %>
     <%= link_to "24h",  performance_path(period: "24h"), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil } %>
     <%= link_to "7d",   performance_path(period: "7d"),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil } %>
@@ -16,15 +16,15 @@
     <table>
       <thead>
         <tr>
-          <th scope="col">Job Class</th>
-          <th scope="col" style="text-align: right;">Runs</th>
-          <th scope="col" style="text-align: right;">Avg</th>
-          <th scope="col" style="text-align: right;">p50</th>
-          <th scope="col" style="text-align: right;">p95</th>
-          <th scope="col" style="text-align: right;">p99</th>
-          <th scope="col" style="text-align: right;">Std Dev</th>
-          <th scope="col" style="text-align: right;">Min</th>
-          <th scope="col" style="text-align: right;">Max</th>
+          <th scope="col"><%= t("solid_queue_web.performance.col_job_class") %></th>
+          <th scope="col" style="text-align: right;"><%= t("solid_queue_web.performance.col_runs") %></th>
+          <th scope="col" style="text-align: right;"><%= t("solid_queue_web.performance.col_avg") %></th>
+          <th scope="col" style="text-align: right;"><%= t("solid_queue_web.performance.col_p50") %></th>
+          <th scope="col" style="text-align: right;"><%= t("solid_queue_web.performance.col_p95") %></th>
+          <th scope="col" style="text-align: right;"><%= t("solid_queue_web.performance.col_p99") %></th>
+          <th scope="col" style="text-align: right;"><%= t("solid_queue_web.performance.col_std_dev") %></th>
+          <th scope="col" style="text-align: right;"><%= t("solid_queue_web.performance.col_min") %></th>
+          <th scope="col" style="text-align: right;"><%= t("solid_queue_web.performance.col_max") %></th>
         </tr>
       </thead>
       <tbody>
@@ -49,6 +49,8 @@
   </div>
 <% else %>
   <div class="sqd-card" style="margin-top: 1rem;">
-    <div class="sqd-empty">No finished jobs found<%= " in the last #{@period}" if @period %>.</div>
+    <div class="sqd-empty">
+      <%= @period ? t("solid_queue_web.performance.empty_with_period", period: @period) : t("solid_queue_web.performance.empty") %>
+    </div>
   </div>
 <% end %>

@@ -1,7 +1,7 @@
 <div class="sqd-page-header">
-  <h1 class="sqd-page-title">Error Summary</h1>
+  <h1 class="sqd-page-title"><%= t("solid_queue_web.failed_job_errors.title") %></h1>
   <div class="sqd-actions">
-    <%= link_to "← Failed Jobs", failed_jobs_path, class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
+    <%= link_to t("solid_queue_web.failed_job_errors.back"), failed_jobs_path, class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
   </div>
 </div>
 
@@ -10,9 +10,9 @@
     <table>
       <thead>
         <tr>
-          <th scope="col">Error Class</th>
-          <th scope="col">Message</th>
-          <th scope="col" style="text-align: right;">Count</th>
+          <th scope="col"><%= t("solid_queue_web.failed_job_errors.col_error_class") %></th>
+          <th scope="col"><%= t("solid_queue_web.failed_job_errors.col_message") %></th>
+          <th scope="col" style="text-align: right;"><%= t("solid_queue_web.failed_job_errors.col_count") %></th>
         </tr>
       </thead>
       <tbody>
@@ -39,6 +39,6 @@
   </div>
 <% else %>
   <div class="sqd-card">
-    <div class="sqd-empty">No failed jobs. All clear!</div>
+    <div class="sqd-empty"><%= t("solid_queue_web.failed_job_errors.empty") %></div>
   </div>
 <% end %>
