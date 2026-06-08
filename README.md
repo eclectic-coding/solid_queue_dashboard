@@ -35,6 +35,9 @@ A monitoring and management dashboard for [Solid Queue](https://github.com/rails
 - [Read replica support](#read-replica-support)
 - [i18n](#i18n)
   - [Adding a custom locale](#adding-a-custom-locale)
+- [Extensibility](#extensibility)
+  - [Custom dashboard cards](#custom-dashboard-cards)
+  - [Custom nav links](#custom-nav-links)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
@@ -102,6 +105,8 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **Error frequency report** — `GET /jobs/failed_jobs/errors` groups all failed jobs by error class and message prefix, shows a count per group, and surfaces a sample backtrace in an expandable row; sorted by count descending so the most common errors appear first; accessible via the "Error Summary" button on the Failed Jobs page
 - **Metrics / health endpoint** — `GET /jobs/metrics.json` returns a machine-readable JSON document with job counts, throughput, per-queue depth and pause state, and process health summary; suitable for Prometheus scraping, uptime monitors, or external dashboards; `slow_jobs` count included when `slow_job_threshold` is configured
 - **i18n** — all UI strings (page titles, table headers, buttons, empty states, flash messages) are backed by `config/locales/en.yml`; locale switching via `?locale=` param or session; add a custom locale by supplying a YAML file in your host app and registering it with `config.available_locales`
+- **Custom dashboard cards** — `config.dashboard_cards` accepts an array of `{ title:, stats:, link: }` hashes rendered after the built-in queue stat cards; `stats:` is a lambda returning a `{ label => value }` hash evaluated at render time; `link:` is an optional header link
+- **Custom nav links** — `config.nav_links` accepts an array of `{ label:, url: }` hashes appended to the main navigation bar after the built-in links
 
 [↑ Back to top](#table-of-contents)
 
@@ -174,6 +179,8 @@ SolidQueueWeb.configure do |config|
   config.connects_to                = { reading: :reading, writing: :writing } # read replica (default: nil)
   config.time_zone                  = "America/New_York" # display timezone for all timestamps (default: nil = UTC)
   config.available_locales          = [:en, :fr]         # locales available for switching (default: [:en])
+  config.nav_links                  = [{ label: "Admin", url: "/admin" }] # extra nav links (default: [])
+  config.dashboard_cards            = [{ title: "My App", stats: -> { { "Users" => User.count } } }] # custom stat cards (default: [])
 end
 
 SolidQueueWeb.authenticate do
@@ -446,6 +453,51 @@ config.available_locales = [:en, :fr]
 ```
 
 Rails will pick up the file automatically via its standard `config.i18n.load_path`; no additional configuration is needed.
+
+[↑ Back to top](#table-of-contents)
+
+---
+
+## Extensibility
+
+### Custom dashboard cards
+
+`config.dashboard_cards` adds custom stat cards to the dashboard after the built-in queue cards. Each card accepts three keys:
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `title` | String | Card heading (required) |
+| `link` | `{ label:, url: }` | Optional header link rendered top-right |
+| `stats` | Lambda | Optional — called at render time; must return a `{ label => value }` hash |
+
+```ruby
+SolidQueueWeb.configure do |config|
+  config.dashboard_cards = [
+    {
+      title: "My App",
+      link:  { label: "View Admin", url: "/admin" },
+      stats: -> { { "Users" => User.count, "Premium" => User.premium.count } }
+    }
+  ]
+end
+```
+
+The `stats` lambda runs on every dashboard render, so keep it fast. Defaults to `[]` — no custom cards appear when unconfigured.
+
+### Custom nav links
+
+`config.nav_links` appends extra links to the main navigation bar after the built-in links. Use it to link back to your host application's admin pages or related tools.
+
+```ruby
+SolidQueueWeb.configure do |config|
+  config.nav_links = [
+    { label: "Back to App", url: "/" },
+    { label: "Admin",       url: "/admin" }
+  ]
+end
+```
+
+Defaults to `[]` — no extra links appear when unconfigured.
 
 [↑ Back to top](#table-of-contents)
 

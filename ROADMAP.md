@@ -6,11 +6,4 @@ Pull requests for any of these are welcome. See [Contributing](README.md#contrib
 
 ---
 
-## v1.6 — Extensibility
-
-*Breaking changes or large architectural additions — planned only if community demand warrants it.*
-
-| Feature | Notes |
-|---|---|
-| **Custom dashboard cards** | Registration hook so host apps can add their own stat cards alongside queue stats. |
-| **Custom nav links** | `config.nav_links = [{ label: "Admin", url: "/admin" }]` to integrate the dashboard into the host app's navigation. |
+No items currently planned. Open an issue to suggest a feature.

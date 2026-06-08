@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - i18n support
+- Custom dashboard cards — `config.dashboard_cards` accepts an array of `{ title:, stats:, link: }` hashes; each card is rendered after the built-in queue stat cards on the dashboard; `stats:` is a lambda returning a `{ label => value }` hash evaluated at render time; `link:` is an optional `{ label:, url: }` header link
+- Custom nav links — `config.nav_links` accepts an array of `{ label:, url: }` hashes appended to the main navigation bar after the built-in links
 
 ### Changed
 
