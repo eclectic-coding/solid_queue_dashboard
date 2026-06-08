@@ -46,6 +46,35 @@ RSpec.describe SolidQueueWeb::ApplicationController, type: :controller do
     end
   end
 
+  describe "#record_audit" do
+    controller(SolidQueueWeb::ApplicationController) do
+      skip_before_action :authenticate!
+
+      def create
+        record_audit("test_action")
+        render plain: "ok"
+      end
+    end
+
+    it "logs an error and does not raise when AuditEvent.create! fails" do
+      allow(SolidQueueWeb::AuditEvent).to receive(:create!).and_raise(ActiveRecord::RecordInvalid)
+      expect(Rails.logger).to receive(:error).with(/Audit log failed/)
+      post :create
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
+  describe "#resolve_current_actor" do
+    after { SolidQueueWeb.instance_variable_set(:@current_actor, nil) }
+
+    it "logs an error and returns nil when the current_actor block raises" do
+      SolidQueueWeb.current_actor { raise "identity error" }
+      expect(Rails.logger).to receive(:error).with(/current_actor block failed/)
+      result = controller.send(:resolve_current_actor)
+      expect(result).to be_nil
+    end
+  end
+
   describe "#replica_configured?" do
     it "returns false when only role is configured" do
       expect(controller.send(:replica_configured?, { role: :writing })).to be false
