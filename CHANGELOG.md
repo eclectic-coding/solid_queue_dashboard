@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- i18n support — all UI strings are now extracted into `config/locales/en.yml`; locale switching via `?locale=` param or session is supported; host apps can add additional locales using `SolidQueueWeb.available_locales = %i[en es]`; the English locale file can be used as a template for translations
+
 ## [1.5.0] - 2026-05-28
 
 ### Added

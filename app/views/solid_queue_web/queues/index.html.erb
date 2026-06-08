@@ -1,20 +1,20 @@
-<h1 class="sqd-page-title">Queues</h1>
+<h1 class="sqd-page-title"><%= t("solid_queue_web.queues.title") %></h1>
 
 <div class="sqd-card">
   <% if @queues.empty? %>
-    <div class="sqd-empty">No queues found.</div>
+    <div class="sqd-empty"><%= t("solid_queue_web.queues.empty") %></div>
   <% else %>
     <table>
       <thead>
         <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Size</th>
-          <th scope="col">Latency</th>
-          <th scope="col">Done (24h)</th>
-          <th scope="col">Failed (24h)</th>
-          <th scope="col">Failure Rate (12h)</th>
-          <th scope="col">Status</th>
-          <th scope="col"><span class="sqd-sr-only">Actions</span></th>
+          <th scope="col"><%= t("solid_queue_web.queues.col_name") %></th>
+          <th scope="col"><%= t("solid_queue_web.queues.col_size") %></th>
+          <th scope="col"><%= t("solid_queue_web.queues.col_latency") %></th>
+          <th scope="col"><%= t("solid_queue_web.queues.col_done_24h") %></th>
+          <th scope="col"><%= t("solid_queue_web.queues.col_failed_24h") %></th>
+          <th scope="col"><%= t("solid_queue_web.queues.col_failure_rate") %></th>
+          <th scope="col"><%= t("solid_queue_web.queues.col_status") %></th>
+          <th scope="col"><span class="sqd-sr-only"><%= t("solid_queue_web.queues.actions") %></span></th>
         </tr>
       </thead>
       <tbody>
@@ -38,7 +38,7 @@
             <td>
               <% sparkline = @failure_sparklines[queue.name] %>
               <% if sparkline.any? %>
-                <div class="sqd-mini-sparkline" aria-label="Failure rate last 12 hours for <%= queue.name %>">
+                <div class="sqd-mini-sparkline" aria-label="<%= t("solid_queue_web.queues.failure_rate_aria", queue: queue.name) %>">
                   <% sparkline.each_with_index do |rate, i| %>
                     <% pct = rate || 0 %>
                     <% hour_label = (12 - i).hours.ago.strftime("%-I%p").downcase %>
@@ -53,19 +53,19 @@
             </td>
             <td>
               <% if @paused_queue_names.include?(queue.name) %>
-                <span class="sqd-badge sqd-badge--paused">Paused</span>
+                <span class="sqd-badge sqd-badge--paused"><%= t("solid_queue_web.queues.status_paused") %></span>
               <% else %>
-                <span class="sqd-badge sqd-badge--running">Running</span>
+                <span class="sqd-badge sqd-badge--running"><%= t("solid_queue_web.queues.status_running") %></span>
               <% end %>
             </td>
             <td class="sqd-row-actions">
               <% if @paused_queue_names.include?(queue.name) %>
-                <%= button_to "Resume", queue_pause_path(queue.name), method: :delete,
+                <%= button_to t("solid_queue_web.queues.resume"), queue_pause_path(queue.name), method: :delete,
                       class: "sqd-btn sqd-btn--primary sqd-btn--sm" %>
               <% else %>
-                <%= button_to "Pause", queue_pause_path(queue.name), method: :post,
+                <%= button_to t("solid_queue_web.queues.pause"), queue_pause_path(queue.name), method: :post,
                       class: "sqd-btn sqd-btn--muted sqd-btn--sm",
-                      data: { confirm: "Pause queue \"#{queue.name}\"?" } %>
+                      data: { confirm: t("solid_queue_web.queues.confirm_pause", name: queue.name) } %>
               <% end %>
             </td>
           </tr>

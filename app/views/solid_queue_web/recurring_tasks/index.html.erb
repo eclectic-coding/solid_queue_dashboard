@@ -1,20 +1,20 @@
-<h1 class="sqd-page-title">Recurring Tasks</h1>
+<h1 class="sqd-page-title"><%= t("solid_queue_web.recurring_tasks.title") %></h1>
 
 <div class="sqd-card" style="margin-top: 1.5rem;">
   <% if @recurring_tasks.empty? %>
-    <div class="sqd-empty">No recurring tasks configured.</div>
+    <div class="sqd-empty"><%= t("solid_queue_web.recurring_tasks.empty") %></div>
   <% else %>
     <table>
       <thead>
         <tr>
-          <th scope="col">Key</th>
-          <th scope="col">Schedule</th>
-          <th scope="col">Job / Command</th>
-          <th scope="col">Queue</th>
-          <th scope="col">Next Run</th>
-          <th scope="col">Last Run</th>
-          <th scope="col">Type</th>
-          <th scope="col"><span class="sqd-sr-only">Actions</span></th>
+          <th scope="col"><%= t("solid_queue_web.recurring_tasks.col_key") %></th>
+          <th scope="col"><%= t("solid_queue_web.recurring_tasks.col_schedule") %></th>
+          <th scope="col"><%= t("solid_queue_web.recurring_tasks.col_job_command") %></th>
+          <th scope="col"><%= t("solid_queue_web.recurring_tasks.col_queue") %></th>
+          <th scope="col"><%= t("solid_queue_web.recurring_tasks.col_next_run") %></th>
+          <th scope="col"><%= t("solid_queue_web.recurring_tasks.col_last_run") %></th>
+          <th scope="col"><%= t("solid_queue_web.recurring_tasks.col_type") %></th>
+          <th scope="col"><span class="sqd-sr-only"><%= t("solid_queue_web.shared.actions") %></span></th>
         </tr>
       </thead>
       <tbody>
@@ -56,16 +56,16 @@
             </td>
             <td>
               <% if task.static? %>
-                <span class="sqd-badge sqd-badge--static">Static</span>
+                <span class="sqd-badge sqd-badge--static"><%= t("solid_queue_web.recurring_tasks.type_static") %></span>
               <% else %>
-                <span class="sqd-badge sqd-badge--dynamic">Dynamic</span>
+                <span class="sqd-badge sqd-badge--dynamic"><%= t("solid_queue_web.recurring_tasks.type_dynamic") %></span>
               <% end %>
             </td>
             <td class="sqd-row-actions">
-              <%= button_to "Run Now", recurring_task_run_path(task.key),
+              <%= button_to t("solid_queue_web.recurring_tasks.run_now"), recurring_task_run_path(task.key),
                     method: :post,
                     class: "sqd-btn sqd-btn--primary sqd-btn--sm",
-                    data: { confirm: "Run \"#{task.key}\" immediately?" } %>
+                    data: { confirm: t("solid_queue_web.recurring_tasks.confirm_run_now", key: task.key) } %>
             </td>
           </tr>
         <% end %>

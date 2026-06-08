@@ -1,60 +1,60 @@
 <%= turbo_frame_tag "dashboard", target: "_top", data: { controller: "refresh", refresh_interval_value: SolidQueueWeb.dashboard_refresh_interval } do %>
-<h1 class="sqd-page-title">Dashboard</h1>
+<h1 class="sqd-page-title"><%= t("solid_queue_web.dashboard.title") %></h1>
 
 <div class="sqd-stats">
   <%= link_to jobs_path(status: "ready"), class: "sqd-stat sqd-stat--ready sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats.counts[:ready] %></div>
-    <div class="sqd-stat__label">Ready</div>
+    <div class="sqd-stat__label"><%= t("solid_queue_web.dashboard.ready") %></div>
   <% end %>
   <%= link_to jobs_path(status: "scheduled"), class: "sqd-stat sqd-stat--scheduled sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats.counts[:scheduled] %></div>
-    <div class="sqd-stat__label">Scheduled</div>
+    <div class="sqd-stat__label"><%= t("solid_queue_web.dashboard.scheduled") %></div>
   <% end %>
   <%= link_to jobs_path(status: "claimed"), class: "sqd-stat sqd-stat--claimed sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats.counts[:claimed] %></div>
-    <div class="sqd-stat__label">Running</div>
+    <div class="sqd-stat__label"><%= t("solid_queue_web.dashboard.running") %></div>
   <% end %>
   <%= link_to jobs_path(status: "blocked"), class: "sqd-stat sqd-stat--blocked sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats.counts[:blocked] %></div>
-    <div class="sqd-stat__label">Blocked</div>
+    <div class="sqd-stat__label"><%= t("solid_queue_web.dashboard.blocked") %></div>
   <% end %>
   <%= link_to failed_jobs_path, class: "sqd-stat sqd-stat--failed sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats.counts[:failed] %></div>
-    <div class="sqd-stat__label">Failed</div>
+    <div class="sqd-stat__label"><%= t("solid_queue_web.dashboard.failed") %></div>
   <% end %>
   <%= link_to queues_path, class: "sqd-stat sqd-stat--queues sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats.counts[:queues] %></div>
-    <div class="sqd-stat__label">Queues</div>
+    <div class="sqd-stat__label"><%= t("solid_queue_web.dashboard.queues") %></div>
   <% end %>
   <%= link_to recurring_tasks_path, class: "sqd-stat sqd-stat--recurring sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats.counts[:recurring] %></div>
-    <div class="sqd-stat__label">Recurring</div>
+    <div class="sqd-stat__label"><%= t("solid_queue_web.dashboard.recurring") %></div>
   <% end %>
   <%= link_to processes_path, class: "sqd-stat sqd-stat--processes sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats.counts[:processes] %></div>
-    <div class="sqd-stat__label">Processes</div>
+    <div class="sqd-stat__label"><%= t("solid_queue_web.dashboard.processes") %></div>
   <% end %>
   <%= link_to history_path(period: "1h"), class: "sqd-stat sqd-stat--done sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats.throughput[:completed_1h] %></div>
-    <div class="sqd-stat__label">Done (1h)</div>
+    <div class="sqd-stat__label"><%= t("solid_queue_web.dashboard.done_1h") %></div>
   <% end %>
   <%= link_to history_path(period: "24h"), class: "sqd-stat sqd-stat--done sqd-stat--link" do %>
     <div class="sqd-stat__value"><%= @stats.throughput[:completed_24h] %></div>
-    <div class="sqd-stat__label">Done (24h)</div>
+    <div class="sqd-stat__label"><%= t("solid_queue_web.dashboard.done_24h") %></div>
   <% end %>
 </div>
 
 <% max_val = [@stats.sparkline.max, 1].max %>
 <div class="sqd-card" style="margin-bottom: 1rem;">
   <div class="sqd-card__header">
-    <span class="sqd-card__title">Throughput &mdash; Last 12 Hours</span>
+    <span class="sqd-card__title"><%= t("solid_queue_web.dashboard.throughput_label") %></span>
     <div class="sqd-throughput__summary">
-      <span>1h: <strong><%= @stats.throughput[:completed_1h] %></strong></span>
-      <span>24h: <strong><%= @stats.throughput[:completed_24h] %></strong></span>
+      <span><%= t("solid_queue_web.dashboard.throughput_1h") %> <strong><%= @stats.throughput[:completed_1h] %></strong></span>
+      <span><%= t("solid_queue_web.dashboard.throughput_24h") %> <strong><%= @stats.throughput[:completed_24h] %></strong></span>
     </div>
   </div>
   <% if @stats.throughput[:completed_24h] == 0 %>
-    <div class="sqd-sparkline__empty">No completed jobs in the last 24 hours</div>
+    <div class="sqd-sparkline__empty"><%= t("solid_queue_web.dashboard.no_completed_jobs") %></div>
   <% else %>
     <div class="sqd-sparkline" aria-label="Jobs completed per hour over the last 12 hours">
       <% @stats.sparkline.each_with_index do |count, i| %>
@@ -67,7 +67,7 @@
                  style="height: <%= [pct, 3].max %>%"
                  title="<%= hour_start.strftime('%-I%p').downcase %>: <%= count %> <%= "job".pluralize(count) %>"></div>
           </div>
-          <div class="sqd-sparkline__tick"><%= show_tick ? (i == 11 ? "now" : hour_start.strftime("%-I%p").downcase) : "" %></div>
+          <div class="sqd-sparkline__tick"><%= show_tick ? (i == 11 ? t("solid_queue_web.dashboard.axis_now") : hour_start.strftime("%-I%p").downcase) : "" %></div>
         </div>
       <% end %>
     </div>
@@ -78,26 +78,26 @@
 <% max_depth = [@stats.depth_sparkline.max, 1].max %>
 <div class="sqd-card" style="margin-bottom: 1rem;">
   <div class="sqd-card__header">
-    <span class="sqd-card__title">Queue Depth &mdash; Last 12 Hours</span>
+    <span class="sqd-card__title"><%= t("solid_queue_web.dashboard.queue_depth_label") %></span>
     <div class="sqd-throughput__summary">
-      <span>Now: <strong><%= current_depth %></strong></span>
+      <span><%= t("solid_queue_web.dashboard.queue_depth_now") %> <strong><%= current_depth %></strong></span>
     </div>
   </div>
   <% if @stats.depth_sparkline.all?(&:zero?) %>
-    <div class="sqd-sparkline__empty">No active jobs in the last 12 hours</div>
+    <div class="sqd-sparkline__empty"><%= t("solid_queue_web.dashboard.no_active_jobs") %></div>
   <% else %>
     <div class="sqd-sparkline" aria-label="Queue depth over the last 12 hours">
       <% @stats.depth_sparkline.each_with_index do |depth, i| %>
         <% pct = (depth.to_f / max_depth * 100).round %>
-        <% t = i == 11 ? Time.current : (12 - i).hours.ago %>
+        <% t_val = i == 11 ? Time.current : (12 - i).hours.ago %>
         <% show_tick = [0, 3, 6, 9, 11].include?(i) %>
         <div class="sqd-sparkline__col">
           <div class="sqd-sparkline__bar-wrap">
             <div class="sqd-sparkline__bar sqd-sparkline__bar--depth"
                  style="height: <%= [pct, 3].max %>%"
-                 title="<%= i == 11 ? "now" : t.strftime("%-I%p").downcase %>: <%= depth %> <%= "job".pluralize(depth) %> in queue"></div>
+                 title="<%= i == 11 ? t("solid_queue_web.dashboard.axis_now") : t_val.strftime("%-I%p").downcase %>: <%= depth %> <%= "job".pluralize(depth) %> in queue"></div>
           </div>
-          <div class="sqd-sparkline__tick"><%= show_tick ? (i == 11 ? "now" : t.strftime("%-I%p").downcase) : "" %></div>
+          <div class="sqd-sparkline__tick"><%= show_tick ? (i == 11 ? t("solid_queue_web.dashboard.axis_now") : t_val.strftime("%-I%p").downcase) : "" %></div>
         </div>
       <% end %>
     </div>
@@ -107,13 +107,13 @@
 <% max_failures = [@stats.failure_sparkline.max, 1].max %>
 <div class="sqd-card" style="margin-bottom: 1rem;">
   <div class="sqd-card__header">
-    <span class="sqd-card__title">Failures &mdash; Last 12 Hours</span>
+    <span class="sqd-card__title"><%= t("solid_queue_web.dashboard.failures_label") %></span>
     <div class="sqd-throughput__summary">
-      <span>Total: <strong><%= @stats.failure_sparkline.sum %></strong></span>
+      <span><%= t("solid_queue_web.dashboard.failures_total") %> <strong><%= @stats.failure_sparkline.sum %></strong></span>
     </div>
   </div>
   <% if @stats.failure_sparkline.all?(&:zero?) %>
-    <div class="sqd-sparkline__empty">No failures in the last 12 hours</div>
+    <div class="sqd-sparkline__empty"><%= t("solid_queue_web.dashboard.no_failures") %></div>
   <% else %>
     <div class="sqd-sparkline" aria-label="Failed jobs per hour over the last 12 hours">
       <% @stats.failure_sparkline.each_with_index do |count, i| %>
@@ -126,7 +126,7 @@
                  style="height: <%= [pct, 3].max %>%"
                  title="<%= hour_start.strftime('%-I%p').downcase %>: <%= count %> <%= "failure".pluralize(count) %>"></div>
           </div>
-          <div class="sqd-sparkline__tick"><%= show_tick ? (i == 11 ? "now" : hour_start.strftime("%-I%p").downcase) : "" %></div>
+          <div class="sqd-sparkline__tick"><%= show_tick ? (i == 11 ? t("solid_queue_web.dashboard.axis_now") : hour_start.strftime("%-I%p").downcase) : "" %></div>
         </div>
       <% end %>
     </div>
@@ -136,31 +136,31 @@
 <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
   <div class="sqd-card">
     <div class="sqd-card__header">
-      <span class="sqd-card__title">Quick Links</span>
+      <span class="sqd-card__title"><%= t("solid_queue_web.dashboard.quick_links") %></span>
     </div>
     <div style="padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
-      <%= link_to "View all ready jobs", jobs_path(status: "ready"), class: "sqd-btn sqd-btn--muted" %>
-      <%= link_to "View scheduled jobs", jobs_path(status: "scheduled"), class: "sqd-btn sqd-btn--muted" %>
-      <%= link_to "View failed jobs", failed_jobs_path, class: "sqd-btn sqd-btn--muted" %>
-      <%= link_to "Manage queues", queues_path, class: "sqd-btn sqd-btn--muted" %>
-      <%= link_to "View recurring tasks", recurring_tasks_path, class: "sqd-btn sqd-btn--muted" %>
+      <%= link_to t("solid_queue_web.dashboard.view_ready_jobs"),     jobs_path(status: "ready"),     class: "sqd-btn sqd-btn--muted" %>
+      <%= link_to t("solid_queue_web.dashboard.view_scheduled_jobs"), jobs_path(status: "scheduled"), class: "sqd-btn sqd-btn--muted" %>
+      <%= link_to t("solid_queue_web.dashboard.view_failed_jobs"),    failed_jobs_path,               class: "sqd-btn sqd-btn--muted" %>
+      <%= link_to t("solid_queue_web.dashboard.manage_queues"),       queues_path,                    class: "sqd-btn sqd-btn--muted" %>
+      <%= link_to t("solid_queue_web.dashboard.view_recurring_tasks"), recurring_tasks_path,          class: "sqd-btn sqd-btn--muted" %>
     </div>
   </div>
 
   <% if @stats.counts[:failed] > 0 %>
     <div class="sqd-card">
       <div class="sqd-card__header">
-        <span class="sqd-card__title">Failed Jobs</span>
+        <span class="sqd-card__title"><%= t("solid_queue_web.dashboard.failed_jobs_card") %></span>
       </div>
       <div style="padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
         <p style="color: var(--danger); font-size: 13px;">
-          <%= pluralize(@stats.counts[:failed], "failed job") %> need attention.
+          <%= t("solid_queue_web.dashboard.need_attention", count: @stats.counts[:failed]) %>
         </p>
-        <%= button_to "Retry All Failed", retry_all_failed_jobs_path,
+        <%= button_to t("solid_queue_web.dashboard.retry_all_failed"), retry_all_failed_jobs_path,
               method: :post,
               class: "sqd-btn sqd-btn--primary",
-              data: { confirm: "Retry all #{@stats.counts[:failed]} failed #{"job".pluralize(@stats.counts[:failed])}?" } %>
-        <%= link_to "Review →", failed_jobs_path, class: "sqd-btn sqd-btn--muted" %>
+              data: { confirm: t("solid_queue_web.dashboard.confirm_retry_all_failed", count: @stats.counts[:failed]) } %>
+        <%= link_to t("solid_queue_web.dashboard.review"), failed_jobs_path, class: "sqd-btn sqd-btn--muted" %>
       </div>
     </div>
   <% end %>
@@ -168,13 +168,13 @@
   <% if SolidQueueWeb.slow_job_threshold && @stats.slow_jobs_count > 0 %>
     <div class="sqd-card">
       <div class="sqd-card__header">
-        <span class="sqd-card__title">Slow Jobs</span>
+        <span class="sqd-card__title"><%= t("solid_queue_web.dashboard.slow_jobs_card") %></span>
       </div>
       <div style="padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
         <p style="color: var(--warning); font-size: 13px;">
-          <%= pluralize(@stats.slow_jobs_count, "job") %> running longer than <%= distance_of_time_in_words(SolidQueueWeb.slow_job_threshold) %>.
+          <%= t("solid_queue_web.dashboard.slow_jobs_warning", count: @stats.slow_jobs_count, threshold: distance_of_time_in_words(SolidQueueWeb.slow_job_threshold)) %>
         </p>
-        <%= link_to "Review →", jobs_path(status: "claimed"), class: "sqd-btn sqd-btn--muted" %>
+        <%= link_to t("solid_queue_web.dashboard.review"), jobs_path(status: "claimed"), class: "sqd-btn sqd-btn--muted" %>
       </div>
     </div>
   <% end %>
@@ -182,17 +182,17 @@
   <% if @stats.counts[:blocked] > 0 %>
     <div class="sqd-card">
       <div class="sqd-card__header">
-        <span class="sqd-card__title">Blocked Jobs</span>
+        <span class="sqd-card__title"><%= t("solid_queue_web.dashboard.blocked_jobs_card") %></span>
       </div>
       <div style="padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
         <p style="color: var(--warning); font-size: 13px;">
-          <%= pluralize(@stats.counts[:blocked], "blocked job") %>.
+          <%= t("solid_queue_web.dashboard.blocked_jobs_count", count: @stats.counts[:blocked]) %>
         </p>
-        <%= button_to "Discard All Blocked", blocked_jobs_path,
+        <%= button_to t("solid_queue_web.dashboard.discard_all_blocked"), blocked_jobs_path,
               method: :delete,
               class: "sqd-btn sqd-btn--danger",
-              data: { confirm: "Discard all #{@stats.counts[:blocked]} blocked #{"job".pluralize(@stats.counts[:blocked])}? This cannot be undone." } %>
-        <%= link_to "Review →", jobs_path(status: "blocked"), class: "sqd-btn sqd-btn--muted" %>
+              data: { confirm: t("solid_queue_web.dashboard.confirm_discard_all_blocked", count: @stats.counts[:blocked]) } %>
+        <%= link_to t("solid_queue_web.dashboard.review"), jobs_path(status: "blocked"), class: "sqd-btn sqd-btn--muted" %>
       </div>
     </div>
   <% end %>

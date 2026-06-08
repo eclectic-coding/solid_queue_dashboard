@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= I18n.locale %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Solid Queue Dashboard</title>
+  <title><%= t("solid_queue_web.layout.title") %></title>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
   <%= inline_styles %>
@@ -13,27 +13,27 @@
 
 <header class="sqd-header">
   <div class="sqd-header__inner">
-    <%= link_to "Solid Queue", root_path, class: "sqd-header__title" %>
+    <%= link_to t("solid_queue_web.layout.logo"), root_path, class: "sqd-header__title" %>
     <div class="sqd-nav-wrapper">
-      <nav aria-label="Main">
+      <nav aria-label="<%= t("solid_queue_web.layout.nav.main_navigation") %>">
         <ul class="sqd-nav">
-          <li><%= link_to "Dashboard", root_path, class: current_page?(root_path) ? "active" : "", aria: { current: current_page?(root_path) ? "page" : nil } %></li>
-          <li><%= link_to "Queues", queues_path, class: current_page?(queues_path) ? "active" : "", aria: { current: current_page?(queues_path) ? "page" : nil } %></li>
-          <li><%= link_to "Jobs", jobs_path, class: current_page?(jobs_path) ? "active" : "", aria: { current: current_page?(jobs_path) ? "page" : nil } %></li>
-          <li><%= link_to "History", history_path, class: current_page?(history_path) ? "active" : "", aria: { current: current_page?(history_path) ? "page" : nil } %></li>
-          <li><%= link_to "Performance", performance_path, class: current_page?(performance_path) ? "active" : "", aria: { current: current_page?(performance_path) ? "page" : nil } %></li>
-          <li><%= link_to "Failed", failed_jobs_path, class: current_page?(failed_jobs_path) ? "active" : "", aria: { current: current_page?(failed_jobs_path) ? "page" : nil } %></li>
-          <li><%= link_to "Recurring", recurring_tasks_path, class: current_page?(recurring_tasks_path) ? "active" : "", aria: { current: current_page?(recurring_tasks_path) ? "page" : nil } %></li>
-          <li><%= link_to "Processes", processes_path, class: current_page?(processes_path) ? "active" : "", aria: { current: current_page?(processes_path) ? "page" : nil } %></li>
-          <li><%= link_to "Search", search_path, class: current_page?(search_path) ? "active" : "", aria: { current: current_page?(search_path) ? "page" : nil } %></li>
-          <li><%= link_to "Audit", audit_path, class: current_page?(audit_path) ? "active" : "", aria: { current: current_page?(audit_path) ? "page" : nil } %></li>
+          <li><%= link_to t("solid_queue_web.layout.nav.dashboard"),  root_path,            class: current_page?(root_path) ? "active" : "",            aria: { current: current_page?(root_path) ? "page" : nil } %></li>
+          <li><%= link_to t("solid_queue_web.layout.nav.queues"),     queues_path,          class: current_page?(queues_path) ? "active" : "",          aria: { current: current_page?(queues_path) ? "page" : nil } %></li>
+          <li><%= link_to t("solid_queue_web.layout.nav.jobs"),       jobs_path,            class: current_page?(jobs_path) ? "active" : "",            aria: { current: current_page?(jobs_path) ? "page" : nil } %></li>
+          <li><%= link_to t("solid_queue_web.layout.nav.history"),    history_path,         class: current_page?(history_path) ? "active" : "",         aria: { current: current_page?(history_path) ? "page" : nil } %></li>
+          <li><%= link_to t("solid_queue_web.layout.nav.performance"), performance_path,    class: current_page?(performance_path) ? "active" : "",     aria: { current: current_page?(performance_path) ? "page" : nil } %></li>
+          <li><%= link_to t("solid_queue_web.layout.nav.failed"),     failed_jobs_path,     class: current_page?(failed_jobs_path) ? "active" : "",     aria: { current: current_page?(failed_jobs_path) ? "page" : nil } %></li>
+          <li><%= link_to t("solid_queue_web.layout.nav.recurring"),  recurring_tasks_path, class: current_page?(recurring_tasks_path) ? "active" : "", aria: { current: current_page?(recurring_tasks_path) ? "page" : nil } %></li>
+          <li><%= link_to t("solid_queue_web.layout.nav.processes"),  processes_path,       class: current_page?(processes_path) ? "active" : "",       aria: { current: current_page?(processes_path) ? "page" : nil } %></li>
+          <li><%= link_to t("solid_queue_web.layout.nav.search"),     search_path,          class: current_page?(search_path) ? "active" : "",          aria: { current: current_page?(search_path) ? "page" : nil } %></li>
+          <li><%= link_to t("solid_queue_web.layout.nav.audit"),      audit_path,           class: current_page?(audit_path) ? "active" : "",           aria: { current: current_page?(audit_path) ? "page" : nil } %></li>
         </ul>
       </nav>
     </div>
     <div class="sqd-header__controls">
-      <button class="sqd-theme-toggle" aria-label="Switch to dark mode"
+      <button class="sqd-theme-toggle" aria-label="<%= t("solid_queue_web.layout.theme_toggle") %>"
               data-theme-target="toggle" data-action="theme#toggle">☽</button>
-      <button class="sqd-nav-toggle" aria-label="Toggle navigation" aria-expanded="false"
+      <button class="sqd-nav-toggle" aria-label="<%= t("solid_queue_web.layout.nav.toggle") %>" aria-expanded="false"
               onclick="var open=document.querySelector('.sqd-nav-wrapper').classList.toggle('sqd-nav--open');this.setAttribute('aria-expanded',open)">
         <span></span>
         <span></span>

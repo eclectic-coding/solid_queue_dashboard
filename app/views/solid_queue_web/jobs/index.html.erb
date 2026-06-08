@@ -1,4 +1,4 @@
-<h1 class="sqd-page-title" style="margin-bottom: 1.5rem;">Jobs</h1>
+<h1 class="sqd-page-title" style="margin-bottom: 1.5rem;"><%= t("solid_queue_web.jobs.title") %></h1>
 
 <%= turbo_frame_tag "jobs-table", data: { turbo_action: "advance", controller: "refresh", refresh_interval_value: SolidQueueWeb.default_refresh_interval } do %>
 <% discardable = SolidQueueWeb::Job::DISCARDABLE.include?(@status) %>
@@ -6,29 +6,29 @@
 <div data-controller="filters" data-filters-page-value="jobs">
 <div class="sqd-page-header">
   <div class="sqd-filters">
-    <%= link_to "Ready",     jobs_path(status: "ready",     q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "ready"     ? "active" : "", data: { action: "click->filters#saveStatus", filters_status_param: "ready" } %>
-    <%= link_to "Scheduled", jobs_path(status: "scheduled", q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "scheduled" ? "active" : "", data: { action: "click->filters#saveStatus", filters_status_param: "scheduled" } %>
-    <%= link_to "Running",   jobs_path(status: "claimed",   q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "claimed"   ? "active" : "", data: { action: "click->filters#saveStatus", filters_status_param: "claimed" } %>
-    <%= link_to "Blocked",   jobs_path(status: "blocked",   q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "blocked"   ? "active" : "", data: { action: "click->filters#saveStatus", filters_status_param: "blocked" } %>
-    <%= link_to "Failed",    jobs_path(status: "failed",    q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "failed"    ? "active" : "", data: { action: "click->filters#saveStatus", filters_status_param: "failed" } %>
+    <%= link_to t("solid_queue_web.jobs.tab_ready"),     jobs_path(status: "ready",     q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "ready"     ? "active" : "", data: { action: "click->filters#saveStatus", filters_status_param: "ready" } %>
+    <%= link_to t("solid_queue_web.jobs.tab_scheduled"), jobs_path(status: "scheduled", q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "scheduled" ? "active" : "", data: { action: "click->filters#saveStatus", filters_status_param: "scheduled" } %>
+    <%= link_to t("solid_queue_web.jobs.tab_running"),   jobs_path(status: "claimed",   q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "claimed"   ? "active" : "", data: { action: "click->filters#saveStatus", filters_status_param: "claimed" } %>
+    <%= link_to t("solid_queue_web.jobs.tab_blocked"),   jobs_path(status: "blocked",   q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "blocked"   ? "active" : "", data: { action: "click->filters#saveStatus", filters_status_param: "blocked" } %>
+    <%= link_to t("solid_queue_web.jobs.tab_failed"),    jobs_path(status: "failed",    q: @search, period: @period, priority: @priority, sort: @sort, direction: @direction), class: @status == "failed"    ? "active" : "", data: { action: "click->filters#saveStatus", filters_status_param: "failed" } %>
   </div>
   <% if @jobs.any? %>
     <div class="sqd-actions">
-      <%= link_to "Export CSV", jobs_path(format: :csv, status: @status, q: @search, period: @period, sort: @sort, direction: @direction),
+      <%= link_to t("solid_queue_web.jobs.export_csv"), jobs_path(format: :csv, status: @status, q: @search, period: @period, sort: @sort, direction: @direction),
             class: "sqd-btn sqd-btn--muted", data: { turbo: false } %>
       <% if @status == "scheduled" %>
-        <%= button_to "Run All Now", run_all_now_scheduled_jobs_path,
+        <%= button_to t("solid_queue_web.jobs.run_all_now"), run_all_now_scheduled_jobs_path,
               method: :post,
               params: { period: @period },
               class: "sqd-btn sqd-btn--primary",
-              data: { confirm: "Run all #{@pagy.count} scheduled jobs immediately?" } %>
+              data: { confirm: t("solid_queue_web.jobs.confirm_run_all_now", count: @pagy.count) } %>
       <% end %>
       <% if discardable %>
-        <%= button_to "Discard All", discard_all_jobs_path,
+        <%= button_to t("solid_queue_web.jobs.discard_all"), discard_all_jobs_path,
               method: :post,
               params: { status: @status, period: @period },
               class: "sqd-btn sqd-btn--danger",
-              data: { confirm: "Discard all #{@pagy.count} #{@status} jobs? This cannot be undone." } %>
+              data: { confirm: t("solid_queue_web.jobs.confirm_discard_all", count: @pagy.count, status: @status) } %>
       <% end %>
     </div>
   <% end %>
@@ -40,22 +40,22 @@
   <input type="hidden" name="sort" value="<%= @sort %>">
   <input type="hidden" name="direction" value="<%= @direction %>">
   <input class="sqd-search__input" type="search" name="q" value="<%= @search %>"
-         placeholder="Filter by job class…" autocomplete="off" aria-label="Filter by job class"
+         placeholder="<%= t("solid_queue_web.jobs.placeholder_job_class") %>" autocomplete="off" aria-label="<%= t("solid_queue_web.jobs.aria_filter_job_class") %>"
          data-action="input->search#filter">
   <% if @priority_options.size > 1 %>
-    <select name="priority" class="sqd-select" aria-label="Filter by priority"
+    <select name="priority" class="sqd-select" aria-label="<%= t("solid_queue_web.jobs.aria_filter_priority") %>"
             onchange="this.form.submit()">
-      <option value="" <%= @priority.nil? ? "selected" : "" %>>All priorities</option>
+      <option value="" <%= @priority.nil? ? "selected" : "" %>><%= t("solid_queue_web.jobs.all_priorities") %></option>
       <% @priority_options.each do |p| %>
-        <option value="<%= p %>" <%= @priority.to_s == p.to_s ? "selected" : "" %>>Priority <%= p %></option>
+        <option value="<%= p %>" <%= @priority.to_s == p.to_s ? "selected" : "" %>><%= t("solid_queue_web.jobs.priority_option", n: p) %></option>
       <% end %>
     </select>
   <% end %>
   <% if @search.present? || @priority.present? %>
-    <%= link_to "Clear", jobs_path(status: @status, period: @period, sort: @sort, direction: @direction), class: "sqd-btn sqd-btn--muted" %>
+    <%= link_to t("solid_queue_web.jobs.clear_search"), jobs_path(status: @status, period: @period, sort: @sort, direction: @direction), class: "sqd-btn sqd-btn--muted" %>
   <% end %>
-  <div class="sqd-period-filter" role="group" aria-label="Time period">
-    <%= link_to "All", jobs_path(status: @status, q: @search, priority: @priority, sort: @sort, direction: @direction),                       class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil }, aria_label: "All time",      data: { action: "click->filters#savePeriod", filters_period_param: "" } %>
+  <div class="sqd-period-filter" role="group" aria-label="<%= t("solid_queue_web.shared.period_filter.label") %>">
+    <%= link_to t("solid_queue_web.shared.period_filter.all"), jobs_path(status: @status, q: @search, priority: @priority, sort: @sort, direction: @direction),                       class: @period.nil?       ? "active" : "", aria: { current: @period.nil?       ? "true" : nil }, aria_label: "All time",      data: { action: "click->filters#savePeriod", filters_period_param: "" } %>
     <%= link_to "1h",  jobs_path(status: @status, q: @search, priority: @priority, period: "1h",  sort: @sort, direction: @direction),  class: @period == "1h"  ? "active" : "", aria: { current: @period == "1h"  ? "true" : nil }, aria_label: "Last 1 hour",   data: { action: "click->filters#savePeriod", filters_period_param: "1h" } %>
     <%= link_to "24h", jobs_path(status: @status, q: @search, priority: @priority, period: "24h", sort: @sort, direction: @direction), class: @period == "24h" ? "active" : "", aria: { current: @period == "24h" ? "true" : nil }, aria_label: "Last 24 hours", data: { action: "click->filters#savePeriod", filters_period_param: "24h" } %>
     <%= link_to "7d",  jobs_path(status: @status, q: @search, priority: @priority, period: "7d",  sort: @sort, direction: @direction),  class: @period == "7d"  ? "active" : "", aria: { current: @period == "7d"  ? "true" : nil }, aria_label: "Last 7 days",   data: { action: "click->filters#savePeriod", filters_period_param: "7d" } %>
@@ -66,7 +66,7 @@
 <% if discardable && @jobs.any? %>
   <div data-controller="selection">
     <%= form_tag job_selection_path, method: :delete, id: "job-selection-form",
-          data: { turbo_confirm: "Discard selected jobs? This cannot be undone." } do %>
+          data: { turbo_confirm: t("solid_queue_web.jobs.confirm_discard_selected") } do %>
       <%= hidden_field_tag :status,    @status %>
       <%= hidden_field_tag :period,    @period %>
       <%= hidden_field_tag :sort,      @sort %>
@@ -74,10 +74,10 @@
     <% end %>
 
     <div class="sqd-selection-bar" data-selection-target="bar" style="display: none;">
-      <span class="sqd-muted-text"><span data-selection-target="count">0</span> selected</span>
+      <span class="sqd-muted-text"><span data-selection-target="count">0</span> <%= t("solid_queue_web.jobs.selected_label") %></span>
       <button type="button" class="sqd-btn sqd-btn--danger sqd-btn--sm"
               data-action="click->selection#submit"
-              data-selection-form-id-param="job-selection-form">Discard Selected</button>
+              data-selection-form-id-param="job-selection-form"><%= t("solid_queue_web.jobs.discard_selected") %></button>
     </div>
 
     <div class="sqd-card" id="jobs-list">
@@ -87,15 +87,15 @@
             <th scope="col">
               <input type="checkbox" data-selection-target="selectAll"
                      data-action="change->selection#selectAll"
-                     aria-label="Select all jobs">
+                     aria-label="<%= t("solid_queue_web.jobs.select_all_jobs") %>">
             </th>
             <% sort_url = ->(p) { jobs_path(status: @status, q: @search, period: @period, priority: @priority, **p) } %>
-            <%= sort_header_th("Job Class",   "class_name", sort_url, current_sort: @sort, current_dir: @direction) %>
-            <%= sort_header_th("Queue",       "queue_name", sort_url, current_sort: @sort, current_dir: @direction) %>
-            <%= sort_header_th("Priority",    "priority",   sort_url, current_sort: @sort, current_dir: @direction) %>
-            <th scope="col">Scheduled At</th>
-            <%= sort_header_th("Enqueued At", "created_at", sort_url, current_sort: @sort, current_dir: @direction) %>
-            <th scope="col"><span class="sqd-sr-only">Actions</span></th>
+            <%= sort_header_th(t("solid_queue_web.jobs.col_job_class"), "class_name", sort_url, current_sort: @sort, current_dir: @direction) %>
+            <%= sort_header_th(t("solid_queue_web.jobs.col_queue"),     "queue_name", sort_url, current_sort: @sort, current_dir: @direction) %>
+            <%= sort_header_th(t("solid_queue_web.jobs.col_priority"),  "priority",   sort_url, current_sort: @sort, current_dir: @direction) %>
+            <th scope="col"><%= t("solid_queue_web.jobs.col_scheduled_at") %></th>
+            <%= sort_header_th(t("solid_queue_web.jobs.col_enqueued_at"), "created_at", sort_url, current_sort: @sort, current_dir: @direction) %>
+            <th scope="col"><span class="sqd-sr-only"><%= t("solid_queue_web.jobs.actions") %></span></th>
           </tr>
         </thead>
         <tbody>
@@ -106,7 +106,7 @@
                 <input type="checkbox" value="<%= execution.id %>"
                        data-selection-target="checkbox"
                        data-action="change->selection#toggle"
-                       aria-label="Select job <%= job.class_name %>">
+                       aria-label="<%= t("solid_queue_web.jobs.select_job", class_name: job.class_name) %>">
               </td>
               <td>
                 <span class="sqd-badge sqd-badge--<%= @status %>"><%= @status %></span>
@@ -123,11 +123,11 @@
               <td class="sqd-mono"><%= format_timestamp(job.created_at) %></td>
               <td class="sqd-row-actions">
                 <% if @status == "scheduled" %>
-                  <%= button_to "Run Now", scheduled_job_path(execution),
+                  <%= button_to t("solid_queue_web.jobs.run_now"), scheduled_job_path(execution),
                         method: :patch,
                         params: { offset: "now", period: @period },
                         class: "sqd-btn sqd-btn--primary sqd-btn--sm",
-                        data: { confirm: "Run this job immediately?" } %>
+                        data: { confirm: t("solid_queue_web.jobs.confirm_run_now") } %>
                   <% %w[1h 24h 7d].each do |offset| %>
                     <%= button_to "+#{offset}", scheduled_job_path(execution),
                           method: :patch,
@@ -135,11 +135,11 @@
                           class: "sqd-btn sqd-btn--muted sqd-btn--sm" %>
                   <% end %>
                 <% end %>
-                <%= button_to "Discard", job_path(execution),
+                <%= button_to t("solid_queue_web.jobs.discard"), job_path(execution),
                       method: :delete,
                       params: { status: @status, period: @period, sort: @sort, direction: @direction },
                       class: "sqd-btn sqd-btn--danger sqd-btn--sm",
-                      data: { confirm: "Discard this job?" } %>
+                      data: { confirm: t("solid_queue_web.jobs.confirm_discard") } %>
               </td>
             </tr>
           <% end %>
@@ -150,21 +150,21 @@
 <% else %>
   <div class="sqd-card" id="jobs-list">
     <% if @jobs.empty? %>
-      <div class="sqd-empty">No <%= @status %> jobs.</div>
+      <div class="sqd-empty"><%= t("solid_queue_web.jobs.no_jobs", status: @status) %></div>
     <% else %>
       <% slow_threshold = @status == "claimed" ? SolidQueueWeb.slow_job_threshold : nil %>
       <table>
         <thead>
           <tr>
             <% sort_url = ->(p) { jobs_path(status: @status, q: @search, period: @period, priority: @priority, **p) } %>
-            <%= sort_header_th("Job Class",   "class_name", sort_url, current_sort: @sort, current_dir: @direction) %>
-            <%= sort_header_th("Queue",       "queue_name", sort_url, current_sort: @sort, current_dir: @direction) %>
-            <%= sort_header_th("Priority",    "priority",   sort_url, current_sort: @sort, current_dir: @direction) %>
-            <th scope="col">Scheduled At</th>
-            <%= sort_header_th("Enqueued At", "created_at", sort_url, current_sort: @sort, current_dir: @direction) %>
+            <%= sort_header_th(t("solid_queue_web.jobs.col_job_class"), "class_name", sort_url, current_sort: @sort, current_dir: @direction) %>
+            <%= sort_header_th(t("solid_queue_web.jobs.col_queue"),     "queue_name", sort_url, current_sort: @sort, current_dir: @direction) %>
+            <%= sort_header_th(t("solid_queue_web.jobs.col_priority"),  "priority",   sort_url, current_sort: @sort, current_dir: @direction) %>
+            <th scope="col"><%= t("solid_queue_web.jobs.col_scheduled_at") %></th>
+            <%= sort_header_th(t("solid_queue_web.jobs.col_enqueued_at"), "created_at", sort_url, current_sort: @sort, current_dir: @direction) %>
             <% if @status == "claimed" %>
-              <th scope="col">Running For</th>
-              <th scope="col">Wait Time</th>
+              <th scope="col"><%= t("solid_queue_web.jobs.col_running_for") %></th>
+              <th scope="col"><%= t("solid_queue_web.jobs.col_wait_time") %></th>
             <% end %>
           </tr>
         </thead>

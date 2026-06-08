@@ -1,26 +1,26 @@
 <div class="sqd-page-header">
   <div>
     <div class="sqd-breadcrumb">
-      <%= link_to "Jobs", jobs_path(status: @execution_status) %> &rsaquo; Detail
+      <%= link_to t("solid_queue_web.jobs_show.breadcrumb"), jobs_path(status: @execution_status) %> &rsaquo; <%= t("solid_queue_web.jobs_show.detail") %>
     </div>
     <h1 class="sqd-page-title"><%= @job.class_name %></h1>
   </div>
 
   <div class="sqd-actions">
     <% if @execution_status == "failed" && @job.failed_execution %>
-      <%= button_to "Retry", retry_failed_job_path(@job.failed_execution), method: :post,
+      <%= button_to t("solid_queue_web.jobs_show.retry"), retry_failed_job_path(@job.failed_execution), method: :post,
             class: "sqd-btn sqd-btn--primary" %>
-      <%= button_to "Discard", failed_job_path(@job.failed_execution), method: :delete,
+      <%= button_to t("solid_queue_web.jobs_show.discard"), failed_job_path(@job.failed_execution), method: :delete,
             class: "sqd-btn sqd-btn--danger",
-            data: { confirm: "Discard this job?" } %>
+            data: { confirm: t("solid_queue_web.jobs_show.confirm_discard") } %>
     <% elsif SolidQueueWeb::Job::DISCARDABLE.include?(@execution_status) %>
       <% execution = @job.public_send("#{@execution_status}_execution") %>
       <% if execution %>
-        <%= button_to "Discard", job_path(execution),
+        <%= button_to t("solid_queue_web.jobs_show.discard"), job_path(execution),
               method: :delete,
               params: { status: @execution_status },
               class: "sqd-btn sqd-btn--danger",
-              data: { confirm: "Discard this job?" } %>
+              data: { confirm: t("solid_queue_web.jobs_show.confirm_discard") } %>
       <% end %>
     <% end %>
   </div>
@@ -28,41 +28,41 @@
 
 <div class="sqd-detail-grid">
   <div class="sqd-card sqd-detail-section">
-    <h2 class="sqd-section-title">Details</h2>
+    <h2 class="sqd-section-title"><%= t("solid_queue_web.jobs_show.section_details") %></h2>
     <dl class="sqd-dl">
-      <dt>Status</dt>
+      <dt><%= t("solid_queue_web.jobs_show.field_status") %></dt>
       <dd><span class="sqd-badge sqd-badge--<%= @execution_status %>"><%= @execution_status %></span></dd>
 
-      <dt>Queue</dt>
+      <dt><%= t("solid_queue_web.jobs_show.field_queue") %></dt>
       <dd class="sqd-mono"><%= @job.queue_name %></dd>
 
-      <dt>Priority</dt>
+      <dt><%= t("solid_queue_web.jobs_show.field_priority") %></dt>
       <dd><%= @job.priority %></dd>
 
-      <dt>Active Job ID</dt>
+      <dt><%= t("solid_queue_web.jobs_show.field_active_job_id") %></dt>
       <dd class="sqd-mono sqd-truncate" title="<%= @job.active_job_id %>"><%= @job.active_job_id %></dd>
 
-      <dt>Concurrency Key</dt>
+      <dt><%= t("solid_queue_web.jobs_show.field_concurrency_key") %></dt>
       <dd class="sqd-mono"><%= @job.concurrency_key.presence || "—" %></dd>
 
       <% if @job.blocked_execution %>
-        <dt>Blocked Until</dt>
+        <dt><%= t("solid_queue_web.jobs_show.field_blocked_until") %></dt>
         <dd class="sqd-mono"><%= @job.blocked_execution.expires_at ? @job.blocked_execution.expires_at.strftime("%Y-%m-%d %H:%M:%S %Z") : "—" %></dd>
       <% end %>
 
-      <dt>Enqueued At</dt>
+      <dt><%= t("solid_queue_web.jobs_show.field_enqueued_at") %></dt>
       <dd class="sqd-mono"><%= @job.created_at.strftime("%Y-%m-%d %H:%M:%S %Z") %></dd>
 
-      <dt>Scheduled At</dt>
+      <dt><%= t("solid_queue_web.jobs_show.field_scheduled_at") %></dt>
       <dd class="sqd-mono"><%= @job.scheduled_at ? @job.scheduled_at.strftime("%Y-%m-%d %H:%M:%S %Z") : "—" %></dd>
 
-      <dt>Finished At</dt>
+      <dt><%= t("solid_queue_web.jobs_show.field_finished_at") %></dt>
       <dd class="sqd-mono"><%= @job.finished_at ? @job.finished_at.strftime("%Y-%m-%d %H:%M:%S %Z") : "—" %></dd>
     </dl>
   </div>
 
   <div class="sqd-card sqd-detail-section">
-    <h2 class="sqd-section-title">Arguments</h2>
+    <h2 class="sqd-section-title"><%= t("solid_queue_web.jobs_show.section_arguments") %></h2>
     <% if @execution_status == "failed" && @job.failed_execution %>
       <% args_json = begin; JSON.pretty_generate(@job.arguments); rescue; @job.arguments.inspect; end %>
       <%= form_with url: failed_job_arguments_path(@job.failed_execution), method: :patch do |f| %>
@@ -70,8 +70,8 @@
               value: args_json,
               class: "sqd-textarea sqd-mono",
               rows: [args_json.lines.count + 1, 6].max,
-              "aria-label": "Job arguments JSON" %>
-        <%= f.submit "Retry with these arguments", class: "sqd-btn sqd-btn--primary sqd-args-form__submit" %>
+              "aria-label": t("solid_queue_web.jobs_show.arguments_aria_label") %>
+        <%= f.submit t("solid_queue_web.jobs_show.retry_with_args"), class: "sqd-btn sqd-btn--primary sqd-args-form__submit" %>
       <% end %>
     <% else %>
       <pre class="sqd-pre"><%= JSON.pretty_generate(@job.arguments) rescue @job.arguments.inspect %></pre>
@@ -81,7 +81,7 @@
 
 <% if @job.failed_execution %>
   <div class="sqd-card sqd-detail-section" style="margin-top: 1.5rem;">
-    <h2 class="sqd-section-title sqd-section-title--danger">Error</h2>
+    <h2 class="sqd-section-title sqd-section-title--danger"><%= t("solid_queue_web.jobs_show.section_error") %></h2>
     <p class="sqd-error-header">
       <strong><%= @job.failed_execution.exception_class %></strong>: <%= @job.failed_execution.message %>
     </p>

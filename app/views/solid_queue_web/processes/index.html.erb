@@ -1,20 +1,20 @@
 <%= turbo_frame_tag "processes", target: "_top", data: { controller: "refresh", refresh_interval_value: SolidQueueWeb.default_refresh_interval } do %>
-<h1 class="sqd-page-title">Processes</h1>
+<h1 class="sqd-page-title"><%= t("solid_queue_web.processes.title") %></h1>
 
 <div class="sqd-card">
   <% if @processes.empty? %>
-    <div class="sqd-empty">No processes registered.</div>
+    <div class="sqd-empty"><%= t("solid_queue_web.processes.empty") %></div>
   <% else %>
     <table>
       <thead>
         <tr>
-          <th scope="col">Kind</th>
-          <th scope="col">Name</th>
-          <th scope="col">PID</th>
-          <th scope="col">Host</th>
-          <th scope="col">Details</th>
-          <th scope="col">Last Heartbeat</th>
-          <th scope="col">Status</th>
+          <th scope="col"><%= t("solid_queue_web.processes.col_kind") %></th>
+          <th scope="col"><%= t("solid_queue_web.processes.col_name") %></th>
+          <th scope="col"><%= t("solid_queue_web.processes.col_pid") %></th>
+          <th scope="col"><%= t("solid_queue_web.processes.col_host") %></th>
+          <th scope="col"><%= t("solid_queue_web.processes.col_details") %></th>
+          <th scope="col"><%= t("solid_queue_web.processes.col_last_heartbeat") %></th>
+          <th scope="col"><%= t("solid_queue_web.processes.col_status") %></th>
         </tr>
       </thead>
       <tbody>
@@ -28,23 +28,23 @@
             <td class="sqd-process-meta">
               <% meta = process.metadata || {} %>
               <% if meta["queues"].present? %>
-                <span title="Queues"><%= Array(meta["queues"]).join(", ") %></span>
+                <span title="<%= t("solid_queue_web.processes.queues_title") %>"><%= Array(meta["queues"]).join(", ") %></span>
               <% end %>
               <% if meta["thread_count"].present? %>
-                <span class="sqd-muted-text"><%= meta["thread_count"] %> threads</span>
+                <span class="sqd-muted-text"><%= t("solid_queue_web.processes.threads", count: meta["thread_count"]) %></span>
               <% end %>
               <% if meta["polling_interval"].present? %>
-                <span class="sqd-muted-text">every <%= meta["polling_interval"] %>s</span>
+                <span class="sqd-muted-text"><%= t("solid_queue_web.processes.polling_interval", interval: meta["polling_interval"]) %></span>
               <% end %>
             </td>
             <td class="sqd-mono sqd-muted-text" title="<%= process.last_heartbeat_at %>">
-              <%= time_ago_in_words(process.last_heartbeat_at) %> ago
+              <%= t("solid_queue_web.processes.last_heartbeat_ago", time: time_ago_in_words(process.last_heartbeat_at)) %>
             </td>
             <td>
               <% if stale %>
-                <span class="sqd-badge sqd-badge--failed">Stale</span>
+                <span class="sqd-badge sqd-badge--failed"><%= t("solid_queue_web.processes.status_stale") %></span>
               <% else %>
-                <span class="sqd-badge sqd-badge--running">Healthy</span>
+                <span class="sqd-badge sqd-badge--running"><%= t("solid_queue_web.processes.status_healthy") %></span>
               <% end %>
             </td>
           </tr>

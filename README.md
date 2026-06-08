@@ -60,6 +60,7 @@ SolidQueueWeb surfaces all of this in a browser UI available at any route you ch
 - **Failed job trend chart** — a "Failures — Last 12 Hours" bar chart on the dashboard shows failures per hour over the last 12 hours; bars are red, making failure spikes visible before clicking into the failed jobs list
 - **Error frequency report** — `GET /jobs/failed_jobs/errors` groups all failed jobs by error class and message prefix, shows a count per group, and surfaces a sample backtrace in an expandable row; sorted by count descending so the most common errors appear first; accessible via the "Error Summary" button on the Failed Jobs page
 - **Metrics / health endpoint** — `GET /jobs/metrics.json` returns a machine-readable JSON document with job counts, throughput, per-queue depth and pause state, and process health summary; suitable for Prometheus scraping, uptime monitors, or external dashboards; `slow_jobs` count included when `slow_job_threshold` is configured
+- **i18n** — all UI strings (page titles, table headers, buttons, empty states, flash messages) are backed by `config/locales/en.yml`; locale switching via `?locale=` param or session; add a custom locale by supplying a YAML file in your host app and registering it with `config.available_locales`
 
 ## Compatibility
 
@@ -115,6 +116,7 @@ SolidQueueWeb.configure do |config|
   config.current_actor                  = -> { current_user&.email } # identity for audit log (default: nil)
   config.connects_to                = { reading: :reading, writing: :writing } # read replica (default: nil)
   config.time_zone                  = "America/New_York" # display timezone for all timestamps (default: nil = UTC)
+  config.available_locales          = [:en, :fr]         # locales available for switching (default: [:en])
 end
 
 SolidQueueWeb.authenticate do
@@ -338,6 +340,31 @@ config.connects_to = { role: :writing }
 ```
 
 When `connects_to` is `nil` (the default), no connection switching occurs and single-database apps are unaffected.
+
+## i18n
+
+All dashboard UI strings — page titles, table headers, button labels, empty states, and flash messages — are backed by `config/locales/en.yml` in the gem. The engine ships with **English (`en`)** only.
+
+The selected locale is stored in the session and applied via `I18n.with_locale`, so it persists across requests without touching the host application's locale. The `?locale=` query param takes precedence over the session value, making it easy to deep-link to a specific language.
+
+```ruby
+SolidQueueWeb.configure do |config|
+  # Locales available for switching (default: [:en]).
+  config.available_locales = [:en, :fr]
+end
+```
+
+### Adding a custom locale
+
+1. Create a locale file in your host application under `config/locales/`, e.g. `config/locales/solid_queue_web.fr.yml`.
+2. Nest all keys under `fr > solid_queue_web:` — use [`config/locales/en.yml`](config/locales/en.yml) in the gem as a reference for the full key list.
+3. Register the locale:
+
+```ruby
+config.available_locales = [:en, :fr]
+```
+
+Rails will pick up the file automatically via its standard `config.i18n.load_path`; no additional configuration is needed.
 
 ## Roadmap
 

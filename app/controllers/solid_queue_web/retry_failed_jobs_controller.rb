@@ -8,7 +8,7 @@ module SolidQueueWeb
 
       if params[:stagger].present? && executions.size > 1
         interval = STAGGER_INTERVALS[params[:stagger]]
-        raise ArgumentError, "Invalid stagger interval." unless interval
+        raise ArgumentError, t("solid_queue_web.flash.invalid_stagger") unless interval
         executions.each_with_index do |execution, i|
           execution.job.update!(scheduled_at: i.zero? ? nil : Time.current + (i * interval))
           execution.retry
@@ -23,17 +23,16 @@ module SolidQueueWeb
     rescue ArgumentError => e
       redirect_to failed_jobs_path, alert: e.message
     rescue => e
-      redirect_to failed_jobs_path, alert: "Could not retry job: #{e.message}"
+      redirect_to failed_jobs_path, alert: t("solid_queue_web.flash.cannot_retry_job", error: e.message)
     end
 
     private
 
     def retry_notice(count)
-      label = "#{count} #{"job".pluralize(count)}"
       if params[:stagger].present? && count > 1
-        "#{label} queued for retry, staggered #{params[:stagger]} apart."
+        t("solid_queue_web.flash.jobs_retried_staggered", count: count, stagger: params[:stagger])
       else
-        "#{label} queued for retry."
+        t("solid_queue_web.flash.jobs_retried", count: count)
       end
     end
 

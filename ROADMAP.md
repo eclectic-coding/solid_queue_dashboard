@@ -12,6 +12,5 @@ Pull requests for any of these are welcome. See [Contributing](README.md#contrib
 
 | Feature | Notes |
 |---|---|
-| **i18n / locale support** | Wrap all user-visible strings in `I18n.t`. Makes the gem usable for non-English apps. |
 | **Custom dashboard cards** | Registration hook so host apps can add their own stat cards alongside queue stats. |
 | **Custom nav links** | `config.nav_links = [{ label: "Admin", url: "/admin" }]` to integrate the dashboard into the host app's navigation. |

@@ -21,19 +21,19 @@ module SolidQueueWeb
           @remaining_count = filtered_scope(model).count
           respond_to do |format|
             format.turbo_stream
-            format.html { redirect_to queue_jobs_path(queue_name: @queue, status: @status), notice: "Job discarded." }
+            format.html { redirect_to queue_jobs_path(queue_name: @queue, status: @status), notice: t("solid_queue_web.flash.job_discarded") }
           end
         else
           jobs = filtered_scope(model).map(&:job)
           model.discard_all_from_jobs(jobs)
           redirect_to queue_jobs_path(queue_name: @queue, status: @status),
-            notice: "#{jobs.size} #{"job".pluralize(jobs.size)} discarded."
+            notice: t("solid_queue_web.flash.jobs_discarded", count: jobs.size)
         end
       rescue ArgumentError => e
         redirect_to queue_jobs_path(queue_name: @queue, status: @status), alert: e.message
       rescue => e
-        redirect_to queue_jobs_path(queue_name: @queue, status: @status),
-          alert: "Could not discard #{params[:id] ? "job" : "jobs"}: #{e.message}"
+        msg = params[:id] ? t("solid_queue_web.flash.cannot_discard_job", error: e.message) : t("solid_queue_web.flash.cannot_discard_jobs", error: e.message)
+        redirect_to queue_jobs_path(queue_name: @queue, status: @status), alert: msg
       end
 
       private
@@ -51,7 +51,7 @@ module SolidQueueWeb
       end
 
       def execution_model_for!(status)
-        raise ArgumentError, "Cannot discard #{status} jobs from this page." unless Job::DISCARDABLE.include?(status)
+        raise ArgumentError, t("solid_queue_web.flash.cannot_discard_from_queue", status: status) unless Job::DISCARDABLE.include?(status)
         Job::EXECUTION_MODELS[status]
       end
     end
