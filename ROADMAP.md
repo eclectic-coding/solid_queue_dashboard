@@ -6,11 +6,7 @@ Pull requests for any of these are welcome. See [Contributing](README.md#contrib
 
 ---
 
-
-
-
-
-## v2.0 — Extensibility
+## v1.6 — Extensibility
 
 *Breaking changes or large architectural additions — planned only if community demand warrants it.*
 
