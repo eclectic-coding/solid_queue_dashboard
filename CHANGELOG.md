@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- i18n support — all UI strings are now extracted into `config/locales/en.yml`; locale switching via `?locale=` param or session is supported; host apps can add additional locales using `SolidQueueWeb.available_locales = %i[en es]`; the English locale file can be used as a template for translations
+- i18n support
+
+### Changed
+
+- README restructured with a Table of Contents, section dividers, and "Back to top" links; alert sections consolidated under a single `## Webhook alerts` parent — all UI strings are now extracted into `config/locales/en.yml`; locale switching via `?locale=` param or session is supported; host apps can add additional locales using `SolidQueueWeb.available_locales = %i[en es]`; the English locale file can be used as a template for translations
 
 ## [1.5.0] - 2026-05-28
 
