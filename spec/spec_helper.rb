@@ -7,15 +7,15 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
 ])
 
 SimpleCov.start "rails" do
-  add_filter "/spec/"
-  add_filter "/lib/solid_queue_web/version.rb"
-  add_filter "app/jobs/solid_queue_web/application_job.rb"
-  add_filter "app/models/solid_queue_web/application_record.rb"
+  skip "/spec/"
+  skip "/lib/solid_queue_web/version.rb"
+  skip "app/jobs/solid_queue_web/application_job.rb"
+  skip "app/models/solid_queue_web/application_record.rb"
 
-  add_group "Controllers", "app/controllers"
-  add_group "Helpers",     "app/helpers"
-  add_group "Views",       "app/views"
-  add_group "Library",     "lib"
+  group "Controllers", "app/controllers"
+  group "Helpers",     "app/helpers"
+  group "Views",       "app/views"
+  group "Library",     "lib"
 end
 
 RSpec.configure do |config|
